@@ -57,6 +57,9 @@ Recent decisions affecting current work:
 - Active nav link uses font-semibold (not color accent) — consistent with neutral palette decision
 - Header has no border or blur — clean white background only (Ollama-style minimal)
 - Plain <a> tags for hash navigation in Header (not next/link)
+- Anchor elements for Hero CTAs (not button-wrapped anchors — avoids invalid a-inside-button HTML)
+- Non-interactive View span in Products cards (product pages not yet built)
+- Decorative large numbers in HowWeWork use text-neutral-200 for subtle visual step indicators
 
 ### Pending Todos
 
@@ -69,5 +72,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-02-18
-Stopped at: Completed 02-02-PLAN.md — Header, Footer, scroll CSS. Next: 02-03 (page assembly).
+Stopped at: Completed 02-01-PLAN.md — 7 section components (Hero, WhatWeDo, Focus, Products, HowWeWork, About, Contact). Note: 02-01 was executed after 02-02; sections now in place. Next: 02-03 (page assembly).
 Resume file: None
