@@ -8,6 +8,8 @@
 @layer base {
   html {
     font-size: 17px; /* midpoint of 16-18px spec range */
+    scroll-behavior: smooth;
+    scroll-padding-top: 4rem; /* matches sticky header height h-16 = 64px */
   }
 
   body {
