@@ -28,7 +28,11 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. Body font renders at 16-18px with line-height 1.6, headings at 28-40px, content max-width 900-1100px
   4. Outlined rounded-full buttons render with correct hover state (bg shifts to neutral-100)
   5. `npm run build` completes without TypeScript or lint errors
-**Plans**: TBD
+**Plans**: 2 plans
+
+Plans:
+- [ ] 01-01-PLAN.md — Scaffold Next.js 15 + TailwindCSS v4, configure globals.css typography and layout.tsx font
+- [ ] 01-02-PLAN.md — Create Button component, update demo page, verify clean build + human visual check
 
 ### Phase 2: Page
 **Goal**: The complete single-page site is visible with all sections, copy, and working navigation
@@ -63,10 +67,10 @@ Phases execute in numeric order: 1 → 2 → 3
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation | 0/TBD | Not started | - |
+| 1. Foundation | 0/2 | Planned | - |
 | 2. Page | 0/TBD | Not started | - |
 | 3. Quality + Ship | 0/TBD | Not started | - |
 
 ---
 *Roadmap created: 2026-02-17*
-*Last updated: 2026-02-17 after initial creation*
+*Last updated: 2026-02-17 — Phase 1 plans created*
