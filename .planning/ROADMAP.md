@@ -31,8 +31,8 @@ Decimal phases appear between their surrounding integers in numeric order.
 **Plans**: 2 plans
 
 Plans:
-- [ ] 01-01-PLAN.md — Scaffold Next.js 15 + TailwindCSS v4, configure globals.css typography and layout.tsx font
-- [ ] 01-02-PLAN.md — Create Button component, update demo page, verify clean build + human visual check
+- [x] 01-01-PLAN.md — Scaffold Next.js 15 + TailwindCSS v4, configure globals.css typography and layout.tsx font
+- [x] 01-02-PLAN.md — Create Button component, update demo page, verify clean build + human visual check
 
 ### Phase 2: Page
 **Goal**: The complete single-page site is visible with all sections, copy, and working navigation
@@ -45,7 +45,12 @@ Plans:
   4. Hero CTA buttons ("Contact" and "Products") scroll to their respective sections
   5. Product cards show Endyra, Manverra, Careyra with title, description, and "View" link; contact section shows clickable email and LINE link; footer shows copyright line
   6. Layout is usable at 360px, 768px, 1024px, and 1280px viewport widths (no horizontal scroll, no broken columns)
-**Plans**: TBD
+**Plans**: 3 plans
+
+Plans:
+- [ ] 02-01-PLAN.md — Create all 7 content section components (Hero, WhatWeDo, Focus, Products, HowWeWork, About, Contact)
+- [ ] 02-02-PLAN.md — Create Header (sticky nav, scroll-spy, mobile hamburger) + Footer + globals.css scroll behavior
+- [ ] 02-03-PLAN.md — Assemble page.tsx with all sections + human visual/responsive verification
 
 ### Phase 3: Quality + Ship
 **Goal**: The site passes quality gates (Lighthouse, accessibility, SEO) and is live on Vercel
@@ -67,10 +72,10 @@ Phases execute in numeric order: 1 → 2 → 3
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation | 0/2 | Complete    | 2026-02-17 |
-| 2. Page | 0/TBD | Not started | - |
+| 1. Foundation | 2/2 | Complete    | 2026-02-17 |
+| 2. Page | 0/3 | Planning complete | - |
 | 3. Quality + Ship | 0/TBD | Not started | - |
 
 ---
 *Roadmap created: 2026-02-17*
-*Last updated: 2026-02-17 — Phase 1 plans created*
+*Last updated: 2026-02-18 — Phase 2 plans created*
