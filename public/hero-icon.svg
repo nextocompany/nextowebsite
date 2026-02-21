@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 80 80" fill="none">
+  <!-- Enterprise software studio icon: connected system nodes -->
+  <!-- Center hub -->
+  <circle cx="40" cy="40" r="6" fill="#2EC4B6"/>
+
+  <!-- Outer nodes -->
+  <circle cx="40" cy="14" r="4" fill="#3D3D3D"/>
+  <circle cx="62" cy="24" r="4" fill="#3D3D3D"/>
+  <circle cx="62" cy="56" r="4" fill="#3D3D3D"/>
+  <circle cx="40" cy="66" r="4" fill="#E85D4A"/>
+  <circle cx="18" cy="56" r="4" fill="#3D3D3D"/>
+  <circle cx="18" cy="24" r="4" fill="#3D3D3D"/>
+
+  <!-- Connection lines -->
+  <line x1="40" y1="18" x2="40" y2="34" stroke="#D4D4D4" stroke-width="1.5"/>
+  <line x1="58.5" y1="26" x2="45" y2="37" stroke="#D4D4D4" stroke-width="1.5"/>
+  <line x1="58.5" y1="54" x2="45" y2="43" stroke="#D4D4D4" stroke-width="1.5"/>
+  <line x1="40" y1="62" x2="40" y2="46" stroke="#D4D4D4" stroke-width="1.5"/>
+  <line x1="21.5" y1="54" x2="35" y2="43" stroke="#D4D4D4" stroke-width="1.5"/>
+  <line x1="21.5" y1="26" x2="35" y2="37" stroke="#D4D4D4" stroke-width="1.5"/>
+
+  <!-- Cross connections for "network" feel -->
+  <line x1="40" y1="18" x2="58.5" y2="26" stroke="#E8E8E8" stroke-width="1"/>
+  <line x1="58.5" y1="26" x2="58.5" y2="54" stroke="#E8E8E8" stroke-width="1"/>
+  <line x1="58.5" y1="54" x2="40" y2="62" stroke="#E8E8E8" stroke-width="1"/>
+  <line x1="40" y1="62" x2="21.5" y2="54" stroke="#E8E8E8" stroke-width="1"/>
+  <line x1="21.5" y1="54" x2="21.5" y2="26" stroke="#E8E8E8" stroke-width="1"/>
+  <line x1="21.5" y1="26" x2="40" y2="18" stroke="#E8E8E8" stroke-width="1"/>
+</svg>
