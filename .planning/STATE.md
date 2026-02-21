@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-02-17)
 ## Current Position
 
 Phase: 3 of 3 (Quality + Ship)
-Plan: Not started
-Status: Ready to plan Phase 3
-Last activity: 2026-02-22 — Phase 2 complete (code iterated beyond original plans)
+Plan: 2 of N complete (03-02 Privacy Page done)
+Status: In progress
+Last activity: 2026-02-22 — 03-02 Privacy page created; robots.ts static-export fix applied
 
-Progress: [███████░░░] 70%
+Progress: [████████░░] 75%
 
 ## Performance Metrics
 
@@ -31,6 +31,10 @@ Progress: [███████░░░] 70%
 | 02-page | 3/3 | ~14 min | ~4.7 min |
 
 *Updated after each plan completion*
+
+| Phase | Plans | Total | Avg/Plan |
+|-------|-------|-------|----------|
+| 03-quality-ship P02 | 1/N | 2 min | 2 min |
 
 ## What Actually Shipped (Phase 2)
 
@@ -79,6 +83,8 @@ Recent decisions affecting current work:
 - WhatWeDo, Focus, About sections created but excluded from page assembly — streamlined to essential sections
 - Product cards link externally to product domains
 - Contact section uses 4-channel grid layout
+- Privacy page uses robots noindex (keep out of search results) — PRIV-01 done
+- Route handlers in static export require export const dynamic = 'force-static'
 
 ### Pending Todos
 
@@ -91,5 +97,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-02-22
-Stopped at: Phase 2 complete. Ready to plan Phase 3 (Quality + Ship).
+Stopped at: Completed 03-02-PLAN.md (Privacy page)
 Resume file: None
