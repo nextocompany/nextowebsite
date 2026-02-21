@@ -13,8 +13,8 @@ Three phases: stand up the project scaffold with design tokens, build every visi
 Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Foundation** - Next.js project scaffold, Tailwind config, typography, global styles, design tokens (completed 2026-02-17)
-- [ ] **Phase 2: Page** - All 9 sections assembled with final copy, anchor nav, responsive layout
-- [ ] **Phase 3: Quality + Ship** - SEO metadata, accessibility audit, Lighthouse pass, privacy page, Vercel deploy
+- [x] **Phase 2: Page** - 6 sections assembled with final copy, anchor nav, responsive layout (completed 2026-02-22)
+- [ ] **Phase 3: Quality + Ship** - SEO metadata, accessibility fixes, GA integration, privacy page, Cloudflare Pages deploy
 
 ## Phase Details
 
@@ -48,34 +48,39 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 02-01-PLAN.md — Create all 7 content section components (Hero, WhatWeDo, Focus, Products, HowWeWork, About, Contact)
-- [ ] 02-02-PLAN.md — Create Header (sticky nav, scroll-spy, mobile hamburger) + Footer + globals.css scroll behavior
-- [ ] 02-03-PLAN.md — Assemble page.tsx with all sections + human visual/responsive verification
+- [x] 02-01-PLAN.md — Create all 7 content section components (Hero, WhatWeDo, Focus, Products, HowWeWork, About, Contact)
+- [x] 02-02-PLAN.md — Create Header (scroll-spy, mobile hamburger) + Footer + globals.css scroll behavior
+- [x] 02-03-PLAN.md — Assemble page.tsx with sections + visual/responsive iteration
 
 ### Phase 3: Quality + Ship
-**Goal**: The site passes quality gates (Lighthouse, accessibility, SEO) and is live on Vercel
+**Goal**: The site passes quality gates (Lighthouse, accessibility, SEO) and is live on Cloudflare Pages at nexto.co.th
 **Depends on**: Phase 2
 **Requirements**: TECH-02, TECH-03, TECH-04, TECH-05, SEO-01, SEO-02, SEO-03, SEO-04, SEO-05, SEO-06, PRIV-01
 **Success Criteria** (what must be TRUE):
   1. Lighthouse mobile performance score is 90 or higher; total page weight is under 1MB (excluding fonts)
   2. All body text and headings meet WCAG AA contrast ratio; keyboard tab order reaches every nav link and button with a visible focus ring
-  3. Browser tab displays "Nexto — Enterprise software studio"; sharing the URL on social shows correct OG title and description
+  3. Browser tab displays "Nexto — Your operations simplified"; sharing the URL on social shows correct OG title and description
   4. robots.txt is reachable at /robots.txt; sitemap.xml is reachable at /sitemap.xml; favicon appears in browser tab
   5. /privacy page loads with basic privacy policy content
-  6. Site is live at the production URL on Vercel; `npm run build` output matches what is deployed
-**Plans**: TBD
+  6. Site is live at nexto.co.th on Cloudflare Pages; `npm run build` output matches what is deployed
+**Plans**: 3 plans
+
+Plans:
+- [ ] 03-01-PLAN.md — SEO metadata, OG tags, GA integration, sitemap/robots, accessibility contrast fixes, focus ring
+- [ ] 03-02-PLAN.md — Privacy policy page at /privacy
+- [ ] 03-03-PLAN.md — Build verification, GitHub repo creation, Cloudflare Pages deploy
 
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 → 2 → 3
+Phases execute in numeric order: 1 -> 2 -> 3
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation | 2/2 | Complete    | 2026-02-17 |
-| 2. Page | 0/3 | Planning complete | - |
-| 3. Quality + Ship | 0/TBD | Not started | - |
+| 2. Page | 3/3 | Complete | 2026-02-22 |
+| 3. Quality + Ship | 0/3 | Not started | - |
 
 ---
 *Roadmap created: 2026-02-17*
-*Last updated: 2026-02-18 — Phase 2 plans created*
+*Last updated: 2026-02-22 — Phase 3 planned (3 plans, 2 waves)*
