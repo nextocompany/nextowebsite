@@ -1,16 +1,15 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import Image from 'next/image'
 
 const NAV_LINKS = [
-  { label: 'What we do', href: '#what-we-do' },
   { label: 'Products', href: '#products' },
-  { label: 'How we work', href: '#how-we-work' },
-  { label: 'About', href: '#about' },
-  { label: 'Contact', href: '#contact' },
+  { label: 'Process', href: '#how-we-work' },
+  { label: 'Connect', href: '#contact' },
 ]
 
-const SECTION_IDS = ['what-we-do', 'focus', 'products', 'how-we-work', 'about', 'contact']
+const SECTION_IDS = ['products', 'how-we-work', 'contact']
 
 export function Header() {
   const [activeSection, setActiveSection] = useState<string>('')
@@ -51,15 +50,22 @@ export function Header() {
 
   return (
     <>
-      <header className="sticky top-0 z-50 bg-white">
-        <div className="mx-auto max-w-5xl px-6 h-16 flex items-center justify-between">
+      <header className="bg-white">
+        <div className="px-4 h-14 flex items-center gap-3">
           {/* Logo */}
-          <a href="#hero" className="font-semibold text-lg">
-            Nexto
+          <a href="#hero" className="shrink-0">
+            <Image
+              src="/nexto-icon.png"
+              alt="Nexto"
+              width={40}
+              height={40}
+              className="w-10 h-10 md:w-8 md:h-8"
+            />
           </a>
 
           {/* Desktop nav */}
-          <nav className="hidden md:flex gap-8">
+          <nav className="hidden md:flex gap-4 flex-1">
+
             {NAV_LINKS.map(({ label, href }) => {
               const sectionId = href.replace('#', '')
               const isActive = activeSection === sectionId
@@ -69,8 +75,8 @@ export function Header() {
                   href={href}
                   className={
                     isActive
-                      ? 'text-sm font-semibold text-neutral-900'
-                      : 'text-sm text-neutral-600 hover:text-neutral-900 transition-colors'
+                      ? 'text-xl font-medium text-brand-teal-dark'
+                      : 'text-xl text-neutral-500 hover:text-neutral-900 transition-colors'
                   }
                 >
                   {label}
@@ -79,9 +85,17 @@ export function Header() {
             })}
           </nav>
 
+          {/* Connect CTA (desktop only) */}
+          <a
+            href="#contact"
+            className="hidden md:inline-flex items-center rounded-full border border-neutral-200 px-4 py-1.5 text-xl text-neutral-600 hover:text-brand-teal hover:border-brand-teal/40 transition-colors duration-200"
+          >
+            Connect
+          </a>
+
           {/* Hamburger button (mobile only) */}
           <button
-            className="md:hidden"
+            className="md:hidden ml-auto"
             aria-label="Open navigation menu"
             onClick={() => setMenuOpen(true)}
           >
@@ -91,7 +105,7 @@ export function Header() {
               viewBox="0 0 24 24"
               strokeWidth={1.5}
               stroke="currentColor"
-              className="w-6 h-6"
+              className="w-8 h-8"
             >
               <path
                 strokeLinecap="round"

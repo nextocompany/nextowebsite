@@ -3,13 +3,20 @@
 @theme {
   /* Wire next/font CSS variable into Tailwind's font-sans token */
   --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+
+  /* Brand colors from Nexto logo */
+  --color-brand-teal: #2EC4B6;
+  --color-brand-coral: #E85D4A;
+  --color-brand-teal-light: #e8f8f6;
+  --color-brand-coral-light: #fdf0ee;
+  --color-brand-teal-dark: #0f786f;
 }
 
 @layer base {
   html {
-    font-size: 17px; /* midpoint of 16-18px spec range */
+    font-size: 16px;
     scroll-behavior: smooth;
-    scroll-padding-top: 4rem; /* matches sticky header height h-16 = 64px */
+    scroll-padding-top: 4rem;
   }
 
   body {
@@ -18,8 +25,15 @@
     line-height: 1.6;
   }
 
-  h1 { @apply text-4xl font-semibold; }  /* 40px */
-  h2 { @apply text-3xl font-semibold; }  /* 36px */
-  h3 { @apply text-[1.75rem] font-semibold; }  /* ~30px at 17px base */
-  h4 { @apply text-xl font-semibold; }
+  h1 { @apply text-4xl font-semibold; }
+  h2 { @apply text-3xl font-semibold; }
+  h3 { @apply text-xl font-semibold; }
+  h4 { @apply text-lg font-semibold; }
+
+  :focus-visible {
+    outline-width: 2px;
+    outline-style: solid;
+    outline-offset: 2px;
+    outline-color: #0f786f; /* darkened teal, 5.33:1 on white */
+  }
 }

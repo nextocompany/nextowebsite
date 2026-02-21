@@ -1,45 +1,28 @@
 export function HowWeWork() {
   const steps = [
-    {
-      number: 1,
-      title: 'Understand',
-      description: 'We start by listening. What does your operation actually need?',
-    },
-    {
-      number: 2,
-      title: 'Prototype',
-      description: 'A working pilot in weeks, not months.',
-    },
-    {
-      number: 3,
-      title: 'Deploy',
-      description: 'Roll out to production with monitoring from day one.',
-    },
-    {
-      number: 4,
-      title: 'Iterate',
-      description: 'Continuous improvement based on real usage data.',
-    },
+    { num: '01', title: 'Assess', desc: 'We study how you operate today.' },
+    { num: '02', title: 'Fit', desc: 'Match the right solution to your workflow.' },
+    { num: '03', title: 'Deploy', desc: 'Up and running with minimal disruption.' },
+    { num: '04', title: 'Evolve', desc: 'Refine as your operations grow.' },
   ]
 
   return (
     <section id="how-we-work">
       <div className="mx-auto max-w-5xl px-6 py-20">
-        <h2 className="mb-12">How we work</h2>
-        <ol className="space-y-10">
+        <h2 className="mb-2">Process</h2>
+        <div className="w-8 h-0.5 bg-brand-teal mb-12" />
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-neutral-200 rounded-xl overflow-hidden">
           {steps.map((step) => (
-            <li key={step.number} className="flex items-start gap-6">
-              <span className="text-5xl font-semibold text-neutral-200 leading-none select-none tabular-nums w-12 shrink-0">
-                {step.number}
+            <div key={step.num} className="bg-white p-6 flex flex-col gap-3">
+              <span className="text-[10px] font-mono tracking-widest text-neutral-500 uppercase">
+                {step.num}
               </span>
-              <div>
-                <h3>{step.title}</h3>
-                <p className="text-neutral-600">{step.description}</p>
-              </div>
-            </li>
+              <h3 className="text-base font-semibold">{step.title}</h3>
+              <p className="text-sm text-neutral-500 leading-relaxed">{step.desc}</p>
+            </div>
           ))}
-        </ol>
-        <p className="mt-12 text-neutral-500 italic">Small pilots over big promises.</p>
+        </div>
+        <p className="mt-8 text-xs text-neutral-400 tracking-wide">We simplify. You operate.</p>
       </div>
     </section>
   )
