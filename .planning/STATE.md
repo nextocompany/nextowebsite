@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-02-17)
 ## Current Position
 
 Phase: 3 of 3 (Quality + Ship)
-Plan: 2 of N complete (03-02 Privacy Page done)
-Status: In progress
-Last activity: 2026-02-22 — 03-02 Privacy page created; robots.ts static-export fix applied
+Plan: 03-01 and 03-02 both complete
+Status: Phase 3 complete — site ready to ship
+Last activity: 2026-02-22 — 03-01 SEO/GA/accessibility + 03-02 Privacy page complete
 
-Progress: [████████░░] 75%
+Progress: [██████████] 100%
 
 ## Performance Metrics
 
@@ -34,7 +34,8 @@ Progress: [████████░░] 75%
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| 03-quality-ship P02 | 1/N | 2 min | 2 min |
+| 03-quality-ship P01 | 1/1 | 3 min | 3 min |
+| 03-quality-ship P02 | 1/1 | 2 min | 2 min |
 
 ## What Actually Shipped (Phase 2)
 
@@ -85,6 +86,10 @@ Recent decisions affecting current work:
 - Contact section uses 4-channel grid layout
 - Privacy page uses robots noindex (keep out of search results) — PRIV-01 done
 - Route handlers in static export require export const dynamic = 'force-static'
+- GA strategy=afterInteractive avoids blocking Lighthouse performance score
+- Active nav uses brand-teal-dark (#0f786f, 5.33:1) — brand-teal (#2EC4B6) only for decorative/hover
+- 10px mono labels use neutral-500 — teal reserved for transient hover states (WCAG allows)
+- OG placeholder PNG generated via sharp; user should replace with real branded design before launch
 
 ### Pending Todos
 
@@ -97,5 +102,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-02-22
-Stopped at: Completed 03-02-PLAN.md (Privacy page)
+Stopped at: Completed 03-01-PLAN.md (SEO, GA, accessibility) and 03-02-PLAN.md (Privacy page)
 Resume file: None
