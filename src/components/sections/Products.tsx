@@ -1,8 +1,8 @@
 import Image from 'next/image'
 
 const products = [
-  { name: 'Endyra', desc: 'Captures and organizes endoscopy cases. Fast, secure, and OR ready.', logo: '/endyra-logo.svg', url: 'https://endyra.io' },
-  { name: 'Manverra', desc: 'Manufacturing execution and traceability platform.', logo: '/manverra-logo.png', url: 'https://manverra.io' },
+  { name: 'Endyra', desc: 'Captures and organizes endoscopy cases. Fast, secure, and OR ready.', logo: '/endyra-logo.svg', url: 'https://endyra.nexto.co.th' },
+  { name: 'Manverra', desc: 'Manufacturing execution and traceability platform.', logo: '/manverra-logo.png', url: 'https://manverra.nexto.co.th' },
   { name: 'Careyra', desc: 'Telemedicine platform for clinics and hospitals.', logo: '/careyra-logo.png', url: 'https://careyra.com' },
 ]
 
