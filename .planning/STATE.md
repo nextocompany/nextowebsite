@@ -10,9 +10,9 @@ See: .planning/PROJECT.md (updated 2026-02-17)
 ## Current Position
 
 Phase: 3 of 3 (Quality + Ship)
-Plan: 03-01 and 03-02 both complete
-Status: Phase 3 complete — site ready to ship
-Last activity: 2026-02-22 — 03-01 SEO/GA/accessibility + 03-02 Privacy page complete
+Plan: 03-03 complete — ALL PLANS COMPLETE
+Status: PROJECT COMPLETE — site live at nexto.co.th
+Last activity: 2026-02-22 — 03-03 build verification + Cloudflare Pages deploy complete
 
 Progress: [██████████] 100%
 
@@ -36,6 +36,7 @@ Progress: [██████████] 100%
 |-------|-------|-------|----------|
 | 03-quality-ship P01 | 1/1 | 3 min | 3 min |
 | 03-quality-ship P02 | 1/1 | 2 min | 2 min |
+| 03-quality-ship P03 | 1/1 | ~15 min | ~15 min |
 
 ## What Actually Shipped (Phase 2)
 
@@ -90,6 +91,8 @@ Recent decisions affecting current work:
 - Active nav uses brand-teal-dark (#0f786f, 5.33:1) — brand-teal (#2EC4B6) only for decorative/hover
 - 10px mono labels use neutral-500 — teal reserved for transient hover states (WCAG allows)
 - OG placeholder PNG generated via sharp; user should replace with real branded design before launch
+- font-display:swap required on @font-face — missing caused LCP regression (Lighthouse 84->98 after fix)
+- Cloudflare Pages: framework preset "Next.js (Static HTML Export)", build cmd "npm run build", output "out", NODE_VERSION=20
 
 ### Pending Todos
 
@@ -102,5 +105,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-02-22
-Stopped at: Completed 03-01-PLAN.md (SEO, GA, accessibility) and 03-02-PLAN.md (Privacy page)
+Stopped at: Completed 03-03-PLAN.md (build verification + Cloudflare Pages deploy) — PROJECT COMPLETE
 Resume file: None
