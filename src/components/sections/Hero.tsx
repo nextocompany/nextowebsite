@@ -15,10 +15,7 @@ export function Hero() {
           <h1 className="text-4xl md:text-5xl font-light text-neutral-900">
             Your operations<br />simplified
           </h1>
-          {/* <div className="space-y-1">
-            <p className="text-neutral-600">We build systems that run in production.</p>
-            <p className="text-neutral-600">From pilot to rollout.</p>
-          </div> */}
+
         </div>
         <div className="mt-10 flex justify-center">
           <a

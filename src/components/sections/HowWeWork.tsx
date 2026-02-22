@@ -22,7 +22,7 @@ export function HowWeWork() {
             </div>
           ))}
         </div>
-        <p className="mt-8 text-xs text-neutral-400 tracking-wide">We simplify. You operate.</p>
+        <p className="mt-8 text-xs text-neutral-500 tracking-wide">We simplify. You operate.</p>
       </div>
     </section>
   )

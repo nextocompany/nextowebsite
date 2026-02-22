@@ -11,7 +11,7 @@ export function Contact() {
             className="group bg-white p-6 flex flex-col gap-1 transition-colors hover:bg-neutral-50"
           >
             <span className="text-[10px] font-mono tracking-widest text-neutral-500 uppercase">Email</span>
-            <span className="text-sm font-medium text-neutral-900 group-hover:text-brand-teal transition-colors">info@nexto.co.th</span>
+            <span className="text-sm font-medium text-neutral-900 group-hover:text-brand-teal-dark transition-colors">info@nexto.co.th</span>
           </a>
           <a
             href="https://line.me/R/ti/p/@nextocompany"
@@ -20,7 +20,7 @@ export function Contact() {
             className="group bg-white p-6 flex flex-col gap-1 transition-colors hover:bg-neutral-50"
           >
             <span className="text-[10px] font-mono tracking-widest text-neutral-500 uppercase">Line</span>
-            <span className="text-sm font-medium text-neutral-900 group-hover:text-brand-teal transition-colors">@nextocompany</span>
+            <span className="text-sm font-medium text-neutral-900 group-hover:text-brand-teal-dark transition-colors">@nextocompany</span>
           </a>
           <a
             href="https://www.facebook.com/nextocompany"
@@ -29,14 +29,14 @@ export function Contact() {
             className="group bg-white p-6 flex flex-col gap-1 transition-colors hover:bg-neutral-50"
           >
             <span className="text-[10px] font-mono tracking-widest text-neutral-500 uppercase">Facebook</span>
-            <span className="text-sm font-medium text-neutral-900 group-hover:text-brand-teal transition-colors">nextocompany</span>
+            <span className="text-sm font-medium text-neutral-900 group-hover:text-brand-teal-dark transition-colors">nextocompany</span>
           </a>
           <div className="bg-white p-6 flex flex-col gap-1">
             <span className="text-[10px] font-mono tracking-widest text-neutral-500 uppercase">Telephone</span>
             <span className="text-sm font-medium text-neutral-900">062-269-6639</span>
           </div>
         </div>
-        <p className="mt-6 text-xs text-neutral-400 tracking-wide">We typically reply within 24 hours.</p>
+        <p className="mt-6 text-xs text-neutral-500 tracking-wide">We typically reply within 24 hours.</p>
       </div>
     </section>
   )

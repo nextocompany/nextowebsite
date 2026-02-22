@@ -4,7 +4,14 @@ import { Footer } from '@/components/layout/Footer'
 
 export const metadata: Metadata = {
   title: 'Privacy Policy — Nexto',
+  description: 'How Nexto handles visitor data and Google Analytics cookies.',
   robots: { index: false },
+  alternates: { canonical: '/privacy' },
+  openGraph: {
+    title: 'Privacy Policy — Nexto',
+    description: 'How Nexto handles visitor data and Google Analytics cookies.',
+    url: '/privacy',
+  },
 }
 
 export default function PrivacyPage() {
@@ -34,7 +41,7 @@ export default function PrivacyPage() {
               href="https://tools.google.com/dlpage/gaoptout"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-neutral-900 underline hover:text-[#2EC4B6] transition-colors"
+              className="text-neutral-900 underline hover:text-brand-teal-dark transition-colors"
             >
               tools.google.com/dlpage/gaoptout
             </a>
@@ -52,7 +59,7 @@ export default function PrivacyPage() {
               href="https://policies.google.com/privacy"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-neutral-900 underline hover:text-[#2EC4B6] transition-colors"
+              className="text-neutral-900 underline hover:text-brand-teal-dark transition-colors"
             >
               Google&apos;s Privacy Policy
             </a>
@@ -66,7 +73,7 @@ export default function PrivacyPage() {
             If you have questions about this privacy policy, contact us at{' '}
             <a
               href="mailto:info@nexto.co.th"
-              className="text-neutral-900 underline hover:text-[#2EC4B6] transition-colors"
+              className="text-neutral-900 underline hover:text-brand-teal-dark transition-colors"
             >
               info@nexto.co.th
             </a>
@@ -74,7 +81,7 @@ export default function PrivacyPage() {
           </p>
         </section>
 
-        <p className="text-sm text-neutral-400">Last updated: February 2026</p>
+        <p className="text-sm text-neutral-500">Last updated: February 2026</p>
       </main>
       <Footer />
     </>
