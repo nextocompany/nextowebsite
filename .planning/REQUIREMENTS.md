@@ -33,32 +33,32 @@
 
 ### Visual design
 
-- [ ] **VIS-01**: Reference language from cipherdigital.com: very large short headlines, generous dark/light grounds, one accent (teal), mono labels in IBM Plex Mono (decided 2026-10-10) for English status text and numbers only (no Thai glyphs); added to the brand book as the third family.
+- [ ] **VIS-01**: Reference language from cipherdigital.com (decided 2026-10-10, redesign): dark only (brand book dark theme), a hairline page grid with dots where lines cross, short headlines in a lighter weight, square-ish buttons, one accent (teal). IBM Plex Mono for English labels and numbers only.
 - [x] **VIS-02**: Header: Nexto logo (brand book file), anchor nav, language switch, primary CTA; collapses on mobile.
 - [ ] **VIS-03**: Layout works at 320, 375, 768, 1024, 1440, 1920 with no horizontal scroll.
 
 ### Network motion (signature)
 
-- [x] **NET-01**: Canvas 2D network renders the Nexto brain using node centres taken from the real vector (stamp page of `NEXTO_Logo.ai`), not an approximation.
-- [x] **NET-02**: Four beats: (1) hero — scattered nodes connect into the brain, played on load (1.8 s) since the hero has no scroll room; (2) approach — the brain separates into teal (logic) and coral (human) halves along the O's colour split, then rejoins; (3) products — the network expands into unlabeled clusters; (4) beyond — lines run down the column gutter to the engineering partner names. Beats 2–4 follow scroll position between stage boxes (no ScrollTrigger; see note).
-- [x] **NET-03**: Colours read from CSS tokens at runtime and update when the colour scheme changes; canvas scales for `devicePixelRatio`; drawing pauses when offscreen or the tab is hidden.
+- [x] **NET-01**: Canvas 2D neural network, no logo: the story is told by the network alone (user, 2026-10-10). Layout is generated, seeded and deterministic (`src/lib/network/scene.ts`).
+- [x] **NET-02**: Six stages, each a still at its scroll position: hero — full-screen scattered network drifting; intro — the nodes gather into one network; approach — the network splits into data (teal) and people (coral) with dim bridges, then rejoins; how we work — outer nodes link in; products — clusters, the two main ones over the Endyra and Anvira cards; beyond — lines run down the column gutter to the engineering partner names.
+- [x] **NET-03**: Colours read from CSS tokens at runtime; canvas scales for `devicePixelRatio`, lines never thinner than one device pixel; drawing runs only on scroll or while the hero drifts, and stops when no stage is on screen or the tab is hidden.
 - [x] **NET-04**: Fewer nodes on small screens; `prefers-reduced-motion` shows a static frame per beat and disables Lenis.
 - [x] **NET-05**: Layout and interpolation maths live in pure functions with unit tests.
-- [x] **NET-06**: Brand book gets a written exception: the website hero animation is the sanctioned place where the brain is drawn outside the O and where a hemisphere's nodes turn coral.
+- [ ] **NET-06**: Brand book exception rewritten for the logo-free network (coral group in the approach beat, teal hubs and partner lines).
 
-> **Implemented 2026-10-10 without GSAP or Lenis.** The landing JS was already ~131 kB gz before any motion code (budget 150 kB, QA-03); GSAP + ScrollTrigger + Lenis would add ~45–50 kB. Scroll progress comes from stage-box positions (`src/lib/network/progress.ts`) with a light rAF follow instead of ScrollTrigger scrub; headings reveal by line via `Intl.Segmenter` + CSS transitions instead of SplitText; native scrolling keeps `scroll-padding-top` working for anchors. Beat 4 lives in the Beyond section (engineering partner names): it is the only place after Products that keeps beats in scroll order. Meditop's partner bar stays text-only.
+> **Redesign 2026-10-10 (user decisions):** dark only + page grid after the reference; Lenis + GSAP ScrollTrigger added and the 150 kB JS budget waived; the logo/brain no longer tells the story, the neural network does; no scroll snap. Beat 4 (partner lines) stays in Beyond (option ก).
 
 ### Text motion
 
-- [x] **MOT-01**: Below-fold `h2` headings reveal by line: words from `Intl.Segmenter` (Thai and English), grouped into rendered lines, CSS transition per line; never split by character. Verified ที่ and ไว้ stay whole (unit test). No SplitText.
+- [x] **MOT-01**: Below-fold `[data-reveal]` text rises in by line with GSAP: lines come from `Intl.Segmenter` (Thai and English; SplitText not used because it splits Thai badly). `[data-fade]` blocks fade up. Hero headline lifts, fades and blurs on scroll-out (scrub).
 - [x] **MOT-02**: Server-rendered HTML ships all text visible (never `opacity: 0` before JS); the hero headline is the LCP element and must not wait for animation.
-- [x] **MOT-03**: Native scrolling (Lenis dropped for the JS budget); anchors land below the header via `scroll-padding-top` (checked: /en/#products top = 80px).
+- [x] **MOT-03**: Lenis smooth scroll (lerp 0.085) driven from the GSAP ticker; off under reduced motion. Anchors land below the header via `scroll-padding-top` (checked: /en/#products top = 80px). No scroll snap (user, 2026-10-10).
 
 ### Quality
 
 - [ ] **QA-01**: Vitest: network layout/interpolation, TH/EN key parity, mailto builder (Thai subjects encoded).
 - [ ] **QA-02**: Playwright screenshots at 320, 768, 1024, 1440 in light and dark, plus one reduced-motion run, for `/` and `/en`.
-- [ ] **QA-03**: Lighthouse mobile 90+, LCP < 2.5s, CLS < 0.1; landing JS < 150 kB gzipped (measured, reported).
+- [ ] **QA-03**: Lighthouse mobile 90+, LCP < 2.5s, CLS < 0.1. JS budget waived by the user on 2026-10-10 for Lenis + GSAP: landing JS measured 193 kB gz (Playwright, all loaded .js), motion chunks load after hydration.
 - [ ] **QA-04**: Keyboard reaches every link and button with a visible focus ring; automated a11y check passes.
 - [ ] **QA-05**: OG image regenerated with the new brand; titles and descriptions per locale.
 
