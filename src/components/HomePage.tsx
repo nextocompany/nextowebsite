@@ -4,7 +4,6 @@ import { SiteFooter } from '@/components/layout/SiteFooter'
 import { SiteHeader } from '@/components/layout/SiteHeader'
 import { Approach } from '@/components/sections/Approach'
 import { Beyond } from '@/components/sections/Beyond'
-import { Closing } from '@/components/sections/Closing'
 import { Contact } from '@/components/sections/Contact'
 import { Hero } from '@/components/sections/Hero'
 import { HowWeWork } from '@/components/sections/HowWeWork'
@@ -22,7 +21,7 @@ export function HomePage({ locale }: HomePageProps) {
   return (
     <>
       <SiteHeader locale={locale} />
-      <main>
+      <main data-snap>
         <Hero dict={dict.hero} partners={dict.partners} />
         <Intro dict={dict.hero} />
         <Approach dict={dict.approach} />
@@ -30,7 +29,6 @@ export function HomePage({ locale }: HomePageProps) {
         <Products dict={dict.products} />
         <Beyond dict={dict.beyond} />
         <Contact dict={dict.contact} />
-        <Closing line={dict.closing} />
       </main>
       <SiteFooter locale={locale} />
       <NetworkCanvas />

@@ -2,10 +2,15 @@ import { BRAIN_EDGES, BRAIN_NODE_RADIUS, RING_SPLIT } from './brain'
 import { easeInOutCubic, lerp, smoothstep } from './math'
 import type { Scene } from './scene'
 
-/** Each beat as 0..1. form: beat 1, split: beat 2, cluster: beat 3, reach: beat 4. */
+/**
+ * Each beat as 0..1. form: scattered → brain; split: the two hemispheres;
+ * connect: outer nodes link into the brain; cluster: the network opens into
+ * clusters; reach: lines to the partner names.
+ */
 export interface BeatState {
   form: number
   split: number
+  connect: number
   cluster: number
   reach: number
   /** Seconds, for the drift of the scattered network. */
@@ -61,6 +66,7 @@ export function frameAt(state: BeatState, scene: Scene): Frame {
   const form = easeInOutCubic(state.form)
   const split = easeInOutCubic(state.split)
   const cluster = easeInOutCubic(state.cluster)
+  const connect = easeInOutCubic(state.connect)
   const { splitNormal } = scene
   const formedAlpha = smoothstep(0.55, 1, state.form)
   const time = state.time ?? 0
@@ -75,15 +81,18 @@ export function frameAt(state: BeatState, scene: Scene): Frame {
       Math.sin(time * n.drift.speed + n.drift.phase + shift) - Math.sin(n.drift.phase + shift)
     const fx = lerp(n.scatter.x + drift * wave(0), n.brain.x, form) + splitNormal.x * push
     const fy = lerp(n.scatter.y + drift * wave(1.7), n.brain.y, form) + splitNormal.y * push
-    const target = n.cluster >= 0 ? n.clusterPos : { x: fx, y: fy }
+    const linked = n.cluster >= 0 ? connect : 0
+    const lx = lerp(fx, n.satellite.x, n.isBrain ? 0 : linked)
+    const ly = lerp(fy, n.satellite.y, n.isBrain ? 0 : linked)
+    const target = n.cluster >= 0 ? n.clusterPos : { x: lx, y: ly }
     const formAlpha = n.isBrain ? 1 : 1 - formedAlpha
     return {
-      x: lerp(fx, target.x, cluster),
-      y: lerp(fy, target.y, cluster),
+      x: lerp(lx, target.x, cluster),
+      y: lerp(ly, target.y, cluster),
       r:
         detail *
         lerp(n.isBrain ? BRAIN_NODE_RADIUS : EXTRA_RADIUS, n.isHub ? BRAIN_NODE_RADIUS : EXTRA_RADIUS * 1.2, cluster),
-      alpha: n.cluster >= 0 ? lerp(formAlpha, 1, cluster) : formAlpha * (1 - cluster),
+      alpha: n.cluster >= 0 ? lerp(lerp(formAlpha, 1, linked), 1, cluster) : formAlpha * (1 - cluster),
       tone: n.hemisphere === 'human' ? 'coral' : n.isBrain || n.isHub ? 'teal' : 'ink',
       toneAmount: n.isBrain ? split : n.isHub ? cluster : 0,
     }
@@ -106,6 +115,10 @@ export function frameAt(state: BeatState, scene: Scene): Frame {
     ([a, b]): FrameEdge => ({ a, b, alpha: cluster, tone: 'ink', toneAmount: 0 }),
   )
 
+  const satelliteEdges = scene.satelliteEdges.map(
+    ([a, b]): FrameEdge => ({ a, b, alpha: connect * (1 - cluster), tone: 'ink', toneAmount: 0 }),
+  )
+
   const scatterAlpha = SCATTER_EDGE * (1 - smoothstep(0, 0.6, state.form))
   const scatterEdges = scene.scatterEdges.map(
     ([a, b]): FrameEdge => ({ a, b, alpha: scatterAlpha, tone: 'ink', toneAmount: 0 }),
@@ -113,7 +126,7 @@ export function frameAt(state: BeatState, scene: Scene): Frame {
 
   return {
     nodes,
-    edges: [...brainEdges, ...clusterEdges, ...scatterEdges],
+    edges: [...brainEdges, ...clusterEdges, ...satelliteEdges, ...scatterEdges],
     ring: { alpha: formedAlpha * (1 - cluster), arcs: ringArcs(SPLIT_DISTANCE * split, splitNormal) },
     reach: state.reach,
     detail,

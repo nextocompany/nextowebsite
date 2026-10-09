@@ -71,6 +71,21 @@ describe('buildScene', () => {
   })
 })
 
+describe('satellites', () => {
+  it('sit outside the O and link each to a brain node', () => {
+    for (const variant of ['wide', 'narrow'] as const) {
+      const scene = buildScene(variant)
+      const outer = scene.nodes.filter((n) => !n.isBrain && n.cluster >= 0)
+      expect(scene.satelliteEdges).toHaveLength(outer.length)
+      for (const n of outer) expect(Math.hypot(n.satellite.x, n.satellite.y)).toBeGreaterThan(1.2)
+      for (const [extra, brain] of scene.satelliteEdges) {
+        expect(scene.nodes[extra].isBrain).toBe(false)
+        expect(scene.nodes[brain].isBrain).toBe(true)
+      }
+    }
+  })
+})
+
 describe('cluster edges', () => {
   it('connect every cluster into one piece', () => {
     for (const variant of ['wide', 'narrow'] as const) {

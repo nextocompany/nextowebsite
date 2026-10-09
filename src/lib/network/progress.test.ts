@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+import { STAGE_ORDER, STAGE_STATE } from './stages'
 import { anchorAt, beatsAt, followStep, scrollPosition, stageScrollTargets, type StageRect } from './progress'
 
 describe('scrollPosition', () => {
@@ -22,30 +23,48 @@ describe('scrollPosition', () => {
 })
 
 describe('beatsAt', () => {
-  // Stages: 0 hero, 1 intro, 2 approach, 3 products, 4 beyond.
+  // Stages: 0 hero, 1 intro, 2 approach, 3 how we work, 4 products, 5 beyond.
   it('is a scattered network at the hero', () => {
-    expect(beatsAt(0)).toEqual({ form: 0, split: 0, cluster: 0, reach: 0 })
+    expect(beatsAt(0)).toEqual({ form: 0, split: 0, connect: 0, cluster: 0, reach: 0 })
   })
 
   it('has formed the brain at the intro', () => {
-    expect(beatsAt(1)).toEqual({ form: 1, split: 0, cluster: 0, reach: 0 })
+    expect(beatsAt(1)).toEqual({ form: 1, split: 0, connect: 0, cluster: 0, reach: 0 })
   })
 
-  it('splits at the approach stage and rejoins before products', () => {
+  it('splits at the approach stage and rejoins before how we work', () => {
     expect(beatsAt(2).split).toBe(1)
     expect(beatsAt(2.75).split).toBe(0)
   })
 
+  it('links outer nodes into the formed brain at how we work', () => {
+    expect(beatsAt(3)).toEqual({ form: 1, split: 0, connect: 1, cluster: 0, reach: 0 })
+  })
+
   it('is clustered at products and reaching at the last stage', () => {
-    expect(beatsAt(3).cluster).toBe(1)
-    expect(beatsAt(4)).toEqual({ form: 1, split: 0, cluster: 1, reach: 1 })
+    expect(beatsAt(4).cluster).toBe(1)
+    expect(beatsAt(4).reach).toBe(0)
+    expect(beatsAt(5)).toEqual({ form: 1, split: 0, connect: 1, cluster: 1, reach: 1 })
+  })
+
+  it('matches every stage still frame at the stage position (stills never draw reach lines)', () => {
+    STAGE_ORDER.forEach((name, i) => {
+      const { form, split, connect, cluster } = beatsAt(i)
+      const still = STAGE_STATE[name]
+      expect({ form, split, connect, cluster }).toEqual({
+        form: still.form,
+        split: still.split,
+        connect: still.connect,
+        cluster: still.cluster,
+      })
+    })
   })
 
   it('never jumps', () => {
-    for (let u = 0; u < 4; u += 0.01) {
+    for (let u = 0; u < 5; u += 0.01) {
       const a = beatsAt(u)
       const b = beatsAt(u + 0.001)
-      for (const key of ['form', 'split', 'cluster', 'reach'] as const) {
+      for (const key of ['form', 'split', 'connect', 'cluster', 'reach'] as const) {
         expect(Math.abs(a[key] - b[key])).toBeLessThan(0.05)
       }
     }

@@ -31,7 +31,7 @@ function FrameSvg({ frame, extentX, extentY, fit, className }: FrameSvgProps) {
     <svg
       viewBox={`${-extentX} ${-extentY} ${extentX * 2} ${extentY * 2}`}
       preserveAspectRatio={fit === 'cover' ? 'xMidYMid slice' : 'xMidYMid meet'}
-      className={`network-still size-full ${className}`}
+      className={`size-full ${className}`}
       focusable="false"
     >
       {frame.ring.alpha > 0 &&
@@ -46,10 +46,11 @@ function FrameSvg({ frame, extentX, extentY, fit, className }: FrameSvgProps) {
           />
         ))}
       {frame.edges
-        .filter((e) => e.alpha > 0)
-        .map((e) => (
+        .map((e, i) => ({ e, i }))
+        .filter(({ e }) => e.alpha > 0)
+        .map(({ e, i }) => (
           <line
-            key={`${e.a}-${e.b}`}
+            key={i}
             x1={round(frame.nodes[e.a].x)}
             y1={round(frame.nodes[e.a].y)}
             x2={round(frame.nodes[e.b].x)}
@@ -75,6 +76,22 @@ const VARIANTS: ReadonlyArray<{ variant: Variant; className: string }> = [
   { variant: 'wide', className: 'hidden md:block' },
 ]
 
+function StillFrames({ name, still }: { name: StageName; still: boolean }) {
+  return VARIANTS.map(({ variant, className: visibility }) => {
+    const extent = STAGE_EXTENT[name][variant]
+    return (
+      <FrameSvg
+        key={variant}
+        frame={frameAt(STAGE_STATE[name], buildScene(variant))}
+        extentX={extent.x}
+        extentY={extent.y}
+        fit={STAGE_FIT[name]}
+        className={`${still ? 'network-still ' : ''}${visibility}`}
+      />
+    )
+  })
+}
+
 /**
  * A stage box the network is drawn in. Server-renders the still frame as SVG
  * (no-JS, reduced motion); NetworkCanvas hides it and animates over the box.
@@ -82,19 +99,16 @@ const VARIANTS: ReadonlyArray<{ variant: Variant; className: string }> = [
 export function NetworkStage({ name, className = '' }: { name: StageName; className?: string }) {
   return (
     <div data-stage={name} aria-hidden="true" className={className}>
-      {VARIANTS.map(({ variant, className: visibility }) => {
-        const extent = STAGE_EXTENT[name][variant]
-        return (
-          <FrameSvg
-            key={variant}
-            frame={frameAt(STAGE_STATE[name], buildScene(variant))}
-            extentX={extent.x}
-            extentY={extent.y}
-            fit={STAGE_FIT[name]}
-            className={visibility}
-          />
-        )
-      })}
+      <StillFrames name={name} still />
+    </div>
+  )
+}
+
+/** A stage's still frame as plain decoration: never animated, never hidden by the canvas. */
+export function NetworkBackdrop({ name, className = '' }: { name: StageName; className?: string }) {
+  return (
+    <div aria-hidden="true" className={className}>
+      <StillFrames name={name} still={false} />
     </div>
   )
 }

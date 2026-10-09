@@ -4,7 +4,7 @@ import { frameAt, type BeatState } from './frame'
 import { buildScene } from './scene'
 
 const scene = buildScene('wide')
-const FORMED: BeatState = { form: 1, split: 0, cluster: 0, reach: 0 }
+const FORMED: BeatState = { form: 1, split: 0, connect: 0, cluster: 0, reach: 0 }
 
 describe('frameAt', () => {
   it('beat 1 resolves into the exact logo brain', () => {
@@ -26,7 +26,7 @@ describe('frameAt', () => {
   })
 
   it('starts scattered with no ring', () => {
-    const frame = frameAt({ form: 0, split: 0, cluster: 0, reach: 0 }, scene)
+    const frame = frameAt({ form: 0, split: 0, connect: 0, cluster: 0, reach: 0 }, scene)
     frame.nodes.forEach((n, i) => {
       expect(n.x).toBeCloseTo(scene.nodes[i].scatter.x)
       expect(n.y).toBeCloseTo(scene.nodes[i].scatter.y)
@@ -43,6 +43,20 @@ describe('frameAt', () => {
     const [teal, coral] = frame.ring.arcs
     expect(coral.cx).toBeGreaterThan(teal.cx)
     expect(coral.cy).toBeGreaterThan(teal.cy)
+  })
+
+  it('connect keeps the logo and links outer nodes into the brain', () => {
+    const frame = frameAt({ ...FORMED, connect: 1 }, scene)
+    expect(frame.ring.alpha).toBe(1)
+    BRAIN_NODES.forEach((p, i) => expect(frame.nodes[i].x).toBeCloseTo(p.x, 10))
+    scene.nodes.forEach((n, i) => {
+      if (n.isBrain || n.cluster < 0) return
+      expect(frame.nodes[i].x).toBeCloseTo(n.satellite.x)
+      expect(frame.nodes[i].alpha).toBe(1)
+    })
+    const links = frame.edges.slice(BRAIN_EDGES.length + scene.clusterEdges.length, -scene.scatterEdges.length || undefined)
+    expect(links.length).toBe(scene.satelliteEdges.length)
+    expect(links.every((e) => e.alpha === 1)).toBe(true)
   })
 
   it('beat 3 hides the ring and moves cluster members to their cluster', () => {
@@ -78,7 +92,7 @@ describe('frameAt', () => {
 
   it('changes continuously as a beat value moves', () => {
     const eps = 1e-4
-    for (const key of ['form', 'split', 'cluster'] as const) {
+    for (const key of ['form', 'split', 'connect', 'cluster'] as const) {
       for (const v of [0.25, 0.5, 0.75]) {
         const a = frameAt({ ...FORMED, [key]: v - eps }, scene)
         const b = frameAt({ ...FORMED, [key]: v + eps }, scene)

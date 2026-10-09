@@ -78,15 +78,15 @@
    * (3440px → 24px). Percent-based so a larger browser font setting still applies.
    */
   /*
-   * Scroll moves one page at a time on desktop. Phones only lean towards the
-   * nearest page: their sections can be taller than the screen.
+   * The home page scrolls one page at a time on desktop. Phones only lean
+   * towards the nearest page: their sections can be taller than the screen.
    */
-  html {
+  html:has(main[data-snap]) {
     scroll-snap-type: y proximity;
   }
 
   @media (min-width: 768px) {
-    html {
+    html:has(main[data-snap]) {
       scroll-snap-type: y mandatory;
     }
   }

@@ -10,6 +10,8 @@ export interface SceneNode {
   /** Brain nodes: logo position. Extra nodes: a point on the O they fly into. */
   readonly brain: Point
   readonly scatter: Point
+  /** Where an outer node waits, linked into the brain, on the how-we-work page. Brain nodes: their logo position. */
+  readonly satellite: Point
   readonly clusterPos: Point
   /** Cluster index in beat 3, or -1 for extras that fade out instead. */
   readonly cluster: number
@@ -25,6 +27,8 @@ export interface Scene {
   readonly variant: Variant
   readonly nodes: ReadonlyArray<SceneNode>
   readonly clusterEdges: ReadonlyArray<readonly [number, number]>
+  /** Each outer node to its nearest brain node: [outer index, brain index]. */
+  readonly satelliteEdges: ReadonlyArray<readonly [number, number]>
   /** Links of the full-screen network in the hero. */
   readonly scatterEdges: ReadonlyArray<readonly [number, number]>
   readonly scatterLinkMax: number
@@ -42,6 +46,7 @@ const LAYOUT = {
     clustered: 22,
     scatter: { x: 3.1, y: 1.5 },
     linkMax: 0.75,
+    orbit: { min: 1.4, spread: 0.3 },
     clusterRadius: 0.55,
     clusters: [
       { x: -2.3, y: 0.2 },
@@ -55,6 +60,7 @@ const LAYOUT = {
     clustered: 12,
     scatter: { x: 1.15, y: 1.9 },
     linkMax: 0.7,
+    orbit: { min: 1.3, spread: 0.2 },
     clusterRadius: 0.42,
     clusters: [
       { x: -0.7, y: -0.5 },
@@ -138,12 +144,17 @@ export function buildScene(variant: Variant): Scene {
       ? BRAIN_NODES[i]
       : { x: Math.cos(ringAngle) * RING.radius, y: Math.sin(ringAngle) * RING.radius }
     const cluster = isBrain || extraIndex < layout.clustered ? i % k : -1
+    const orbitAngle = (extraIndex / layout.clustered) * Math.PI * 2 + (rand() - 0.5) * 0.4
+    const orbitRadius = layout.orbit.min + rand() * layout.orbit.spread
+    const satellite =
+      isBrain || cluster < 0 ? brain : { x: Math.cos(orbitAngle) * orbitRadius, y: Math.sin(orbitAngle) * orbitRadius }
     const angle = rand() * Math.PI * 2
     const dist = layout.clusterRadius * Math.sqrt(rand())
     const centre = layout.clusters[Math.max(cluster, 0)]
     return {
       brain,
       scatter: { x: between(layout.scatter.x), y: between(layout.scatter.y) },
+      satellite,
       clusterPos: { x: centre.x + Math.cos(angle) * dist, y: centre.y + Math.sin(angle) * dist },
       cluster,
       drift: { phase: rand() * Math.PI * 2, speed: 0.25 + rand() * 0.35 },
@@ -157,6 +168,15 @@ export function buildScene(variant: Variant): Scene {
     clusterLinks(nodes.flatMap((n, index) => (n.cluster === c ? [{ index, pos: n.clusterPos }] : []))),
   ).flat()
 
+  const satelliteEdges = nodes.flatMap((n, index): Array<[number, number]> => {
+    if (n.isBrain || n.cluster < 0) return []
+    const nearest = BRAIN_NODES.reduce(
+      (best, p, b) => (distance(p, n.satellite) < distance(BRAIN_NODES[best], n.satellite) ? b : best),
+      0,
+    )
+    return [[index, nearest]]
+  })
+
   const scatterEdges = nearLinks(
     nodes.map((n, index) => ({ index, pos: n.scatter })),
     layout.linkMax,
@@ -166,6 +186,7 @@ export function buildScene(variant: Variant): Scene {
     variant,
     nodes,
     clusterEdges,
+    satelliteEdges,
     scatterEdges,
     scatterLinkMax: layout.linkMax,
     clusterCount: k,
