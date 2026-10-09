@@ -14,6 +14,8 @@ const INTRO_MS = 1800
 const FOLLOW = 0.16
 const SETTLED = 0.0005
 const MAX_DPR = 2
+/** Between stages the network passes behind text; it nearly disappears there. */
+const TRAVEL_DIM = 0.92
 const REDUCED_MOTION = '(prefers-reduced-motion: reduce)'
 const WIDE = '(min-width: 768px)'
 const DARK = '(prefers-color-scheme: dark)'
@@ -96,7 +98,7 @@ export function NetworkCanvas() {
       ctx.clearRect(0, 0, window.innerWidth, window.innerHeight)
       if (stages.some((s) => s.visible)) {
         const travel = Math.abs(shown - Math.round(shown))
-        const fade = 1 - 0.7 * smoothstep(0.12, 0.4, travel)
+        const fade = 1 - TRAVEL_DIM * smoothstep(0.1, 0.35, travel)
         const frame = frameAt({ form, ...beatsAt(shown) }, scene)
         drawFrame(ctx, frame, anchorAt(stages.map((s) => s.rect), shown), palette, fade, measureTargets())
       }

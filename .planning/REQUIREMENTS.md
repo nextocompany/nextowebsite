@@ -40,7 +40,7 @@
 ### Network motion (signature)
 
 - [x] **NET-01**: Canvas 2D network renders the Nexto brain using node centres taken from the real vector (stamp page of `NEXTO_Logo.ai`), not an approximation.
-- [x] **NET-02**: Four scroll beats driven by GSAP ScrollTrigger: (1) hero — scattered nodes connect into the brain; (2) approach — the brain separates into teal (logic) and coral (human) halves, coral on that hemisphere's nodes only, then rejoins; (3) what we do — the network expands into several unlabeled clusters; (4) partners — lines reach out toward the partner names.
+- [x] **NET-02**: Four beats: (1) hero — scattered nodes connect into the brain, played on load (1.8 s) since the hero has no scroll room; (2) approach — the brain separates into teal (logic) and coral (human) halves along the O's colour split, then rejoins; (3) products — the network expands into unlabeled clusters; (4) beyond — lines run down the column gutter to the engineering partner names. Beats 2–4 follow scroll position between stage boxes (no ScrollTrigger; see note).
 - [x] **NET-03**: Colours read from CSS tokens at runtime and update when the colour scheme changes; canvas scales for `devicePixelRatio`; drawing pauses when offscreen or the tab is hidden.
 - [x] **NET-04**: Fewer nodes on small screens; `prefers-reduced-motion` shows a static frame per beat and disables Lenis.
 - [x] **NET-05**: Layout and interpolation maths live in pure functions with unit tests.
@@ -50,9 +50,9 @@
 
 ### Text motion
 
-- [x] **MOT-01**: Headline reveals use GSAP SplitText for English. Thai headlines reveal by line with a mask, or segment with `Intl.Segmenter('th')`; never split by character (breaks combining vowels and tone marks). Verified with ที่ and ไว้.
+- [x] **MOT-01**: Below-fold `h2` headings reveal by line: words from `Intl.Segmenter` (Thai and English), grouped into rendered lines, CSS transition per line; never split by character. Verified ที่ and ไว้ stay whole (unit test). No SplitText.
 - [x] **MOT-02**: Server-rendered HTML ships all text visible (never `opacity: 0` before JS); the hero headline is the LCP element and must not wait for animation.
-- [x] **MOT-03**: Lenis smooth scroll, disabled under reduced motion; anchor links still land below the header.
+- [x] **MOT-03**: Native scrolling (Lenis dropped for the JS budget); anchors land below the header via `scroll-padding-top` (checked: /en/#products top = 80px).
 
 ### Quality
 
