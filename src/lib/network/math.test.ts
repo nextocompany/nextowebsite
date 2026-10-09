@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { clamp01, easeInOutCubic, lerp, mulberry32, smoothstep, window01 } from './math'
+import { clamp01, easeInOutCubic, easeInOutSine, lerp, mulberry32, smoothstep, window01 } from './math'
 
 describe('math', () => {
   it('clamp01 clamps', () => {
@@ -16,6 +16,12 @@ describe('math', () => {
     expect(easeInOutCubic(0)).toBe(0)
     expect(easeInOutCubic(1)).toBe(1)
     expect(easeInOutCubic(0.5)).toBeCloseTo(0.5)
+  })
+
+  it('easeInOutSine is fixed at the ends and symmetric', () => {
+    expect(easeInOutSine(0)).toBeCloseTo(0)
+    expect(easeInOutSine(1)).toBeCloseTo(1)
+    expect(easeInOutSine(0.5)).toBeCloseTo(0.5)
   })
 
   it('smoothstep maps an interval to 0..1', () => {

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { anchorAt, beatsAt, scrollPosition, type StageRect } from './progress'
+import { anchorAt, beatsAt, followStep, scrollPosition, stageScrollTargets, type StageRect } from './progress'
 
 describe('scrollPosition', () => {
   const centers = [400, 1400, 2600, 3600]
@@ -62,5 +62,42 @@ describe('anchorAt', () => {
     const mid = anchorAt(rects, 0.5)
     expect(mid.cx).toBeCloseTo(200)
     expect(mid.scale).toBeCloseTo(100)
+  })
+})
+
+describe('stageScrollTargets', () => {
+  it('is the scroll offset that centres each stage, never below 0', () => {
+    // viewport 1000 tall, at scrollY 0: hero centre at 400 (already above centre), next at 1600
+    expect(stageScrollTargets([400, 1600], 0, 1000, 5000)).toEqual([0, 1100])
+  })
+
+  it('caps a stage the page cannot scroll far enough to centre', () => {
+    expect(stageScrollTargets([400, 1600, 3000], 0, 1000, 2000)).toEqual([0, 1100, 2000])
+  })
+
+  it('does not depend on the current scroll', () => {
+    expect(stageScrollTargets([-600, 600], 1000, 1000, 5000)).toEqual([0, 1100])
+  })
+
+  it('puts the page top at position 0 even when the hero sits above centre', () => {
+    const targets = stageScrollTargets([400, 1600], 0, 1000, 5000)
+    expect(scrollPosition(targets, 0)).toBe(0)
+  })
+})
+
+describe('followStep', () => {
+  it('moves part of the way, more with a longer frame', () => {
+    const short = followStep(0, 1, 16)
+    const long = followStep(0, 1, 64)
+    expect(short).toBeGreaterThan(0)
+    expect(long).toBeGreaterThan(short)
+    expect(long).toBeLessThan(1)
+  })
+
+  it('reaches the target eventually and never overshoots', () => {
+    let v = 0
+    for (let i = 0; i < 300; i++) v = followStep(v, 2, 16)
+    expect(v).toBeCloseTo(2, 3)
+    expect(v).toBeLessThanOrEqual(2)
   })
 })

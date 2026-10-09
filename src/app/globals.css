@@ -17,8 +17,23 @@
   --teal-text: #007a7e;
   --coral-text: #c24433;
 
+  /* Page column: grows on very wide screens instead of floating in the middle. */
+  --page-width: 72rem;
+
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
   --duration-reveal: 900ms;
+}
+
+@media (min-width: 1920px) {
+  :root {
+    --page-width: 88rem;
+  }
+}
+
+@media (min-width: 2560px) {
+  :root {
+    --page-width: 100rem;
+  }
 }
 
 @media (prefers-color-scheme: dark) {
@@ -52,11 +67,18 @@
   --font-sans: var(--font-montserrat), var(--font-anuphan), ui-sans-serif, system-ui, sans-serif;
   --font-thai: var(--font-anuphan), var(--font-montserrat), ui-sans-serif, sans-serif;
   --font-mono: var(--font-plex-mono), ui-monospace, monospace;
+
+  --container-page: var(--page-width);
 }
 
 @layer base {
+  /*
+   * Everything is in rem, so the whole layout scales with this: the reader's
+   * default size up to 1600px wide, then up to 1.5× on ultra-wide screens
+   * (3440px → 24px). Percent-based so a larger browser font setting still applies.
+   */
   html {
-    font-size: 16px;
+    font-size: clamp(100%, calc(100% + (100vw - 1600px) * 0.0045), 150%);
     scroll-padding-top: 5rem;
   }
 

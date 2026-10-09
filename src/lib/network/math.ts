@@ -5,6 +5,8 @@ export const lerp = (a: number, b: number, t: number): number => a + (b - a) * t
 export const easeInOutCubic = (t: number): number =>
   t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2
 
+export const easeInOutSine = (t: number): number => -(Math.cos(Math.PI * t) - 1) / 2
+
 /** 0 below `from`, 1 above `to`, eased in between. */
 export function smoothstep(from: number, to: number, v: number): number {
   const t = clamp01((v - from) / (to - from))

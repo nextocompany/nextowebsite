@@ -4,14 +4,12 @@ import { useEffect, useRef } from 'react'
 import { parseHex, type Rgb } from '@/lib/network/color'
 import { frameAt } from '@/lib/network/frame'
 import { clamp01, smoothstep } from '@/lib/network/math'
-import { anchorAt, beatsAt, scrollPosition, type StageRect } from '@/lib/network/progress'
+import { anchorAt, beatsAt, followStep, scrollPosition, stageScrollTargets, type StageRect } from '@/lib/network/progress'
 import { buildScene, type Variant } from '@/lib/network/scene'
 import { STAGE_EXTENT, STAGE_ORDER, stageScale, type StageName } from '@/lib/network/stages'
 import { drawFrame, type Palette, type ReachTarget } from './drawFrame'
 
 const INTRO_MS = 1800
-/** Per-frame easing towards the scroll target: a light "scrub" without a library. */
-const FOLLOW = 0.16
 const SETTLED = 0.0005
 const MAX_DPR = 2
 /** Between stages the network passes behind text; it nearly disappears there. */
@@ -77,6 +75,7 @@ export function NetworkCanvas() {
     let palette = readPalette()
     let shown = -1
     let raf = 0
+    let lastTime = 0
     const start = performance.now()
 
     const resize = () => {
@@ -90,9 +89,12 @@ export function NetworkCanvas() {
       raf = 0
       const stages = measureStages(scene.variant)
       if (stages.length === 0) return
-      const centers = stages.map((s) => s.rect.cy)
-      const target = scrollPosition(centers, window.innerHeight / 2)
-      shown = shown < 0 ? target : shown + (target - shown) * FOLLOW
+      const maxScroll = document.documentElement.scrollHeight - window.innerHeight
+      const targets = stageScrollTargets(stages.map((s) => s.rect.cy), window.scrollY, window.innerHeight, maxScroll)
+      const target = scrollPosition(targets, window.scrollY)
+      const dt = lastTime ? Math.min(now - lastTime, 100) : 16
+      lastTime = now
+      shown = shown < 0 ? target : followStep(shown, target, dt)
       const form = clamp01((now - start) / INTRO_MS)
 
       ctx.clearRect(0, 0, window.innerWidth, window.innerHeight)
@@ -104,6 +106,7 @@ export function NetworkCanvas() {
       }
 
       if (form < 1 || Math.abs(target - shown) > SETTLED) schedule()
+      else lastTime = 0
     }
 
     const schedule = () => {

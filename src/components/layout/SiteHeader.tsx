@@ -19,7 +19,7 @@ export function SiteHeader({ locale }: SiteHeaderProps) {
 
   return (
     <header className="relative z-20 bg-ground/90 backdrop-blur md:sticky md:top-0">
-      <div className="mx-auto flex h-18 max-w-6xl items-center justify-between gap-4 px-4 sm:px-8">
+      <div className="mx-auto flex h-18 max-w-page items-center justify-between gap-4 px-4 sm:px-8">
         <Link href={home} aria-label="Nexto" className="shrink-0">
           <BrandLogo basePath="/brand/nexto-logo" alt="Nexto" width={124} height={29} />
         </Link>
