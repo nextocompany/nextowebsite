@@ -7,7 +7,7 @@ import { SECTION_IDS } from '@/lib/site/sections'
 
 export function Contact({ dict }: { dict: Dictionary['contact'] }) {
   return (
-    <Section id={SECTION_IDS.contact} labelledBy="contact-title" className="py-24 sm:py-36">
+    <Section id={SECTION_IDS.contact} labelledBy="contact-title">
       <h2
         id="contact-title"
         data-reveal

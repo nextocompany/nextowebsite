@@ -14,7 +14,7 @@ export function Hero({ dict, partners }: HeroProps) {
     <section
       id={SECTION_IDS.hero}
       aria-labelledby="hero-title"
-      className="relative isolate flex min-h-[calc(100svh-4.5rem)] flex-col overflow-hidden"
+      className="relative isolate flex min-h-[calc(100svh-4.5rem)] snap-start flex-col overflow-hidden"
     >
       <NetworkStage name="hero" className="absolute inset-0 -z-10 opacity-45" />
       <div className="mx-auto flex w-full max-w-page grow flex-col justify-center px-4 py-20 sm:px-8">

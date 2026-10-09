@@ -8,7 +8,7 @@ export function Beyond({ dict }: { dict: Dictionary['beyond'] }) {
   const { saaniq, engineering } = dict
 
   return (
-    <Section id={SECTION_IDS.beyond} labelledBy="beyond-title" className="pb-24 sm:pb-36">
+    <Section id={SECTION_IDS.beyond} labelledBy="beyond-title">
       <NetworkStage name="beyond" className="mb-10 aspect-[4/3] w-full md:aspect-[4/1]" />
       <h2 id="beyond-title" className="text-sm text-ink-muted en:font-mono en:text-xs en:tracking-wide en:uppercase">
         {dict.title}

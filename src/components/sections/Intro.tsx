@@ -7,7 +7,7 @@ import { SECTION_IDS } from '@/lib/site/sections'
 /** Where the scattered network gathers into the Nexto brain, and what Nexto does. */
 export function Intro({ dict }: { dict: Dictionary['hero'] }) {
   return (
-    <Section id={SECTION_IDS.intro} labelledBy="intro-lead" className="py-24 sm:py-36">
+    <Section id={SECTION_IDS.intro} labelledBy="intro-lead">
       <div className="grid items-center gap-12 lg:grid-cols-12">
         <div className="lg:col-span-7">
           <p

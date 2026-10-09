@@ -5,7 +5,7 @@ import { SECTION_IDS } from '@/lib/site/sections'
 
 export function Approach({ dict }: { dict: Dictionary['approach'] }) {
   return (
-    <Section id={SECTION_IDS.approach} labelledBy="approach-title" className="py-24 sm:py-36">
+    <Section id={SECTION_IDS.approach} labelledBy="approach-title">
       <div className="grid items-center gap-10 lg:grid-cols-12 lg:gap-x-12">
         <h2
           id="approach-title"

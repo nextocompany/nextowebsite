@@ -77,6 +77,20 @@
    * default size up to 1600px wide, then up to 1.5× on ultra-wide screens
    * (3440px → 24px). Percent-based so a larger browser font setting still applies.
    */
+  /*
+   * Scroll moves one page at a time on desktop. Phones only lean towards the
+   * nearest page: their sections can be taller than the screen.
+   */
+  html {
+    scroll-snap-type: y proximity;
+  }
+
+  @media (min-width: 768px) {
+    html {
+      scroll-snap-type: y mandatory;
+    }
+  }
+
   html {
     font-size: clamp(100%, calc(100% + (100vw - 1600px) * 0.0045), 150%);
     scroll-padding-top: 5rem;
