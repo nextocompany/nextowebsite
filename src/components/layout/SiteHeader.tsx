@@ -18,8 +18,8 @@ export function SiteHeader({ locale }: SiteHeaderProps) {
   const navLinks = NAV_SECTIONS.map(({ key, id }) => ({ label: dict.nav[key], href: `${home}#${id}` }))
 
   return (
-    <header className="relative z-20 bg-ground/90 backdrop-blur md:sticky md:top-0">
-      <div className="mx-auto flex h-18 max-w-page items-center justify-between gap-4 px-4 sm:px-8">
+    <header className="relative z-20 border-b border-[color:var(--grid-line)] bg-ground/80 backdrop-blur md:sticky md:top-0">
+      <div className="grid-column mx-auto flex h-18 max-w-page items-center justify-between gap-4 px-4 sm:px-8">
         <Link href={home} aria-label="Nexto" className="shrink-0">
           <BrandLogo basePath="/brand/nexto-logo" alt="Nexto" width={124} height={29} />
         </Link>
@@ -45,7 +45,7 @@ export function SiteHeader({ locale }: SiteHeaderProps) {
           />
           <Link
             href={`${home}#${SECTION_IDS.contact}`}
-            className="hidden min-h-10 items-center rounded-full bg-teal-text px-5 text-sm font-medium text-ground transition-colors hover:bg-ink sm:inline-flex"
+            className="hidden min-h-10 items-center rounded-[3px] bg-teal-text px-5 text-sm font-medium text-ground transition-colors hover:bg-ink sm:inline-flex"
           >
             {dict.hero.primaryCta}
           </Link>
@@ -70,7 +70,7 @@ export function SiteHeader({ locale }: SiteHeaderProps) {
               </ul>
               <Link
                 href={`${home}#${SECTION_IDS.contact}`}
-                className="mt-2 flex min-h-12 items-center justify-center rounded-full bg-teal-text font-medium text-ground"
+                className="mt-2 flex min-h-12 items-center justify-center rounded-[3px] bg-teal-text font-medium text-ground"
               >
                 {dict.hero.primaryCta}
               </Link>

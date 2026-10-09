@@ -1,27 +1,30 @@
 @import "tailwindcss";
 
 /*
- * Colour tokens mirror src/lib/brand/tokens.ts (Nexto brand book).
- * contrast.test.ts fails if a value here drifts from tokens.ts.
+ * Colour tokens mirror the dark theme of src/lib/brand/tokens.ts (Nexto brand
+ * book): the website is dark only (SITE_THEME). contrast.test.ts fails if a
+ * value here drifts from tokens.ts.
  */
 :root {
-  color-scheme: light;
+  color-scheme: dark;
   --teal: #00b0b6;
   --coral: #f15a4b;
   --charcoal: #414142;
   --mist: #e7e8e9;
-  --ground: #ffffff;
-  --ground-raised: #f3f4f4;
-  --ink: #414142;
-  --ink-muted: #6a6a6c;
-  --teal-text: #007a7e;
-  --coral-text: #c24433;
+  --ground: #2b2b2c;
+  --ground-raised: #414142;
+  --ink: #e7e8e9;
+  --ink-muted: #b4b5b7;
+  --teal-text: #5ed3d7;
+  --coral-text: #f6958b;
 
   /* Page column: grows on very wide screens instead of floating in the middle. */
   --page-width: 72rem;
 
-  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
-  --duration-reveal: 900ms;
+  /* Page grid: hairlines and the dots where they cross. */
+  --grid-line: color-mix(in srgb, var(--mist) 13%, transparent);
+  --grid-dot: color-mix(in srgb, var(--mist) 45%, transparent);
+
 }
 
 @media (min-width: 1920px) {
@@ -33,18 +36,6 @@
 @media (min-width: 2560px) {
   :root {
     --page-width: 100rem;
-  }
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    color-scheme: dark;
-    --ground: #2b2b2c;
-    --ground-raised: #414142;
-    --ink: #e7e8e9;
-    --ink-muted: #b4b5b7;
-    --teal-text: #5ed3d7;
-    --coral-text: #f6958b;
   }
 }
 
@@ -77,20 +68,6 @@
    * default size up to 1600px wide, then up to 1.5× on ultra-wide screens
    * (3440px → 24px). Percent-based so a larger browser font setting still applies.
    */
-  /*
-   * The home page scrolls one page at a time on desktop. Phones only lean
-   * towards the nearest page: their sections can be taller than the screen.
-   */
-  html:has(main[data-snap]) {
-    scroll-snap-type: y proximity;
-  }
-
-  @media (min-width: 768px) {
-    html:has(main[data-snap]) {
-      scroll-snap-type: y mandatory;
-    }
-  }
-
   html {
     font-size: clamp(100%, calc(100% + (100vw - 1600px) * 0.0045), 150%);
     scroll-padding-top: 5rem;
@@ -109,22 +86,47 @@
     -webkit-font-smoothing: antialiased;
   }
 
+  /*
+   * Page grid (after the reference): every section starts with a full-width
+   * hairline, the page column has hairline guides on both edges, and a small
+   * dot marks each place they cross.
+   */
+  .grid-section {
+    border-top: 1px solid var(--grid-line);
+  }
+
+  .grid-column {
+    position: relative;
+    border-inline: 1px solid var(--grid-line);
+  }
+
+  .grid-section > .grid-column::before,
+  .grid-section > .grid-column::after {
+    content: '';
+    position: absolute;
+    top: -3.5px;
+    width: 6px;
+    height: 6px;
+    border-radius: 9999px;
+    background: var(--grid-dot);
+  }
+
+  .grid-section > .grid-column::before {
+    left: -3.5px;
+  }
+
+  .grid-section > .grid-column::after {
+    right: -3.5px;
+  }
+
   /* NetworkCanvas draws instead of the stills when motion is on. */
   [data-motion='on'] .network-still {
     visibility: hidden;
   }
 
-  /* HeadingReveal: lines rise into place. Only set by JS, never in server HTML. */
+  /* MotionRoot splits [data-reveal] text into these while a reveal runs. */
   .reveal-line {
     display: block;
-    transition:
-      transform var(--duration-reveal) var(--ease-out-expo),
-      opacity var(--duration-reveal) var(--ease-out-expo);
-  }
-
-  [data-reveal-state='hidden'] .reveal-line {
-    opacity: 0;
-    transform: translateY(0.45em);
   }
 
   :focus-visible {

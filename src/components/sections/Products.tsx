@@ -15,13 +15,13 @@ export function Products({ dict }: { dict: Dictionary['products'] }) {
       <h2
         id="products-title"
         data-reveal
-        className="text-4xl leading-[1.1] font-medium tracking-tight sm:text-5xl th:leading-[1.4] th:tracking-normal"
+        className="text-4xl leading-[1.1] font-normal tracking-tight sm:text-5xl th:leading-[1.4] th:tracking-normal"
       >
         {dict.title}
       </h2>
       <NetworkStage name="products" className="mt-8 aspect-[4/3] w-full md:aspect-[4/1]" />
       <ul className="mt-8 grid gap-4 md:grid-cols-2">
-        <li className={CARD}>
+        <li data-fade className={CARD}>
           <div className="flex items-start justify-between gap-4">
             {/* Endyra as text: the current Endyra logo is off-system. */}
             <h3 lang="en" className="text-4xl font-semibold tracking-tight">
@@ -31,7 +31,7 @@ export function Products({ dict }: { dict: Dictionary['products'] }) {
           </div>
           <p className="max-w-sm text-lg text-ink-muted">{endyra.description}</p>
         </li>
-        <li className={CARD}>
+        <li data-fade className={CARD}>
           <div className="flex items-start justify-between gap-4">
             <h3>
               <BrandLogo basePath="/brand/anvira-wordmark" alt={anvira.name} width={165} height={42} className="h-10 w-auto" />

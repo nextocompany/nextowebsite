@@ -1,4 +1,4 @@
-import type { Point } from './brain'
+import type { Point } from './point'
 import type { BeatState } from './frame'
 import type { Variant } from './scene'
 
@@ -22,8 +22,8 @@ export const STAGE_FIT: Readonly<Record<StageName, StageFit>> = {
 /** Half-width and half-height (in brain units) each stage must fit. */
 export const STAGE_EXTENT: Readonly<Record<StageName, Readonly<Record<Variant, Point>>>> = {
   hero: { wide: { x: 3.2, y: 1.6 }, narrow: { x: 1.2, y: 2 } },
-  intro: { wide: { x: 1.05, y: 1.05 }, narrow: { x: 1.05, y: 1.05 } },
-  approach: { wide: { x: 1.3, y: 1.3 }, narrow: { x: 1.3, y: 1.3 } },
+  intro: { wide: { x: 1.1, y: 1.1 }, narrow: { x: 1.1, y: 1.1 } },
+  approach: { wide: { x: 1.5, y: 1.1 }, narrow: { x: 1.5, y: 1.1 } },
   'how-we-work': { wide: { x: 1.85, y: 1.85 }, narrow: { x: 1.65, y: 1.65 } },
   products: { wide: { x: 3, y: 0.95 }, narrow: { x: 1.3, y: 1.2 } },
   beyond: { wide: { x: 3, y: 0.95 }, narrow: { x: 1.3, y: 1.2 } },
@@ -47,4 +47,4 @@ export function stageScale(width: number, height: number, extent: Point, fit: St
 }
 
 /** Line widths in brain units, shared by the SVG stills and the canvas. */
-export const STROKE = { edge: 0.024, reach: 0.02 } as const
+export const STROKE = { edge: 0.012, reach: 0.012 } as const

@@ -1,5 +1,4 @@
-import { RING } from '@/lib/network/brain'
-import { frameAt, type Frame, type RingArc, type Tone } from '@/lib/network/frame'
+import { frameAt, type Frame, type Tone } from '@/lib/network/frame'
 import { buildScene, type Variant } from '@/lib/network/scene'
 import { STAGE_EXTENT, STAGE_FIT, STAGE_STATE, STROKE, type StageFit, type StageName } from '@/lib/network/stages'
 
@@ -9,13 +8,6 @@ function paint(tone: Tone, amount: number): string {
   if (tone === 'ink' || amount <= 0) return 'var(--ink)'
   if (amount >= 1) return `var(--${tone})`
   return `color-mix(in srgb, var(--${tone}) ${Math.round(amount * 100)}%, var(--ink))`
-}
-
-function arcPath({ cx, cy, start, end }: RingArc): string {
-  const r = RING.radius
-  const point = (a: number) => `${round(cx + Math.cos(a) * r)} ${round(cy + Math.sin(a) * r)}`
-  const large = end - start > Math.PI ? 1 : 0
-  return `M ${point(start)} A ${r} ${r} 0 ${large} 1 ${point(end)}`
 }
 
 interface FrameSvgProps {
@@ -34,17 +26,6 @@ function FrameSvg({ frame, extentX, extentY, fit, className }: FrameSvgProps) {
       className={`size-full ${className}`}
       focusable="false"
     >
-      {frame.ring.alpha > 0 &&
-        frame.ring.arcs.map((arc) => (
-          <path
-            key={arc.tone}
-            d={arcPath(arc)}
-            fill="none"
-            stroke={`var(--${arc.tone})`}
-            strokeWidth={RING.width}
-            opacity={frame.ring.alpha}
-          />
-        ))}
       {frame.edges
         .map((e, i) => ({ e, i }))
         .filter(({ e }) => e.alpha > 0)

@@ -29,7 +29,7 @@ export const en: Dictionary = {
   },
   approach: {
     title: 'Systems handle the data. People make the call.',
-    body: 'Our logo is a brain with two halves: one for logic and data, one for human judgment. Everything we build makes data complete, accurate and visible at a glance. The decisions stay with the people using it.',
+    body: 'Everything we build draws a clear line. The system keeps data complete, accurate and visible at a glance. The decisions stay with the people using it.',
   },
   howWeWork: {
     title: 'How we work',

@@ -15,7 +15,7 @@ export function HowWeWork({ dict }: { dict: Dictionary['howWeWork'] }) {
           {/* Not numbered: these are principles, not steps. */}
           <ul className="mt-8 flex flex-col">
             {dict.items.map((item) => (
-              <li key={item.title} className="border-t border-ink/15 py-7">
+              <li key={item.title} data-fade className="border-t border-ink/15 py-7">
                 <h3 className="text-2xl font-medium tracking-tight sm:text-3xl th:tracking-normal">{item.title}</h3>
                 <p className="mt-3 max-w-xl text-lg text-ink-muted">{item.body}</p>
               </li>

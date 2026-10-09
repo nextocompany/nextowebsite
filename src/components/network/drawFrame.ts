@@ -1,4 +1,4 @@
-import { RING, type Point } from '@/lib/network/brain'
+import type { Point } from '@/lib/network/point'
 import { mixHex, type Rgb } from '@/lib/network/color'
 import type { Frame, Tone } from '@/lib/network/frame'
 import { polylineAt } from '@/lib/network/path'
@@ -30,18 +30,8 @@ export function drawFrame(
   const px = (x: number) => cx + x * scale
   const py = (y: number) => cy + y * scale
 
-  if (frame.ring.alpha > 0) {
-    ctx.lineWidth = RING.width * scale
-    for (const arc of frame.ring.arcs) {
-      ctx.globalAlpha = frame.ring.alpha * fade
-      ctx.strokeStyle = paint(palette, arc.tone, 1)
-      ctx.beginPath()
-      ctx.arc(px(arc.cx), py(arc.cy), RING.radius * scale, arc.start, arc.end)
-      ctx.stroke()
-    }
-  }
-
-  ctx.lineWidth = STROKE.edge * scale * frame.detail
+  // Never thinner than a device pixel, so the fine hero lines don't shimmer.
+  ctx.lineWidth = Math.max(1, STROKE.edge * scale * frame.detail)
   ctx.lineCap = 'round'
   for (const e of frame.edges) {
     if (e.alpha <= 0) continue
@@ -79,7 +69,7 @@ function drawReach(
   fade: number,
   targets: ReadonlyArray<ReachTarget>,
 ) {
-  ctx.lineWidth = STROKE.reach * scale
+  ctx.lineWidth = Math.max(1, STROKE.reach * scale)
   ctx.strokeStyle = paint(palette, 'teal', 1)
   ctx.fillStyle = ctx.strokeStyle
   ctx.globalAlpha = fade

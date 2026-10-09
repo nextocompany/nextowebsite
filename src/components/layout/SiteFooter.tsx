@@ -19,10 +19,11 @@ export function SiteFooter({ locale }: SiteFooterProps) {
   const home = LOCALE_PATH[locale]
 
   return (
-    <footer className="relative isolate flex min-h-[calc(100svh-5rem)] snap-start flex-col overflow-hidden bg-charcoal text-mist [--ink:var(--mist)]">
+    <footer className="grid-section relative isolate flex min-h-[calc(100svh-4.5rem)] flex-col overflow-hidden text-ink">
       <NetworkBackdrop name="hero" className="absolute inset-0 -z-10 opacity-25" />
 
-      <div className="mx-auto grid w-full max-w-page grow items-center gap-16 px-4 py-20 sm:px-8 lg:grid-cols-12">
+      <div className="grid-column mx-auto flex w-full max-w-page grow flex-col px-4 sm:px-8">
+      <div className="grid grow items-center gap-16 py-20 lg:grid-cols-12">
         <p className="text-5xl leading-[1.05] font-medium tracking-tight text-balance sm:text-7xl lg:col-span-7 lg:text-8xl th:leading-[1.3] th:tracking-normal">
           {dict.closing}
         </p>
@@ -48,7 +49,7 @@ export function SiteFooter({ locale }: SiteFooterProps) {
           <div className="flex flex-col items-start gap-6">
             <Link
               href={`${home}#${SECTION_IDS.contact}`}
-              className="inline-flex min-h-12 items-center rounded-full bg-mist px-6 font-medium text-charcoal transition-colors hover:bg-white"
+              className="inline-flex min-h-12 items-center rounded-[3px] bg-mist px-6 font-medium text-charcoal transition-colors hover:bg-white"
             >
               {dict.hero.primaryCta}
             </Link>
@@ -74,8 +75,7 @@ export function SiteFooter({ locale }: SiteFooterProps) {
         </div>
       </div>
 
-      <div className="mx-auto w-full max-w-page px-4 sm:px-8">
-        <p className="border-t border-mist/20 py-6 text-sm">{dict.footer.rights}</p>
+        <p className="border-t border-[color:var(--grid-line)] py-6 text-sm">{dict.footer.rights}</p>
       </div>
     </footer>
   )

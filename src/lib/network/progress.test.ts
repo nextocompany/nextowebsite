@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { STAGE_ORDER, STAGE_STATE } from './stages'
-import { anchorAt, beatsAt, followStep, scrollPosition, stageScrollTargets, type StageRect } from './progress'
+import { anchorAt, beatsAt, scrollPosition, stageScrollTargets, type StageRect } from './progress'
 
 describe('scrollPosition', () => {
   const centers = [400, 1400, 2600, 3600]
@@ -106,22 +106,5 @@ describe('stageScrollTargets', () => {
   it('puts the page top at position 0 even when the hero sits above centre', () => {
     const targets = stageScrollTargets([400, 1600], 0, 1000, 5000)
     expect(scrollPosition(targets, 0)).toBe(0)
-  })
-})
-
-describe('followStep', () => {
-  it('moves part of the way, more with a longer frame', () => {
-    const short = followStep(0, 1, 16)
-    const long = followStep(0, 1, 64)
-    expect(short).toBeGreaterThan(0)
-    expect(long).toBeGreaterThan(short)
-    expect(long).toBeLessThan(1)
-  })
-
-  it('reaches the target eventually and never overshoots', () => {
-    let v = 0
-    for (let i = 0; i < 300; i++) v = followStep(v, 2, 16)
-    expect(v).toBeCloseTo(2, 3)
-    expect(v).toBeLessThanOrEqual(2)
   })
 })

@@ -1,4 +1,4 @@
-import { HeadingReveal } from '@/components/motion/HeadingReveal'
+import { MotionRoot } from '@/components/motion/MotionRoot'
 import { NetworkCanvas } from '@/components/network/NetworkCanvas'
 import { SiteFooter } from '@/components/layout/SiteFooter'
 import { SiteHeader } from '@/components/layout/SiteHeader'
@@ -21,7 +21,7 @@ export function HomePage({ locale }: HomePageProps) {
   return (
     <>
       <SiteHeader locale={locale} />
-      <main data-snap>
+      <main>
         <Hero dict={dict.hero} partners={dict.partners} />
         <Intro dict={dict.hero} />
         <Approach dict={dict.approach} />
@@ -32,7 +32,7 @@ export function HomePage({ locale }: HomePageProps) {
       </main>
       <SiteFooter locale={locale} />
       <NetworkCanvas />
-      <HeadingReveal />
+      <MotionRoot />
     </>
   )
 }

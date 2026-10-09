@@ -1,4 +1,4 @@
-import type { Point } from './brain'
+import type { Point } from './point'
 
 /** The first `t` (0..1) of a polyline, measured by length. */
 export function polylineAt(points: ReadonlyArray<Point>, t: number): Point[] {

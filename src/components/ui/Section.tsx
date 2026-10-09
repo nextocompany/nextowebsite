@@ -5,18 +5,11 @@ interface SectionProps {
   children: React.ReactNode
 }
 
-/**
- * One "page" of the scroll story: at least a screen tall (below the header),
- * content centred, and a scroll-snap stop at its top.
- */
+/** One chapter of the scroll story, framed by the page grid (hairline on top, guides at the column edges). */
 export function Section({ id, labelledBy, className = '', children }: SectionProps) {
   return (
-    <section
-      id={id}
-      aria-labelledby={labelledBy}
-      className={`flex min-h-[calc(100svh-5rem)] snap-start items-center py-16 sm:py-20 ${className}`}
-    >
-      <div className="mx-auto w-full max-w-page px-4 sm:px-8">{children}</div>
+    <section id={id} aria-labelledby={labelledBy} className={`grid-section ${className}`}>
+      <div className="grid-column mx-auto w-full max-w-page px-4 py-24 sm:px-8 sm:py-36">{children}</div>
     </section>
   )
 }

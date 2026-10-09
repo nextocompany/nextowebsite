@@ -11,12 +11,12 @@ export function Contact({ dict }: { dict: Dictionary['contact'] }) {
       <h2
         id="contact-title"
         data-reveal
-        className="text-5xl leading-[1.05] font-medium tracking-tight sm:text-7xl th:leading-[1.35] th:tracking-normal"
+        className="text-5xl leading-[1.05] font-normal tracking-tight sm:text-7xl th:leading-[1.35] th:tracking-normal"
       >
         {dict.title}
       </h2>
       <p className="mt-6 max-w-xl text-lg text-ink-muted">{dict.intro}</p>
-      <ul className="mt-10 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+      <ul data-fade className="mt-10 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
         {dict.topics.map((topic, index) => (
           <li key={topic.subject}>
             <ButtonLink href={buildMailto(topic.subject)} variant={index === 0 ? 'primary' : 'secondary'} className="w-full sm:w-auto">
@@ -25,7 +25,7 @@ export function Contact({ dict }: { dict: Dictionary['contact'] }) {
           </li>
         ))}
       </ul>
-      <dl className="mt-14 grid gap-6 border-t border-ink/15 pt-8 sm:grid-cols-2">
+      <dl data-fade className="mt-14 grid gap-6 border-t border-ink/15 pt-8 sm:grid-cols-2">
         <div>
           <dt className="text-sm text-ink-muted">{dict.emailLabel}</dt>
           <dd className="mt-1 font-mono text-lg select-all">

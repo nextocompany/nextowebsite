@@ -14,19 +14,22 @@ export function Hero({ dict, partners }: HeroProps) {
     <section
       id={SECTION_IDS.hero}
       aria-labelledby="hero-title"
-      className="relative isolate flex min-h-[calc(100svh-4.5rem)] snap-start flex-col overflow-hidden"
+      className="relative isolate flex min-h-[calc(100svh-4.5rem)] flex-col overflow-hidden"
     >
       <NetworkStage name="hero" className="absolute inset-0 -z-10 opacity-45" />
-      <div className="mx-auto flex w-full max-w-page grow flex-col justify-center px-4 py-20 sm:px-8">
-        <h1
-          id="hero-title"
-          className="max-w-[16ch] text-[2.75rem] leading-[1.05] font-medium tracking-tight text-balance sm:text-7xl lg:text-8xl th:max-w-[20ch] th:leading-[1.3] th:tracking-normal"
-        >
-          {dict.title}
-        </h1>
-      </div>
-      <div className="mx-auto w-full max-w-page px-4 pb-8 sm:px-8">
-        <PartnerBar dict={partners} />
+      <div className="grid-column mx-auto flex w-full max-w-page grow flex-col px-4 sm:px-8">
+        <div className="flex grow flex-col justify-center py-20">
+          <h1
+            id="hero-title"
+            data-hero-title
+            className="max-w-[16ch] text-[2.75rem] leading-[1.05] font-normal tracking-tight text-balance sm:text-6xl lg:text-7xl th:max-w-[20ch] th:leading-[1.3] th:tracking-normal"
+          >
+            {dict.title}
+          </h1>
+        </div>
+        <div className="pb-8">
+          <PartnerBar dict={partners} />
+        </div>
       </div>
     </section>
   )

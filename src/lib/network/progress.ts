@@ -22,14 +22,6 @@ export function stageScrollTargets(
   return viewportCenters.map((c) => Math.min(Math.max(c + scrollY - viewportHeight / 2, 0), maxScroll))
 }
 
-/** Time constant of the scroll follow: higher = more glide behind the wheel. */
-const FOLLOW_MS = 320
-
-/** Frame-rate independent glide of the shown position towards the scroll target. */
-export function followStep(current: number, target: number, dtMs: number): number {
-  return current + (target - current) * (1 - Math.exp(-dtMs / FOLLOW_MS))
-}
-
 /**
  * Position along the stages: k when stage k's centre sits on the viewport
  * centre, fractional while moving between stages.

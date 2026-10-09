@@ -14,7 +14,7 @@ export function Beyond({ dict }: { dict: Dictionary['beyond'] }) {
         {dict.title}
       </h2>
       <div className="mt-6 grid gap-12 border-t border-ink/15 pt-10 md:grid-cols-2 md:gap-8">
-        <article aria-labelledby="saaniq-title">
+        <article aria-labelledby="saaniq-title" data-fade>
           <h3 id="saaniq-title" lang="en" className="text-3xl font-semibold tracking-tight">
             {saaniq.name}
           </h3>
@@ -30,7 +30,7 @@ export function Beyond({ dict }: { dict: Dictionary['beyond'] }) {
           </a>
         </article>
         {/* data-partner-group: beat 4 routes its lines down this column's left gutter. */}
-        <article aria-labelledby="engineering-title" data-partner-group>
+        <article aria-labelledby="engineering-title" data-partner-group data-fade>
           <h3 id="engineering-title" className="text-3xl font-medium tracking-tight th:tracking-normal">
             {engineering.title}
           </h3>

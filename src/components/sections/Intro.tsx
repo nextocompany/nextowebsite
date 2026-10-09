@@ -13,11 +13,11 @@ export function Intro({ dict }: { dict: Dictionary['hero'] }) {
           <p
             id="intro-lead"
             data-reveal
-            className="text-2xl leading-snug font-medium text-balance sm:text-3xl lg:text-4xl th:leading-[1.6]"
+            className="text-2xl leading-snug font-normal text-balance sm:text-3xl lg:text-4xl th:leading-[1.6]"
           >
             {dict.subtitle}
           </p>
-          <div className="mt-10 flex flex-wrap gap-3">
+          <div data-fade className="mt-10 flex flex-wrap gap-3">
             <ButtonLink href={`#${SECTION_IDS.contact}`}>{dict.primaryCta}</ButtonLink>
             <ButtonLink href={`#${SECTION_IDS.products}`} variant="secondary">
               {dict.secondaryCta}

@@ -5,6 +5,9 @@
 export const THEMES = ['light', 'dark'] as const
 export type Theme = (typeof THEMES)[number]
 
+/** The website uses the brand book's dark theme only; light stays for print and documents. */
+export const SITE_THEME: Theme = 'dark'
+
 type ThemedColour = Readonly<Record<Theme, string>>
 
 const same = (hex: string): ThemedColour => ({ light: hex, dark: hex })

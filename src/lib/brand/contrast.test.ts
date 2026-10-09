@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs'
 import path from 'node:path'
 import { describe, expect, it } from 'vitest'
 import { contrastRatio } from './contrast'
-import { COLOR_TOKENS, TEXT_PAIRS, THEMES } from './tokens'
+import { COLOR_TOKENS, SITE_THEME, TEXT_PAIRS, THEMES } from './tokens'
 
 describe('contrastRatio', () => {
   it('returns 21 for black on white', () => {
@@ -33,16 +33,17 @@ describe('brand text pairs', () => {
   }
 })
 
-describe('globals.css stays in sync with tokens.ts', () => {
+describe('globals.css uses the site theme from tokens.ts', () => {
   const css = readFileSync(path.resolve(__dirname, '../../app/globals.css'), 'utf8').toLowerCase()
 
+  it('is dark only', () => {
+    expect(css).toContain('color-scheme: dark')
+    expect(css).not.toContain('prefers-color-scheme')
+  })
+
   for (const [name, values] of Object.entries(COLOR_TOKENS)) {
-    // Theme-independent tokens are declared once on :root.
-    const distinct = [...new Set(THEMES.map((theme) => values[theme]))]
-    for (const value of distinct) {
-      it(`declares --${name}: ${value}`, () => {
-        expect(css).toContain(`--${name}: ${value}`)
-      })
-    }
+    it(`declares --${name}: ${values[SITE_THEME]}`, () => {
+      expect(css).toContain(`--${name}: ${values[SITE_THEME]}`)
+    })
   }
 })
