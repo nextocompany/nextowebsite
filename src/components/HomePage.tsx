@@ -1,12 +1,19 @@
 import { SiteFooter } from '@/components/layout/SiteFooter'
 import { SiteHeader } from '@/components/layout/SiteHeader'
+import { Approach } from '@/components/sections/Approach'
+import { Beyond } from '@/components/sections/Beyond'
+import { Closing } from '@/components/sections/Closing'
+import { Contact } from '@/components/sections/Contact'
+import { Hero } from '@/components/sections/Hero'
+import { HowWeWork } from '@/components/sections/HowWeWork'
+import { PartnerBar } from '@/components/sections/PartnerBar'
+import { Products } from '@/components/sections/Products'
 import { getDictionary, type Locale } from '@/lib/i18n'
 
 interface HomePageProps {
   locale: Locale
 }
 
-// Phase 4 shell: hero only. Phase 5 adds the remaining sections.
 export function HomePage({ locale }: HomePageProps) {
   const dict = getDictionary(locale)
 
@@ -14,12 +21,14 @@ export function HomePage({ locale }: HomePageProps) {
     <>
       <SiteHeader locale={locale} />
       <main>
-        <section aria-labelledby="hero-title" className="mx-auto max-w-6xl px-4 py-24 sm:px-8">
-          <h1 id="hero-title" className="max-w-4xl text-4xl font-medium text-balance sm:text-6xl">
-            {dict.hero.title}
-          </h1>
-          <p className="mt-6 max-w-2xl text-lg text-ink-muted">{dict.hero.subtitle}</p>
-        </section>
+        <Hero dict={dict.hero} />
+        <PartnerBar dict={dict.partners} />
+        <Approach dict={dict.approach} />
+        <HowWeWork dict={dict.howWeWork} />
+        <Products dict={dict.products} />
+        <Beyond dict={dict.beyond} />
+        <Contact dict={dict.contact} />
+        <Closing line={dict.closing} />
       </main>
       <SiteFooter locale={locale} />
     </>

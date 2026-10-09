@@ -21,20 +21,20 @@
 
 ### Sections and copy (approved 2026-10-10)
 
-- [ ] **COPY-01 Hero**: TH "ข้อมูลที่กระจัดกระจาย รวมไว้ในที่เดียว" / EN "Scattered data, brought together." Sub: TH "Nexto ทำเรื่องยุ่งยากให้เป็นเรื่องง่าย ด้วยซอฟต์แวร์ที่เชื่อมข้อมูลจากหลายระบบและหลายเครื่องมือเข้าด้วยกัน เพื่อให้ทีมแพทย์และองค์กรทำงานได้ง่ายขึ้น" / EN "Nexto makes the complex simple, with software that connects data from many systems and devices so clinical teams and organizations can work with less friction." Primary CTA "ร่วมเป็นพาร์ทเนอร์ / Partner with us", secondary "ดูสิ่งที่เราทำ / See what we build".
-- [ ] **COPY-02 Partner bar**: "ทำงานร่วมกับ / Working with" · Meditop. Name as text until logo file and written consent arrive.
-- [ ] **COPY-03 Approach**: TH "ระบบจัดการข้อมูล คนเป็นผู้ตัดสินใจ" / EN "Systems handle the data. People make the call." plus the two-hemisphere logo story (text in conversation draft).
-- [ ] **COPY-04 How we work**: three points — start where the work happens; connect to what's already there; grow with partners. Not numbered (not a sequence).
-- [ ] **COPY-05 Products**: Endyra `พร้อมใช้งาน / Available` — endoscopy video and image capture (name as text; current Endyra logo is off-system); Anvira `อยู่ระหว่างพัฒนา / In development` — perioperative anesthesia information system, shown with its wordmark logo.
-- [ ] **COPY-06 Beyond healthcare**: Saaniq (all-in-one hotel and resort management, PMS to CRM, HR and finance); engineering partnerships in the government sector with Touch Technologies and 500 Miles (names as text until logos and consent).
-- [ ] **COPY-07 Contact**: TH "คุยกับเรา" / EN "Talk to us"; three topic buttons (medical device partnership, our products, engineering work) as `mailto:info@nexto.co.th` with pre-filled subjects; LINE @nextocompany. Email and LINE ID also shown as selectable text.
-- [ ] **COPY-08 Closing line**: TH "เชื่อมข้อมูล เพื่อการดูแลที่ดีขึ้น" / EN "Connecting data for better care."
-- [ ] **COPY-09**: No team-experience section, no founder section, no hospital-deployment claims, no numbers that are not real.
+- [x] **COPY-01 Hero**: TH "ข้อมูลที่กระจัดกระจาย รวมไว้ในที่เดียว" / EN "Scattered data, brought together." Sub: TH "Nexto ทำเรื่องยุ่งยากให้เป็นเรื่องง่าย ด้วยซอฟต์แวร์ที่เชื่อมข้อมูลจากหลายระบบและหลายเครื่องมือเข้าด้วยกัน เพื่อให้ทีมแพทย์และองค์กรทำงานได้ง่ายขึ้น" / EN "Nexto makes the complex simple, with software that connects data from many systems and devices so clinical teams and organizations can work with less friction." Primary CTA "ร่วมเป็นพาร์ทเนอร์ / Partner with us", secondary "ดูสิ่งที่เราทำ / See what we build".
+- [x] **COPY-02 Partner bar**: "ทำงานร่วมกับ / Working with" · Meditop. Name as text until logo file and written consent arrive.
+- [x] **COPY-03 Approach**: TH "ระบบจัดการข้อมูล คนเป็นผู้ตัดสินใจ" / EN "Systems handle the data. People make the call." plus the two-hemisphere logo story (text in conversation draft).
+- [x] **COPY-04 How we work**: three points — start where the work happens; connect to what's already there; grow with partners. Not numbered (not a sequence).
+- [x] **COPY-05 Products**: Endyra `พร้อมใช้งาน / Available` — endoscopy video and image capture (name as text; current Endyra logo is off-system); Anvira `อยู่ระหว่างพัฒนา / In development` — perioperative anesthesia information system, shown with its wordmark logo.
+- [x] **COPY-06 Beyond healthcare**: Saaniq (all-in-one hotel and resort management, PMS to CRM, HR and finance); engineering partnerships in the government sector with Touch Technologies and 500 Miles (names as text until logos and consent).
+- [x] **COPY-07 Contact**: TH "คุยกับเรา" / EN "Talk to us"; three topic buttons (medical device partnership, our products, engineering work) as `mailto:info@nexto.co.th` with pre-filled subjects; LINE @nextocompany. Email and LINE ID also shown as selectable text.
+- [x] **COPY-08 Closing line**: TH "เชื่อมข้อมูล เพื่อการดูแลที่ดีขึ้น" / EN "Connecting data for better care."
+- [x] **COPY-09**: No team-experience section, no founder section, no hospital-deployment claims, no numbers that are not real.
 
 ### Visual design
 
 - [ ] **VIS-01**: Reference language from cipherdigital.com: very large short headlines, generous dark/light grounds, one accent (teal), mono labels in IBM Plex Mono (decided 2026-10-10) for English status text and numbers only (no Thai glyphs); added to the brand book as the third family.
-- [ ] **VIS-02**: Header: Nexto logo (brand book file), anchor nav, language switch, primary CTA; collapses on mobile.
+- [x] **VIS-02**: Header: Nexto logo (brand book file), anchor nav, language switch, primary CTA; collapses on mobile.
 - [ ] **VIS-03**: Layout works at 320, 375, 768, 1024, 1440, 1920 with no horizontal scroll.
 
 ### Network motion (signature)

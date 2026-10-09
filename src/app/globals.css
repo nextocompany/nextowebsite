@@ -30,6 +30,10 @@
   }
 }
 
+/* Locale variants: th:leading-* keeps tone marks clear; en:font-mono (Plex Mono has no Thai glyphs). */
+@custom-variant th (&:where(:lang(th), :lang(th) *));
+@custom-variant en (&:where(:lang(en), :lang(en) *));
+
 @theme inline {
   --color-teal: var(--teal);
   --color-coral: var(--coral);

@@ -34,4 +34,8 @@ export const TEXT_PAIRS: ReadonlyArray<readonly [ColorToken, ColorToken]> = [
   ['teal-text', 'ground-raised'],
   ['coral-text', 'ground'],
   ['coral-text', 'ground-raised'],
+  // Primary button (and its hover), closing band.
+  ['ground', 'teal-text'],
+  ['ground', 'ink'],
+  ['mist', 'charcoal'],
 ]

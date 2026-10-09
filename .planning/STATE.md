@@ -5,14 +5,15 @@
 See: .planning/PROJECT.md (updated 2026-02-17)
 
 **Core value (v2):** A referred visitor sees, within one screen, that Nexto connects scattered clinical data into one place, and can reach the right person in one click.
-**Current focus:** Milestone v2 — Phase 5 (Sections + copy)
+**Current focus:** Milestone v2 — Phase 6 (network motion)
 
 ## Current Position
 
 Milestone: v2 (healthcare repositioning), planned 2026-10-10
-Phase: 5 of 7 (Sections + copy) — next
+Phase: 6 of 7 (Network motion) — next
 Status: v1 live at nexto.co.th (commit 00441c9). Phase 4 complete (uncommitted, branch feat/v2-healthcare): brand tokens + contrast test, light/dark via prefers-color-scheme, Montserrat/Anuphan/IBM Plex Mono via next/font, TH at / and EN at /en/ (two root layouts, global-not-found, trailingSlash), full TH/EN copy dictionaries + parity test, old assets removed. Vitest 39 passing, lint/tsc/build clean. HomePage.tsx is a hero-only shell; Phase 5 builds the 8 sections from the dictionaries.
-Last activity: 2026-10-10 — PROJECT/REQUIREMENTS/ROADMAP rewritten for v2
+Phase 5 complete (uncommitted): 8 server-rendered sections in src/components/sections/, ui/{Section,ButtonLink,StatusChip}, src/lib/site/{constants,contact,sections}.ts (+tests), SiteHeader with anchor nav, <details> mobile menu, CTA, and LanguageSwitch (only client island; carries the current section to the other locale). Sections carry data-beat (hero/partners/approach/clusters) for Phase 6. Tailwind custom variants th:/en: (Thai heading leading, mono only for English). Vitest 55 passing; lint/tsc/build clean; no horizontal overflow at 320/375/1440 in TH/EN light/dark.
+Last activity: 2026-10-10 — Phase 5 sections built
 
 Progress v2: [░░░░░░░░░░] 0%
 
@@ -107,5 +108,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-10-10
-Stopped at: Phase 4 done; next is Phase 5 (sections). Brand logo SVGs in public/brand/.
+Stopped at: Phase 5 done; next is Phase 6 (canvas network, GSAP, Lenis). Known nit: Thai browser line-breaking can split words (e.g. พาร์ท/เนอร์) at narrow widths; consider Intl.Segmenter + <wbr> or nowrap spans.
 Resume file: .planning/ROADMAP.md (Milestone v2)
