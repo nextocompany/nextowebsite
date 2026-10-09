@@ -5,6 +5,10 @@ import '@/app/globals.css'
 
 const GA_ID = 'G-62ZB83X2YZ'
 
+// First thing in <body>, so it runs before content paints: when motion is allowed, hide the SVG stills so the
+// canvas intro doesn't flash a finished brain first. Constant string, no input.
+const MOTION_FLAG = `if(!matchMedia('(prefers-reduced-motion: reduce)').matches)document.documentElement.dataset.motion='on'`
+
 interface RootDocumentProps {
   locale: Locale
   children: React.ReactNode
@@ -13,8 +17,11 @@ interface RootDocumentProps {
 /** The <html> shell shared by the Thai and English root layouts. */
 export function RootDocument({ locale, children }: RootDocumentProps) {
   return (
-    <html lang={locale} className={fontVariables}>
-      <body>{children}</body>
+    <html lang={locale} className={fontVariables} suppressHydrationWarning>
+      <body>
+        <script dangerouslySetInnerHTML={{ __html: MOTION_FLAG }} />
+        {children}
+      </body>
       <Script src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`} strategy="afterInteractive" />
       <Script id="gtag-init" strategy="afterInteractive">
         {`window.dataLayer = window.dataLayer || [];

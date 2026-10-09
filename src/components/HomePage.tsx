@@ -1,3 +1,5 @@
+import { HeadingReveal } from '@/components/motion/HeadingReveal'
+import { NetworkCanvas } from '@/components/network/NetworkCanvas'
 import { SiteFooter } from '@/components/layout/SiteFooter'
 import { SiteHeader } from '@/components/layout/SiteHeader'
 import { Approach } from '@/components/sections/Approach'
@@ -31,6 +33,8 @@ export function HomePage({ locale }: HomePageProps) {
         <Closing line={dict.closing} />
       </main>
       <SiteFooter locale={locale} />
+      <NetworkCanvas />
+      <HeadingReveal />
     </>
   )
 }

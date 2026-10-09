@@ -10,6 +10,7 @@ export function Contact({ dict }: { dict: Dictionary['contact'] }) {
     <Section id={SECTION_IDS.contact} labelledBy="contact-title" className="py-24 sm:py-36">
       <h2
         id="contact-title"
+        data-reveal
         className="text-5xl leading-[1.05] font-medium tracking-tight sm:text-7xl th:leading-[1.35] th:tracking-normal"
       >
         {dict.title}

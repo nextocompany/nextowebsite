@@ -16,6 +16,9 @@
   --ink-muted: #6a6a6c;
   --teal-text: #007a7e;
   --coral-text: #c24433;
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --duration-reveal: 900ms;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -68,6 +71,24 @@
     font-family: var(--font-sans);
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
+  }
+
+  /* NetworkCanvas draws instead of the stills when motion is on. */
+  [data-motion='on'] .network-still {
+    visibility: hidden;
+  }
+
+  /* HeadingReveal: lines rise into place. Only set by JS, never in server HTML. */
+  .reveal-line {
+    display: block;
+    transition:
+      transform var(--duration-reveal) var(--ease-out-expo),
+      opacity var(--duration-reveal) var(--ease-out-expo);
+  }
+
+  [data-reveal-state='hidden'] .reveal-line {
+    opacity: 0;
+    transform: translateY(0.45em);
   }
 
   :focus-visible {

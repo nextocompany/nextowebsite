@@ -39,18 +39,20 @@
 
 ### Network motion (signature)
 
-- [ ] **NET-01**: Canvas 2D network renders the Nexto brain using node centres taken from the real vector (stamp page of `NEXTO_Logo.ai`), not an approximation.
-- [ ] **NET-02**: Four scroll beats driven by GSAP ScrollTrigger: (1) hero — scattered nodes connect into the brain; (2) approach — the brain separates into teal (logic) and coral (human) halves, coral on that hemisphere's nodes only, then rejoins; (3) what we do — the network expands into several unlabeled clusters; (4) partners — lines reach out toward the partner names.
-- [ ] **NET-03**: Colours read from CSS tokens at runtime and update when the colour scheme changes; canvas scales for `devicePixelRatio`; drawing pauses when offscreen or the tab is hidden.
-- [ ] **NET-04**: Fewer nodes on small screens; `prefers-reduced-motion` shows a static frame per beat and disables Lenis.
-- [ ] **NET-05**: Layout and interpolation maths live in pure functions with unit tests.
-- [ ] **NET-06**: Brand book gets a written exception: the website hero animation is the sanctioned place where the brain is drawn outside the O and where a hemisphere's nodes turn coral.
+- [x] **NET-01**: Canvas 2D network renders the Nexto brain using node centres taken from the real vector (stamp page of `NEXTO_Logo.ai`), not an approximation.
+- [x] **NET-02**: Four scroll beats driven by GSAP ScrollTrigger: (1) hero — scattered nodes connect into the brain; (2) approach — the brain separates into teal (logic) and coral (human) halves, coral on that hemisphere's nodes only, then rejoins; (3) what we do — the network expands into several unlabeled clusters; (4) partners — lines reach out toward the partner names.
+- [x] **NET-03**: Colours read from CSS tokens at runtime and update when the colour scheme changes; canvas scales for `devicePixelRatio`; drawing pauses when offscreen or the tab is hidden.
+- [x] **NET-04**: Fewer nodes on small screens; `prefers-reduced-motion` shows a static frame per beat and disables Lenis.
+- [x] **NET-05**: Layout and interpolation maths live in pure functions with unit tests.
+- [x] **NET-06**: Brand book gets a written exception: the website hero animation is the sanctioned place where the brain is drawn outside the O and where a hemisphere's nodes turn coral.
+
+> **Implemented 2026-10-10 without GSAP or Lenis.** The landing JS was already ~131 kB gz before any motion code (budget 150 kB, QA-03); GSAP + ScrollTrigger + Lenis would add ~45–50 kB. Scroll progress comes from stage-box positions (`src/lib/network/progress.ts`) with a light rAF follow instead of ScrollTrigger scrub; headings reveal by line via `Intl.Segmenter` + CSS transitions instead of SplitText; native scrolling keeps `scroll-padding-top` working for anchors. Beat 4 lives in the Beyond section (engineering partner names): it is the only place after Products that keeps beats in scroll order. Meditop's partner bar stays text-only.
 
 ### Text motion
 
-- [ ] **MOT-01**: Headline reveals use GSAP SplitText for English. Thai headlines reveal by line with a mask, or segment with `Intl.Segmenter('th')`; never split by character (breaks combining vowels and tone marks). Verified with ที่ and ไว้.
-- [ ] **MOT-02**: Server-rendered HTML ships all text visible (never `opacity: 0` before JS); the hero headline is the LCP element and must not wait for animation.
-- [ ] **MOT-03**: Lenis smooth scroll, disabled under reduced motion; anchor links still land below the header.
+- [x] **MOT-01**: Headline reveals use GSAP SplitText for English. Thai headlines reveal by line with a mask, or segment with `Intl.Segmenter('th')`; never split by character (breaks combining vowels and tone marks). Verified with ที่ and ไว้.
+- [x] **MOT-02**: Server-rendered HTML ships all text visible (never `opacity: 0` before JS); the hero headline is the LCP element and must not wait for animation.
+- [x] **MOT-03**: Lenis smooth scroll, disabled under reduced motion; anchor links still land below the header.
 
 ### Quality
 

@@ -5,7 +5,7 @@ import { SECTION_IDS } from '@/lib/site/sections'
 
 export function PartnerBar({ dict }: { dict: Dictionary['partners'] }) {
   return (
-    <Section id={SECTION_IDS.partners} labelledBy="partners-title" beat="partners">
+    <Section id={SECTION_IDS.partners} labelledBy="partners-title">
       <div className="flex flex-col gap-3 border-y border-ink/15 py-6 sm:flex-row sm:items-baseline sm:gap-10">
         <h2 id="partners-title" className="text-sm text-ink-muted en:font-mono en:text-xs en:tracking-wide en:uppercase">
           {dict.label}

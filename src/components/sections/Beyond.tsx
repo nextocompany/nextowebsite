@@ -1,3 +1,4 @@
+import { NetworkStage } from '@/components/network/NetworkStill'
 import { Section } from '@/components/ui/Section'
 import type { Dictionary } from '@/lib/i18n'
 import { ENGINEERING_PARTNERS, SAANIQ_URL } from '@/lib/site/constants'
@@ -8,6 +9,7 @@ export function Beyond({ dict }: { dict: Dictionary['beyond'] }) {
 
   return (
     <Section id={SECTION_IDS.beyond} labelledBy="beyond-title" className="pb-24 sm:pb-36">
+      <NetworkStage name="beyond" className="mb-10 aspect-[4/3] w-full md:aspect-[4/1]" />
       <h2 id="beyond-title" className="text-sm text-ink-muted en:font-mono en:text-xs en:tracking-wide en:uppercase">
         {dict.title}
       </h2>
@@ -27,12 +29,13 @@ export function Beyond({ dict }: { dict: Dictionary['beyond'] }) {
             <span aria-hidden="true">↗</span>
           </a>
         </article>
-        <article aria-labelledby="engineering-title">
+        {/* data-partner-group: beat 4 routes its lines down this column's left gutter. */}
+        <article aria-labelledby="engineering-title" data-partner-group>
           <h3 id="engineering-title" className="text-3xl font-medium tracking-tight th:tracking-normal">
             {engineering.title}
           </h3>
           <p className="mt-3 max-w-md text-ink-muted">{engineering.body}</p>
-          <ul lang="en" className="mt-6 flex flex-wrap gap-x-8 gap-y-2">
+          <ul lang="en" className="mt-6 flex flex-col gap-2">
             {ENGINEERING_PARTNERS.map((name) => (
               <li key={name} data-partner={name} className="text-lg font-semibold">
                 {name}
