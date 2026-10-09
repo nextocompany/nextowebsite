@@ -44,7 +44,7 @@
 - [x] **NET-03**: Colours read from CSS tokens at runtime; canvas scales for `devicePixelRatio`, lines never thinner than one device pixel; drawing runs only on scroll or while the hero drifts, and stops when no stage is on screen or the tab is hidden.
 - [x] **NET-04**: Fewer nodes on small screens; `prefers-reduced-motion` shows a static frame per beat and disables Lenis.
 - [x] **NET-05**: Layout and interpolation maths live in pure functions with unit tests.
-- [ ] **NET-06**: Brand book exception rewritten for the logo-free network (coral group in the approach beat, teal hubs and partner lines).
+- [x] **NET-06**: Brand book exception rewritten (v9) for the logo-free network (coral group in the approach beat, teal hubs and partner lines).
 
 > **Redesign 2026-10-10 (user decisions):** dark only + page grid after the reference; Lenis + GSAP ScrollTrigger added and the 150 kB JS budget waived; the logo/brain no longer tells the story, the neural network does; no scroll snap. Beat 4 (partner lines) stays in Beyond (option ก).
 
