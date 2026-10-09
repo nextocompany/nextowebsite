@@ -70,16 +70,75 @@ Plans:
 - [ ] 03-02-PLAN.md — Privacy policy page at /privacy
 - [ ] 03-03-PLAN.md — Build verification, GitHub repo creation, Cloudflare Pages deploy
 
+---
+
+# Milestone v2: Healthcare repositioning (planned 2026-10-10)
+
+Rebuild the single page around the new positioning, in Thai and English, light and dark, with the neural-network scroll story as the signature. Phases 4–7. Production deploy happens only after the user approves a preview.
+
+- [x] **Phase 4: Foundation v2** - brand tokens, fonts, themes, TH/EN route split, old assets removed
+- [ ] **Phase 5: Sections + copy** - all 8 sections in both languages, static (no motion), reference visual language
+- [ ] **Phase 6: Network + motion** - canvas network with 4 beats, GSAP text reveals, Lenis, reduced motion
+- [ ] **Phase 7: Quality + preview** - tests, Lighthouse/a11y/bundle budget, SEO per locale, OG image, preview deploy, launch gates
+
+### Phase 4: Foundation v2
+**Goal**: The app builds with the brand book tokens, both themes, both locales and the right fonts, before any section work
+**Depends on**: v1 complete
+**Requirements**: FND-01..04, I18N-01..05
+**Success Criteria**:
+  1. `/` renders `<html lang="th">`, `/en` renders `<html lang="en">`; `/privacy` and 404 still build; `out/en/index.html` exists
+  2. Toggling the OS colour scheme switches every token; a contrast script over the token pairs reports no pair under 4.5:1
+  3. Montserrat and Anuphan load from the site's own origin (no Google Fonts request; CSP unchanged)
+  4. Vitest is set up and the TH/EN key-parity test passes on a starter dictionary
+  5. Manverra/Careyra/old Endyra/scaffold assets are gone and nothing references them
+
+### Phase 5: Sections + copy
+**Goal**: The full page reads correctly in both languages and themes without any JavaScript animation
+**Depends on**: Phase 4
+**Requirements**: COPY-01..09, VIS-01..03, I18N-02
+**Success Criteria**:
+  1. All 8 sections render with the approved copy; partner and product names appear as text
+  2. Contact buttons open mail with the right pre-filled subject in Thai and English (mailto builder unit-tested)
+  3. No horizontal scroll at 320–1920; header collapses on mobile; language switch keeps the section
+  4. With JavaScript disabled, every word is visible
+**Decisions (2026-10-10)**: IBM Plex Mono for English/number labels; Saaniq card links to saaniq.com; Anvira shown with its logo
+
+### Phase 6: Network + motion
+**Goal**: The neural-network story plays across four beats and the headlines reveal, without hurting LCP or accessibility
+**Depends on**: Phase 5
+**Requirements**: NET-01..06, MOT-01..03
+**Success Criteria**:
+  1. Beat 1 resolves into the exact Nexto brain node layout (centres from the vector); beats 2–4 play on scroll and reverse cleanly
+  2. Pure layout/interpolation functions are unit-tested
+  3. Reduced motion shows static frames and turns off Lenis; offscreen or hidden tab stops the draw loop
+  4. Thai headline reveal keeps ที่ and ไว้ intact
+  5. Brand book updated with the website-animation exception
+
+### Phase 7: Quality + preview
+**Goal**: The site meets the quality bar and the user approves a preview before production
+**Depends on**: Phase 6
+**Requirements**: QA-01..05, GATE-01..04
+**Success Criteria**:
+  1. Playwright screenshots (320/768/1024/1440 × light/dark × TH/EN, plus reduced motion) reviewed
+  2. Lighthouse mobile 90+, LCP < 2.5s, CLS < 0.1; landing JS gzipped size measured and under 150 kB
+  3. hreflang, canonical, sitemap and per-locale OG verified in the built `out/`
+  4. Preview deployed (Cloudflare preview branch or version upload) and link given to the user
+  5. Production deploy only after explicit approval and all launch gates checked
+
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 -> 2 -> 3
+Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation | 2/2 | Complete    | 2026-02-17 |
 | 2. Page | 3/3 | Complete | 2026-02-22 |
-| 3. Quality + Ship | 0/3 | Not started | - |
+| 3. Quality + Ship | 3/3 | Complete | 2026-02-22 |
+| 4. Foundation v2 | 1/1 | Complete | 2026-10-10 |
+| 5. Sections + copy | 0/? | Not started | - |
+| 6. Network + motion | 0/? | Not started | - |
+| 7. Quality + preview | 0/? | Not started | - |
 
 ---
 *Roadmap created: 2026-02-17*

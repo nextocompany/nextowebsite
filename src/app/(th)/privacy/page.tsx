@@ -1,8 +1,10 @@
 import type { Metadata } from 'next'
-import { Header } from '@/components/layout/Header'
-import { Footer } from '@/components/layout/Footer'
+import { SITE_URL } from '@/lib/i18n'
+import { SiteFooter } from '@/components/layout/SiteFooter'
+import { SiteHeader } from '@/components/layout/SiteHeader'
 
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: 'Privacy Policy — Nexto',
   description: 'How Nexto handles visitor data and Google Analytics cookies.',
   robots: { index: false },
@@ -17,13 +19,14 @@ export const metadata: Metadata = {
 export default function PrivacyPage() {
   return (
     <>
-      <Header />
-      <main className="mx-auto max-w-3xl px-6 py-24">
-        <h1 className="text-3xl font-semibold text-neutral-900 mb-8">Privacy Policy</h1>
+      <SiteHeader locale="th" />
+      {/* Policy text is English only for now */}
+      <main lang="en" className="mx-auto max-w-3xl px-4 py-24 sm:px-6">
+        <h1 className="text-3xl font-semibold text-ink mb-8">Privacy Policy</h1>
 
         <section className="mb-8">
-          <h2 className="text-lg font-medium text-neutral-900 mb-3">What data we collect</h2>
-          <p className="text-neutral-600 leading-relaxed">
+          <h2 className="text-lg font-medium text-ink mb-3">What data we collect</h2>
+          <p className="text-ink-muted leading-relaxed">
             We use Google Analytics to understand how visitors interact with this website.
             Google Analytics collects anonymous usage data — such as page views, session duration,
             and general location (country or city level). No personally identifiable information
@@ -32,8 +35,8 @@ export default function PrivacyPage() {
         </section>
 
         <section className="mb-8">
-          <h2 className="text-lg font-medium text-neutral-900 mb-3">Cookies</h2>
-          <p className="text-neutral-600 leading-relaxed">
+          <h2 className="text-lg font-medium text-ink mb-3">Cookies</h2>
+          <p className="text-ink-muted leading-relaxed">
             Google Analytics sets cookies in your browser to distinguish visitors and track sessions.
             These cookies do not identify you personally. You can disable cookies through your browser
             settings or opt out of Google Analytics tracking at{' '}
@@ -41,7 +44,7 @@ export default function PrivacyPage() {
               href="https://tools.google.com/dlpage/gaoptout"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-neutral-900 underline hover:text-brand-teal-dark transition-colors"
+              className="text-ink underline hover:text-teal-text transition-colors"
             >
               tools.google.com/dlpage/gaoptout
             </a>
@@ -50,8 +53,8 @@ export default function PrivacyPage() {
         </section>
 
         <section className="mb-8">
-          <h2 className="text-lg font-medium text-neutral-900 mb-3">Third-party services</h2>
-          <p className="text-neutral-600 leading-relaxed">
+          <h2 className="text-lg font-medium text-ink mb-3">Third-party services</h2>
+          <p className="text-ink-muted leading-relaxed">
             This site uses Google Analytics, operated by Google LLC. Google may use the data
             collected to personalise ads on its own network. For details on how Google handles
             this data, see{' '}
@@ -59,7 +62,7 @@ export default function PrivacyPage() {
               href="https://policies.google.com/privacy"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-neutral-900 underline hover:text-brand-teal-dark transition-colors"
+              className="text-ink underline hover:text-teal-text transition-colors"
             >
               Google&apos;s Privacy Policy
             </a>
@@ -68,12 +71,12 @@ export default function PrivacyPage() {
         </section>
 
         <section className="mb-8">
-          <h2 className="text-lg font-medium text-neutral-900 mb-3">Contact</h2>
-          <p className="text-neutral-600 leading-relaxed">
+          <h2 className="text-lg font-medium text-ink mb-3">Contact</h2>
+          <p className="text-ink-muted leading-relaxed">
             If you have questions about this privacy policy, contact us at{' '}
             <a
               href="mailto:info@nexto.co.th"
-              className="text-neutral-900 underline hover:text-brand-teal-dark transition-colors"
+              className="text-ink underline hover:text-teal-text transition-colors"
             >
               info@nexto.co.th
             </a>
@@ -81,9 +84,9 @@ export default function PrivacyPage() {
           </p>
         </section>
 
-        <p className="text-sm text-neutral-500">Last updated: February 2026</p>
+        <p className="text-sm text-ink-muted">Last updated: February 2026</p>
       </main>
-      <Footer />
+      <SiteFooter locale="th" />
     </>
   )
 }

@@ -4,17 +4,19 @@
 
 See: .planning/PROJECT.md (updated 2026-02-17)
 
-**Core value:** Visitors understand what Nexto does and can contact them within 30 seconds of landing.
-**Current focus:** Phase 3 — Quality + Ship
+**Core value (v2):** A referred visitor sees, within one screen, that Nexto connects scattered clinical data into one place, and can reach the right person in one click.
+**Current focus:** Milestone v2 — Phase 5 (Sections + copy)
 
 ## Current Position
 
-Phase: 3 of 3 (Quality + Ship)
-Plan: 03-03 complete — ALL PLANS COMPLETE
-Status: PROJECT COMPLETE — site live at nexto.co.th
-Last activity: 2026-02-22 — 03-03 build verification + Cloudflare Pages deploy complete
+Milestone: v2 (healthcare repositioning), planned 2026-10-10
+Phase: 5 of 7 (Sections + copy) — next
+Status: v1 live at nexto.co.th (commit 00441c9). Phase 4 complete (uncommitted, branch feat/v2-healthcare): brand tokens + contrast test, light/dark via prefers-color-scheme, Montserrat/Anuphan/IBM Plex Mono via next/font, TH at / and EN at /en/ (two root layouts, global-not-found, trailingSlash), full TH/EN copy dictionaries + parity test, old assets removed. Vitest 39 passing, lint/tsc/build clean. HomePage.tsx is a hero-only shell; Phase 5 builds the 8 sections from the dictionaries.
+Last activity: 2026-10-10 — PROJECT/REQUIREMENTS/ROADMAP rewritten for v2
 
-Progress: [██████████] 100%
+Progress v2: [░░░░░░░░░░] 0%
+
+> Everything below "What Actually Shipped" describes v1. v2 decisions live in PROJECT.md Key Decisions.
 
 ## Performance Metrics
 
@@ -104,6 +106,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-02-22
-Stopped at: Completed 03-03-PLAN.md (build verification + Cloudflare Pages deploy) — PROJECT COMPLETE
-Resume file: None
+Last session: 2026-10-10
+Stopped at: Phase 4 done; next is Phase 5 (sections). Brand logo SVGs in public/brand/.
+Resume file: .planning/ROADMAP.md (Milestone v2)

@@ -1,39 +1,73 @@
 @import "tailwindcss";
 
-@theme {
-  /* Wire next/font CSS variable into Tailwind's font-sans token */
-  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+/*
+ * Colour tokens mirror src/lib/brand/tokens.ts (Nexto brand book).
+ * contrast.test.ts fails if a value here drifts from tokens.ts.
+ */
+:root {
+  color-scheme: light;
+  --teal: #00b0b6;
+  --coral: #f15a4b;
+  --charcoal: #414142;
+  --mist: #e7e8e9;
+  --ground: #ffffff;
+  --ground-raised: #f3f4f4;
+  --ink: #414142;
+  --ink-muted: #6a6a6c;
+  --teal-text: #007a7e;
+  --coral-text: #c24433;
+}
 
-  /* Brand colors from Nexto logo */
-  --color-brand-teal: #2EC4B6;
-  --color-brand-coral: #E85D4A;
-  --color-brand-teal-light: #e8f8f6;
-  --color-brand-coral-light: #fdf0ee;
-  --color-brand-teal-dark: #0f786f;
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --ground: #2b2b2c;
+    --ground-raised: #414142;
+    --ink: #e7e8e9;
+    --ink-muted: #b4b5b7;
+    --teal-text: #5ed3d7;
+    --coral-text: #f6958b;
+  }
+}
+
+@theme inline {
+  --color-teal: var(--teal);
+  --color-coral: var(--coral);
+  --color-charcoal: var(--charcoal);
+  --color-mist: var(--mist);
+  --color-ground: var(--ground);
+  --color-ground-raised: var(--ground-raised);
+  --color-ink: var(--ink);
+  --color-ink-muted: var(--ink-muted);
+  --color-teal-text: var(--teal-text);
+  --color-coral-text: var(--coral-text);
+
+  --font-sans: var(--font-montserrat), var(--font-anuphan), ui-sans-serif, system-ui, sans-serif;
+  --font-thai: var(--font-anuphan), var(--font-montserrat), ui-sans-serif, sans-serif;
+  --font-mono: var(--font-plex-mono), ui-monospace, monospace;
 }
 
 @layer base {
   html {
     font-size: 16px;
-    scroll-behavior: smooth;
-    scroll-padding-top: 4rem;
+    scroll-padding-top: 5rem;
+  }
+
+  html:lang(th) body {
+    font-family: var(--font-thai);
+    line-height: 1.75;
   }
 
   body {
-    @apply bg-white text-neutral-900 antialiased;
+    background: var(--ground);
+    color: var(--ink);
     font-family: var(--font-sans);
     line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
   }
 
-  h1 { @apply text-4xl font-semibold; }
-  h2 { @apply text-3xl font-semibold; }
-  h3 { @apply text-xl font-semibold; }
-  h4 { @apply text-lg font-semibold; }
-
   :focus-visible {
-    outline-width: 2px;
-    outline-style: solid;
+    outline: 2px solid var(--teal-text);
     outline-offset: 2px;
-    outline-color: #0f786f; /* darkened teal, 5.33:1 on white */
   }
 }
