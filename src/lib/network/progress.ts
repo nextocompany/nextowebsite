@@ -44,12 +44,16 @@ export function scrollPosition(centers: ReadonlyArray<number>, viewportCenter: n
   return centers.length - 1
 }
 
-/** Beats 2–4 as a function of scroll position (beat 1 plays on load). */
-export function beatsAt(u: number): Omit<BeatState, 'form'> {
+/**
+ * Every beat as a function of scroll position along the stages
+ * (0 hero, 1 intro, 2 approach, 3 products, 4 beyond).
+ */
+export function beatsAt(u: number): BeatState {
   return {
-    split: window01(u, 0.3, 0.85, 1.15, 1.7),
-    cluster: smoothstep(1.4, 2, u),
-    reach: smoothstep(2.3, 3, u),
+    form: smoothstep(0.1, 0.9, u),
+    split: window01(u, 1.3, 1.85, 2.15, 2.7),
+    cluster: smoothstep(2.4, 3, u),
+    reach: smoothstep(3.3, 4, u),
   }
 }
 

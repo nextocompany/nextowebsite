@@ -8,7 +8,7 @@ import { Closing } from '@/components/sections/Closing'
 import { Contact } from '@/components/sections/Contact'
 import { Hero } from '@/components/sections/Hero'
 import { HowWeWork } from '@/components/sections/HowWeWork'
-import { PartnerBar } from '@/components/sections/PartnerBar'
+import { Intro } from '@/components/sections/Intro'
 import { Products } from '@/components/sections/Products'
 import { getDictionary, type Locale } from '@/lib/i18n'
 
@@ -23,8 +23,8 @@ export function HomePage({ locale }: HomePageProps) {
     <>
       <SiteHeader locale={locale} />
       <main>
-        <Hero dict={dict.hero} />
-        <PartnerBar dict={dict.partners} />
+        <Hero dict={dict.hero} partners={dict.partners} />
+        <Intro dict={dict.hero} />
         <Approach dict={dict.approach} />
         <HowWeWork dict={dict.howWeWork} />
         <Products dict={dict.products} />

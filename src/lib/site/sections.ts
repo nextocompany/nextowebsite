@@ -4,6 +4,7 @@ import type { Dictionary } from '@/lib/i18n'
 export const SECTION_IDS = {
   hero: 'top',
   partners: 'partners',
+  intro: 'intro',
   approach: 'approach',
   howWeWork: 'how-we-work',
   products: 'products',

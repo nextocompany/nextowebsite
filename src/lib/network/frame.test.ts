@@ -16,6 +16,7 @@ describe('frameAt', () => {
       expect(frame.nodes[i].toneAmount).toBe(0)
     })
     expect(frame.ring.alpha).toBe(1)
+    expect(frame.detail).toBe(1)
     for (const arc of frame.ring.arcs) expect(Math.hypot(arc.cx, arc.cy)).toBe(0)
     const [teal, coral] = frame.ring.arcs
     expect(teal.end).toBeCloseTo(coral.start)
@@ -44,13 +45,31 @@ describe('frameAt', () => {
     expect(coral.cy).toBeGreaterThan(teal.cy)
   })
 
-  it('beat 3 hides the ring and moves every node to its cluster', () => {
+  it('beat 3 hides the ring and moves cluster members to their cluster', () => {
     const frame = frameAt({ ...FORMED, cluster: 1 }, scene)
     expect(frame.ring.alpha).toBe(0)
     frame.nodes.forEach((n, i) => {
+      if (scene.nodes[i].cluster < 0) {
+        expect(n.alpha).toBe(0)
+        return
+      }
       expect(n.x).toBeCloseTo(scene.nodes[i].clusterPos.x)
       expect(n.y).toBeCloseTo(scene.nodes[i].clusterPos.y)
     })
+  })
+
+  it('shows the scattered network links only before the brain forms', () => {
+    const scatterAlpha = (form: number) =>
+      frameAt({ ...FORMED, form }, scene).edges.slice(-scene.scatterEdges.length).every((e) => e.alpha > 0)
+    expect(scatterAlpha(0)).toBe(true)
+    expect(frameAt(FORMED, scene).edges.slice(-scene.scatterEdges.length).every((e) => e.alpha === 0)).toBe(true)
+  })
+
+  it('drifts the scattered network over time but not at time 0 or once formed', () => {
+    const at = (time: number, form: number) => frameAt({ ...FORMED, form, time }, scene).nodes[12]
+    expect(at(0, 0).x).toBeCloseTo(scene.nodes[12].scatter.x)
+    expect(at(3, 0).x).not.toBeCloseTo(scene.nodes[12].scatter.x, 3)
+    expect(at(3, 1).x).toBeCloseTo(at(0, 1).x)
   })
 
   it('beat 4 passes reach through for the renderer', () => {

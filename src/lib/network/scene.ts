@@ -11,7 +11,10 @@ export interface SceneNode {
   readonly brain: Point
   readonly scatter: Point
   readonly clusterPos: Point
+  /** Cluster index in beat 3, or -1 for extras that fade out instead. */
   readonly cluster: number
+  /** Gentle drift while scattered: phase (radians) and speed (radians/second). */
+  readonly drift: { readonly phase: number; readonly speed: number }
   readonly isBrain: boolean
   readonly hemisphere: Hemisphere | null
   /** One extra node per cluster turns teal in the cluster beat. */
@@ -22,6 +25,9 @@ export interface Scene {
   readonly variant: Variant
   readonly nodes: ReadonlyArray<SceneNode>
   readonly clusterEdges: ReadonlyArray<readonly [number, number]>
+  /** Links of the full-screen network in the hero. */
+  readonly scatterEdges: ReadonlyArray<readonly [number, number]>
+  readonly scatterLinkMax: number
   readonly clusterCount: number
   readonly scatterBounds: Point
   /** Unit vector from the logic half towards the human half. */
@@ -32,8 +38,10 @@ const SEED = 20261010
 
 const LAYOUT = {
   wide: {
-    extras: 22,
-    scatter: { x: 1.7, y: 1.3 },
+    extras: 46,
+    clustered: 22,
+    scatter: { x: 3.1, y: 1.5 },
+    linkMax: 0.75,
     clusterRadius: 0.55,
     clusters: [
       { x: -2.3, y: 0.2 },
@@ -43,8 +51,10 @@ const LAYOUT = {
     ],
   },
   narrow: {
-    extras: 12,
-    scatter: { x: 1.3, y: 1.1 },
+    extras: 24,
+    clustered: 12,
+    scatter: { x: 1.15, y: 1.9 },
+    linkMax: 0.7,
     clusterRadius: 0.42,
     clusters: [
       { x: -0.7, y: -0.5 },
@@ -95,6 +105,19 @@ function clusterLinks(points: ReadonlyArray<{ index: number; pos: Point }>): Arr
   return [...links].map((key) => key.split(':').map(Number) as [number, number])
 }
 
+/** Each node to its two nearest neighbours, if they are within `max`. */
+function nearLinks(points: ReadonlyArray<{ index: number; pos: Point }>, max: number): Array<[number, number]> {
+  const links = new Set<string>()
+  for (const a of points) {
+    const near = points
+      .filter((b) => b.index !== a.index && distance(a.pos, b.pos) <= max)
+      .sort((p, q) => distance(p.pos, a.pos) - distance(q.pos, a.pos))
+      .slice(0, 2)
+    for (const b of near) links.add(a.index < b.index ? `${a.index}:${b.index}` : `${b.index}:${a.index}`)
+  }
+  return [...links].map((key) => key.split(':').map(Number) as [number, number])
+}
+
 export function buildScene(variant: Variant): Scene {
   const layout = LAYOUT[variant]
   const rand = mulberry32(SEED)
@@ -114,15 +137,16 @@ export function buildScene(variant: Variant): Scene {
     const brain = isBrain
       ? BRAIN_NODES[i]
       : { x: Math.cos(ringAngle) * RING.radius, y: Math.sin(ringAngle) * RING.radius }
-    const cluster = i % k
+    const cluster = isBrain || extraIndex < layout.clustered ? i % k : -1
     const angle = rand() * Math.PI * 2
     const dist = layout.clusterRadius * Math.sqrt(rand())
-    const centre = layout.clusters[cluster]
+    const centre = layout.clusters[Math.max(cluster, 0)]
     return {
       brain,
       scatter: { x: between(layout.scatter.x), y: between(layout.scatter.y) },
       clusterPos: { x: centre.x + Math.cos(angle) * dist, y: centre.y + Math.sin(angle) * dist },
       cluster,
+      drift: { phase: rand() * Math.PI * 2, speed: 0.25 + rand() * 0.35 },
       isBrain,
       hemisphere: isBrain ? hemisphereOf(brain, centroid) : null,
       isHub: !isBrain && extraIndex < k,
@@ -133,10 +157,17 @@ export function buildScene(variant: Variant): Scene {
     clusterLinks(nodes.flatMap((n, index) => (n.cluster === c ? [{ index, pos: n.clusterPos }] : []))),
   ).flat()
 
+  const scatterEdges = nearLinks(
+    nodes.map((n, index) => ({ index, pos: n.scatter })),
+    layout.linkMax,
+  )
+
   return {
     variant,
     nodes,
     clusterEdges,
+    scatterEdges,
+    scatterLinkMax: layout.linkMax,
     clusterCount: k,
     scatterBounds: layout.scatter,
     splitNormal: SPLIT_NORMAL,

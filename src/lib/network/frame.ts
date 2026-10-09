@@ -8,6 +8,8 @@ export interface BeatState {
   split: number
   cluster: number
   reach: number
+  /** Seconds, for the drift of the scattered network. */
+  time?: number
 }
 
 export type Tone = 'ink' | 'teal' | 'coral'
@@ -44,10 +46,16 @@ export interface Frame {
   edges: FrameEdge[]
   ring: { alpha: number; arcs: [RingArc, RingArc] }
   reach: number
+  /** Line-width factor: the full-screen network is drawn finer than the brain. */
+  detail: number
 }
 
 const SPLIT_DISTANCE = 0.32
 const EXTRA_RADIUS = 0.045
+const DRIFT = 0.07
+const SCATTER_EDGE = 0.55
+/** Dots and lines of the scattered network, relative to the brain's. */
+const SCATTER_DETAIL = 0.3
 
 export function frameAt(state: BeatState, scene: Scene): Frame {
   const form = easeInOutCubic(state.form)
@@ -55,18 +63,27 @@ export function frameAt(state: BeatState, scene: Scene): Frame {
   const cluster = easeInOutCubic(state.cluster)
   const { splitNormal } = scene
   const formedAlpha = smoothstep(0.55, 1, state.form)
+  const time = state.time ?? 0
+  const drift = DRIFT * (1 - form)
+  const detail = lerp(SCATTER_DETAIL, 1, form)
 
   const nodes = scene.nodes.map((n): FrameNode => {
     const side = n.hemisphere === 'human' ? 1 : n.hemisphere === 'logic' ? -1 : 0
     const push = side * SPLIT_DISTANCE * split
-    const fx = lerp(n.scatter.x, n.brain.x, form) + splitNormal.x * push
-    const fy = lerp(n.scatter.y, n.brain.y, form) + splitNormal.y * push
+    // Offset from time 0, so a still frame sits exactly on the scatter.
+    const wave = (shift: number) =>
+      Math.sin(time * n.drift.speed + n.drift.phase + shift) - Math.sin(n.drift.phase + shift)
+    const fx = lerp(n.scatter.x + drift * wave(0), n.brain.x, form) + splitNormal.x * push
+    const fy = lerp(n.scatter.y + drift * wave(1.7), n.brain.y, form) + splitNormal.y * push
+    const target = n.cluster >= 0 ? n.clusterPos : { x: fx, y: fy }
     const formAlpha = n.isBrain ? 1 : 1 - formedAlpha
     return {
-      x: lerp(fx, n.clusterPos.x, cluster),
-      y: lerp(fy, n.clusterPos.y, cluster),
-      r: lerp(n.isBrain ? BRAIN_NODE_RADIUS : EXTRA_RADIUS, n.isHub ? BRAIN_NODE_RADIUS : EXTRA_RADIUS * 1.2, cluster),
-      alpha: lerp(formAlpha, 1, cluster),
+      x: lerp(fx, target.x, cluster),
+      y: lerp(fy, target.y, cluster),
+      r:
+        detail *
+        lerp(n.isBrain ? BRAIN_NODE_RADIUS : EXTRA_RADIUS, n.isHub ? BRAIN_NODE_RADIUS : EXTRA_RADIUS * 1.2, cluster),
+      alpha: n.cluster >= 0 ? lerp(formAlpha, 1, cluster) : formAlpha * (1 - cluster),
       tone: n.hemisphere === 'human' ? 'coral' : n.isBrain || n.isHub ? 'teal' : 'ink',
       toneAmount: n.isBrain ? split : n.isHub ? cluster : 0,
     }
@@ -89,11 +106,17 @@ export function frameAt(state: BeatState, scene: Scene): Frame {
     ([a, b]): FrameEdge => ({ a, b, alpha: cluster, tone: 'ink', toneAmount: 0 }),
   )
 
+  const scatterAlpha = SCATTER_EDGE * (1 - smoothstep(0, 0.6, state.form))
+  const scatterEdges = scene.scatterEdges.map(
+    ([a, b]): FrameEdge => ({ a, b, alpha: scatterAlpha, tone: 'ink', toneAmount: 0 }),
+  )
+
   return {
     nodes,
-    edges: [...brainEdges, ...clusterEdges],
+    edges: [...brainEdges, ...clusterEdges, ...scatterEdges],
     ring: { alpha: formedAlpha * (1 - cluster), arcs: ringArcs(SPLIT_DISTANCE * split, splitNormal) },
     reach: state.reach,
+    detail,
   }
 }
 

@@ -41,7 +41,7 @@ export function drawFrame(
     }
   }
 
-  ctx.lineWidth = STROKE.edge * scale
+  ctx.lineWidth = STROKE.edge * scale * frame.detail
   ctx.lineCap = 'round'
   for (const e of frame.edges) {
     if (e.alpha <= 0) continue

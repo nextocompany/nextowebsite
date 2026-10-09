@@ -1,7 +1,7 @@
 import { RING } from '@/lib/network/brain'
 import { frameAt, type Frame, type RingArc, type Tone } from '@/lib/network/frame'
 import { buildScene, type Variant } from '@/lib/network/scene'
-import { STAGE_EXTENT, STAGE_STATE, STROKE, type StageName } from '@/lib/network/stages'
+import { STAGE_EXTENT, STAGE_FIT, STAGE_STATE, STROKE, type StageFit, type StageName } from '@/lib/network/stages'
 
 const round = (v: number) => Math.round(v * 10000) / 10000
 
@@ -18,11 +18,19 @@ function arcPath({ cx, cy, start, end }: RingArc): string {
   return `M ${point(start)} A ${r} ${r} 0 ${large} 1 ${point(end)}`
 }
 
-function FrameSvg({ frame, extentX, extentY, className }: { frame: Frame; extentX: number; extentY: number; className: string }) {
+interface FrameSvgProps {
+  frame: Frame
+  extentX: number
+  extentY: number
+  fit: StageFit
+  className: string
+}
+
+function FrameSvg({ frame, extentX, extentY, fit, className }: FrameSvgProps) {
   return (
     <svg
       viewBox={`${-extentX} ${-extentY} ${extentX * 2} ${extentY * 2}`}
-      preserveAspectRatio="xMidYMid meet"
+      preserveAspectRatio={fit === 'cover' ? 'xMidYMid slice' : 'xMidYMid meet'}
       className={`network-still size-full ${className}`}
       focusable="false"
     >
@@ -47,7 +55,7 @@ function FrameSvg({ frame, extentX, extentY, className }: { frame: Frame; extent
             x2={round(frame.nodes[e.b].x)}
             y2={round(frame.nodes[e.b].y)}
             stroke={paint(e.tone, e.toneAmount)}
-            strokeWidth={STROKE.edge}
+            strokeWidth={STROKE.edge * frame.detail}
             strokeLinecap="round"
             opacity={e.alpha}
           />
@@ -73,7 +81,7 @@ const VARIANTS: ReadonlyArray<{ variant: Variant; className: string }> = [
  */
 export function NetworkStage({ name, className = '' }: { name: StageName; className?: string }) {
   return (
-    <div data-stage={name} aria-hidden="true" className={`relative ${className}`}>
+    <div data-stage={name} aria-hidden="true" className={className}>
       {VARIANTS.map(({ variant, className: visibility }) => {
         const extent = STAGE_EXTENT[name][variant]
         return (
@@ -82,6 +90,7 @@ export function NetworkStage({ name, className = '' }: { name: StageName; classN
             frame={frameAt(STAGE_STATE[name], buildScene(variant))}
             extentX={extent.x}
             extentY={extent.y}
+            fit={STAGE_FIT[name]}
             className={visibility}
           />
         )

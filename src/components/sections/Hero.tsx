@@ -1,33 +1,33 @@
 import { NetworkStage } from '@/components/network/NetworkStill'
-import { ButtonLink } from '@/components/ui/ButtonLink'
-import { Section } from '@/components/ui/Section'
 import type { Dictionary } from '@/lib/i18n'
 import { SECTION_IDS } from '@/lib/site/sections'
+import { PartnerBar } from './PartnerBar'
 
-export function Hero({ dict }: { dict: Dictionary['hero'] }) {
+interface HeroProps {
+  dict: Dictionary['hero']
+  partners: Dictionary['partners']
+}
+
+/** One sentence over the full-screen network; the story continues on scroll. */
+export function Hero({ dict, partners }: HeroProps) {
   return (
-    <Section id={SECTION_IDS.hero} labelledBy="hero-title" className="pt-16 pb-20 sm:pt-24 sm:pb-28">
-      <div className="grid items-center gap-12 lg:grid-cols-12">
-        <div className="lg:col-span-7">
-          <h1
-            id="hero-title"
-            className="text-[2.5rem] leading-[1.08] font-medium tracking-tight text-balance sm:text-6xl lg:text-7xl th:leading-[1.35] th:tracking-normal"
-          >
-            {dict.title}
-          </h1>
-          <p className="mt-8 max-w-2xl text-lg text-ink-muted sm:text-xl">{dict.subtitle}</p>
-          <div className="mt-10 flex flex-wrap gap-3">
-            <ButtonLink href={`#${SECTION_IDS.contact}`}>{dict.primaryCta}</ButtonLink>
-            <ButtonLink href={`#${SECTION_IDS.products}`} variant="secondary">
-              {dict.secondaryCta}
-            </ButtonLink>
-          </div>
-        </div>
-        <NetworkStage
-          name="hero"
-          className="mx-auto aspect-square w-full max-w-72 sm:max-w-sm lg:col-span-5 lg:max-w-none"
-        />
+    <section
+      id={SECTION_IDS.hero}
+      aria-labelledby="hero-title"
+      className="relative isolate flex min-h-[calc(100svh-4.5rem)] flex-col overflow-hidden"
+    >
+      <NetworkStage name="hero" className="absolute inset-0 -z-10 opacity-45" />
+      <div className="mx-auto flex w-full max-w-page grow flex-col justify-center px-4 py-20 sm:px-8">
+        <h1
+          id="hero-title"
+          className="max-w-[16ch] text-[2.75rem] leading-[1.05] font-medium tracking-tight text-balance sm:text-7xl lg:text-8xl th:max-w-[20ch] th:leading-[1.3] th:tracking-normal"
+        >
+          {dict.title}
+        </h1>
       </div>
-    </Section>
+      <div className="mx-auto w-full max-w-page px-4 pb-8 sm:px-8">
+        <PartnerBar dict={partners} />
+      </div>
+    </section>
   )
 }

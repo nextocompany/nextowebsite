@@ -36,13 +36,30 @@ describe('buildScene', () => {
     BRAIN_NODES.forEach((p, i) => expect(scene.nodes[i].brain).toEqual(p))
   })
 
-  it('gives every node a cluster and only links nodes in the same cluster', () => {
+  it('only links nodes in the same cluster, and every cluster is used', () => {
     const scene = buildScene('wide')
     for (const [a, b] of scene.clusterEdges) {
       expect(scene.nodes[a].cluster).toBe(scene.nodes[b].cluster)
+      expect(scene.nodes[a].cluster).toBeGreaterThanOrEqual(0)
     }
-    const clusters = new Set(scene.nodes.map((n) => n.cluster))
+    const clusters = new Set(scene.nodes.filter((n) => n.cluster >= 0).map((n) => n.cluster))
     expect(clusters.size).toBe(scene.clusterCount)
+  })
+
+  it('puts every brain node in a cluster but leaves some extras out', () => {
+    const scene = buildScene('wide')
+    expect(scene.nodes.filter((n) => n.isBrain).every((n) => n.cluster >= 0)).toBe(true)
+    expect(scene.nodes.some((n) => n.cluster < 0)).toBe(true)
+  })
+
+  it('links the scattered network to near neighbours only', () => {
+    const scene = buildScene('wide')
+    expect(scene.scatterEdges.length).toBeGreaterThan(scene.nodes.length / 2)
+    for (const [a, b] of scene.scatterEdges) {
+      const p = scene.nodes[a].scatter
+      const q = scene.nodes[b].scatter
+      expect(Math.hypot(p.x - q.x, p.y - q.y)).toBeLessThanOrEqual(scene.scatterLinkMax)
+    }
   })
 
   it('scatters nodes inside the scatter bounds', () => {

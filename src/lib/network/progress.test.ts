@@ -22,25 +22,30 @@ describe('scrollPosition', () => {
 })
 
 describe('beatsAt', () => {
-  it('holds the formed brain at the hero', () => {
-    expect(beatsAt(0)).toEqual({ split: 0, cluster: 0, reach: 0 })
+  // Stages: 0 hero, 1 intro, 2 approach, 3 products, 4 beyond.
+  it('is a scattered network at the hero', () => {
+    expect(beatsAt(0)).toEqual({ form: 0, split: 0, cluster: 0, reach: 0 })
+  })
+
+  it('has formed the brain at the intro', () => {
+    expect(beatsAt(1)).toEqual({ form: 1, split: 0, cluster: 0, reach: 0 })
   })
 
   it('splits at the approach stage and rejoins before products', () => {
-    expect(beatsAt(1).split).toBe(1)
-    expect(beatsAt(1.75).split).toBe(0)
+    expect(beatsAt(2).split).toBe(1)
+    expect(beatsAt(2.75).split).toBe(0)
   })
 
   it('is clustered at products and reaching at the last stage', () => {
-    expect(beatsAt(2).cluster).toBe(1)
-    expect(beatsAt(3)).toEqual({ split: 0, cluster: 1, reach: 1 })
+    expect(beatsAt(3).cluster).toBe(1)
+    expect(beatsAt(4)).toEqual({ form: 1, split: 0, cluster: 1, reach: 1 })
   })
 
   it('never jumps', () => {
-    for (let u = 0; u < 3; u += 0.01) {
+    for (let u = 0; u < 4; u += 0.01) {
       const a = beatsAt(u)
       const b = beatsAt(u + 0.001)
-      for (const key of ['split', 'cluster', 'reach'] as const) {
+      for (const key of ['form', 'split', 'cluster', 'reach'] as const) {
         expect(Math.abs(a[key] - b[key])).toBeLessThan(0.05)
       }
     }
