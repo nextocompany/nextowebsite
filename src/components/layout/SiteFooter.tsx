@@ -53,7 +53,7 @@ export function SiteFooter({ locale }: SiteFooterProps) {
             >
               {dict.hero.primaryCta}
             </Link>
-            <dl className="grid gap-4 sm:grid-cols-2 sm:gap-8">
+            <dl className="flex flex-wrap gap-x-10 gap-y-4">
               <div>
                 <dt className="text-sm">{dict.contact.emailLabel}</dt>
                 <dd className="mt-1 font-mono select-all">

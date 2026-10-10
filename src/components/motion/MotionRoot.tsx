@@ -110,7 +110,10 @@ function pinApproach(ScrollTrigger: ScrollTriggerClass) {
 function landOnHash(lenis: LenisInstance) {
   const id = decodeURIComponent(window.location.hash.slice(1))
   const target = id ? document.getElementById(id) : null
-  if (target) lenis.scrollTo(target, { immediate: true, force: true })
+  if (!target) return
+  // Lenis caches the scroll limit from before the pin spacer existed; without this it stops short.
+  lenis.resize()
+  lenis.scrollTo(target, { immediate: true, force: true })
 }
 
 /** The hero headline lifts, fades and blurs away as the page scrolls past it (after the reference). */
