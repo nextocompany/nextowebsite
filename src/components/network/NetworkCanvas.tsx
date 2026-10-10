@@ -7,6 +7,7 @@ import { frameAt } from '@/lib/network/frame'
 import { smoothstep } from '@/lib/network/math'
 import { anchorAt, beatsAt, scrollPosition, stageScrollTargets, type StageRect } from '@/lib/network/progress'
 import { buildScene, type Variant } from '@/lib/network/scene'
+import { signalsAt } from '@/lib/network/signals'
 import { STAGE_EXTENT, STAGE_FIT, STAGE_ORDER, stageScale, type StageName } from '@/lib/network/stages'
 import { drawFrame, type Palette, type ReachTarget } from './drawFrame'
 
@@ -91,7 +92,6 @@ export function NetworkCanvas() {
       // Lenis already glides the scroll, so the network follows it directly.
       const shown = scrollPosition(targets, window.scrollY)
       const beats = beatsAt(shown, getApproachPin())
-      const drifting = beats.form < 1 && stages[0].visible
 
       ctx.clearRect(0, 0, window.innerWidth, window.innerHeight)
       if (stages.some((s) => s.visible)) {
@@ -99,11 +99,13 @@ export function NetworkCanvas() {
         const travel = shown < 1 ? 0 : Math.abs(shown - Math.round(shown))
         const fade =
           (1 - TRAVEL_DIM * smoothstep(0.1, 0.35, travel)) * (HERO_ALPHA + (1 - HERO_ALPHA) * beats.form)
-        const frame = frameAt({ ...beats, time: (now - start) / 1000 }, scene)
-        drawFrame(ctx, frame, anchorAt(stages.map((s) => s.rect), shown), palette, fade, measureTargets())
+        const seconds = (now - start) / 1000
+        const frame = frameAt({ ...beats, time: seconds }, scene)
+        const anchor = anchorAt(stages.map((s) => s.rect), shown)
+        drawFrame(ctx, frame, anchor, palette, fade, measureTargets(), signalsAt(frame, seconds))
+        // Signals keep moving while the network is on screen; off screen the loop rests until the next scroll.
+        schedule()
       }
-
-      if (drifting) schedule()
     }
 
     const schedule = () => {
