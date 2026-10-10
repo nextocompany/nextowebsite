@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { NetworkBackdrop } from '@/components/network/NetworkStill'
+import { SocialLinks } from './SocialLinks'
 import { getDictionary, LOCALE_PATH, type Locale } from '@/lib/i18n'
 import { CONTACT_EMAIL, LINE_ID, LINE_URL } from '@/lib/site/constants'
 import { NAV_SECTIONS, SECTION_IDS } from '@/lib/site/sections'
@@ -72,6 +73,7 @@ export function SiteFooter({ locale }: SiteFooterProps) {
                 </dd>
               </div>
             </dl>
+            <SocialLinks label={dict.footer.social} linkPrefix={dict.footer.socialLinkPrefix} />
           </div>
         </div>
       </div>

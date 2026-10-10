@@ -86,6 +86,8 @@ export const en: Dictionary = {
   },
   closing: 'Connecting data for better care.',
   footer: {
+    social: 'Nexto on social media',
+    socialLinkPrefix: 'Nexto on',
     rights: '© Nexto Co., Ltd. · Bangkok',
     privacy: 'Privacy',
   },

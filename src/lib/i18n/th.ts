@@ -86,6 +86,8 @@ export const th: Dictionary = {
   },
   closing: 'เชื่อมข้อมูล เพื่อการดูแลที่ดีขึ้น',
   footer: {
+    social: 'Nexto บนโซเชียลมีเดีย',
+    socialLinkPrefix: 'Nexto บน',
     rights: '© Nexto Co., Ltd. · กรุงเทพฯ',
     privacy: 'นโยบายความเป็นส่วนตัว',
   },

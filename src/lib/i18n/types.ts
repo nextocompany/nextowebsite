@@ -68,6 +68,10 @@ export interface Dictionary {
   }
   closing: string
   footer: {
+    /** Name of the social icon row. */
+    social: string
+    /** Before each channel name in an icon's label, e.g. "Nexto on" + "LinkedIn". */
+    socialLinkPrefix: string
     rights: string
     privacy: string
   }

@@ -4,6 +4,14 @@ export const LINE_ID = '@nextocompany'
 export const LINE_URL = 'https://line.me/R/ti/p/@nextocompany'
 export const SAANIQ_URL = 'https://saaniq.com'
 
+/** Nexto's own channels, shown as icons in the footer. */
+export const SOCIAL_LINKS = [
+  { name: 'Facebook', icon: 'facebook', href: 'https://www.facebook.com/nextocompany' },
+  { name: 'LINE', icon: 'line', href: LINE_URL },
+  { name: 'LinkedIn', icon: 'linkedin', href: 'https://www.linkedin.com/company/nextocompany' },
+  { name: 'X', icon: 'x', href: 'https://x.com/nextocomp' },
+] as const
+
 export interface Organisation {
   name: string
   /** White, transparent logo in public/partners/; without one the name shows as text. */
@@ -25,4 +33,9 @@ export const WORKING_WITH: ReadonlyArray<Organisation> = [
   { name: 'Tech It Up', logo: { src: '/partners/tiu.png', width: 792, height: 160 } },
 ]
 
-export const ENGINEERING_PARTNERS = ['Touch Technologies', '500 Miles'] as const
+export const ENGINEERING_PARTNERS = [
+  'Touch Technologies',
+  '500 Miles',
+  'The Enterprise Resources Training',
+  'Tech It Up',
+] as const

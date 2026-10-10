@@ -23,3 +23,30 @@ test('the hero "Working with" row shows every customer and partner logo', async 
   expect(names).toEqual(['Meditop', 'Touch Technologies', 'Anantariverhills Resort', 'Leaf Lake Kans', '500 Miles', 'VDS Business Center', 'The Enterprise Resources Training', 'Tech It Up'])
   for (const name of names) await expect(page.getByRole('img', { name: name! })).toBeVisible()
 })
+
+test('the footer links to every Nexto channel, each named and opening in a new tab', async ({ page }) => {
+  await page.goto('/')
+  const links = page.getByRole('navigation', { name: 'Nexto on social media' }).getByRole('link')
+  const found = await links.evaluateAll((items) =>
+    items.map((a) => ({ label: a.getAttribute('aria-label'), href: a.getAttribute('href'), target: a.getAttribute('target'), rel: a.getAttribute('rel') })),
+  )
+  expect(found).toEqual(
+    [
+      ['Facebook', 'https://www.facebook.com/nextocompany'],
+      ['LINE', 'https://line.me/R/ti/p/@nextocompany'],
+      ['LinkedIn', 'https://www.linkedin.com/company/nextocompany'],
+      ['X', 'https://x.com/nextocomp'],
+    ].map(([name, href]) => ({ label: `Nexto on ${name}`, href, target: '_blank', rel: 'noopener noreferrer' })),
+  )
+  for (const link of await links.all()) await expect(link).toBeVisible()
+})
+
+test('engineering partnerships name all four partners', async ({ page }) => {
+  await page.goto('/')
+  await expect(page.locator('[data-partner-group] [data-partner]')).toHaveText([
+    'Touch Technologies',
+    '500 Miles',
+    'The Enterprise Resources Training',
+    'Tech It Up',
+  ])
+})
