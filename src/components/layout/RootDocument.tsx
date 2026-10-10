@@ -22,8 +22,9 @@ export function RootDocument({ locale, children }: RootDocumentProps) {
         <script dangerouslySetInnerHTML={{ __html: MOTION_FLAG }} />
         {children}
       </body>
-      <Script src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`} strategy="afterInteractive" />
-      <Script id="gtag-init" strategy="afterInteractive">
+      {/* Analytics waits for idle so it never competes with the first paint. */}
+      <Script src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`} strategy="lazyOnload" />
+      <Script id="gtag-init" strategy="lazyOnload">
         {`window.dataLayer = window.dataLayer || [];
 function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date());

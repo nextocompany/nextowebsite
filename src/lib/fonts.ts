@@ -20,6 +20,8 @@ export const plexMono = IBM_Plex_Mono({
   weight: ['400', '500'],
   variable: '--font-plex-mono',
   display: 'swap',
+  // Labels only, never above the fold's headline: don't compete with the fonts the hero needs.
+  preload: false,
 })
 
 export const fontVariables = [montserrat.variable, anuphan.variable, plexMono.variable].join(' ')

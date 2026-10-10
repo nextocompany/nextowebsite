@@ -34,6 +34,8 @@ export function LanguageSwitch({ href, hrefLang, label, ariaLabel }: LanguageSwi
   return (
     <Link
       href={href}
+      // Switching is a full page load (other root layout), so a prefetched payload is never used.
+      prefetch={false}
       hrefLang={hrefLang}
       lang={hrefLang}
       aria-label={ariaLabel}

@@ -33,13 +33,13 @@ export function SiteFooter({ locale }: SiteFooterProps) {
             <ul className="grid grid-cols-2 gap-x-8 gap-y-4 text-lg">
               {NAV_SECTIONS.map(({ key, id }) => (
                 <li key={id}>
-                  <Link href={`${home}#${id}`} className={LINK}>
+                  <Link prefetch={false} href={`${home}#${id}`} className={LINK}>
                     {dict.nav[key]}
                   </Link>
                 </li>
               ))}
               <li>
-                <Link href="/privacy/" className={LINK}>
+                <Link prefetch={false} href="/privacy/" className={LINK}>
                   {dict.footer.privacy}
                 </Link>
               </li>
@@ -48,6 +48,7 @@ export function SiteFooter({ locale }: SiteFooterProps) {
 
           <div className="flex flex-col items-start gap-6">
             <Link
+              prefetch={false}
               href={`${home}#${SECTION_IDS.contact}`}
               className="inline-flex min-h-12 items-center rounded-[3px] bg-mist px-6 font-medium text-charcoal transition-colors hover:bg-white"
             >
