@@ -207,6 +207,18 @@ describe('product shapes (products stage)', () => {
   })
 })
 
+describe('trunk (beyond)', () => {
+  it('bridges the two main clusters with one link between their nearest nodes', () => {
+    for (const variant of VARIANTS) {
+      const scene = buildScene(variant)
+      expect(scene.trunkEdges).toHaveLength(1)
+      for (const [a, b] of scene.trunkEdges) {
+        expect([scene.nodes[a].cluster, scene.nodes[b].cluster].sort()).toEqual([PRODUCT.endyra, PRODUCT.anvira].sort())
+      }
+    }
+  })
+})
+
 function connected(members: number[], edges: ReadonlyArray<readonly [number, number]>): boolean {
   const reached = new Set([members[0]])
   let grew = true

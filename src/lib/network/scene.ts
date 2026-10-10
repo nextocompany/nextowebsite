@@ -64,6 +64,8 @@ export interface Scene {
   readonly lens: number
   /** Anvira nodes from left to right along the trace. */
   readonly trace: ReadonlyArray<number>
+  /** Beyond: links between the two main clusters, one network branching both ways. */
+  readonly trunkEdges: ReadonlyArray<readonly [number, number]>
   readonly scatterLinkMax: number
   readonly scatterBounds: Point
   readonly clusterCount: number
@@ -324,6 +326,7 @@ export function buildScene(variant: Variant): Scene {
     shapeEdges: shapes.edges,
     lens: shapes.lens,
     trace: shapes.trace,
+    trunkEdges: trunkLinks(nodes),
     coreEdges,
     clusterEdges,
     satelliteEdges,
@@ -374,4 +377,14 @@ function productShapes(nodes: ReadonlyArray<Placed>, clusters: ReadonlyArray<Clu
   })
 
   return { positions, edges, lens, trace }
+}
+
+/** The nearest pair between the two main clusters: one trunk, so the network reads as branching. */
+function trunkLinks(nodes: ReadonlyArray<Placed>): Array<[number, number]> {
+  const left = nodes.flatMap((n, i) => (n.cluster === PRODUCT.endyra ? [i] : []))
+  const right = nodes.flatMap((n, i) => (n.cluster === PRODUCT.anvira ? [i] : []))
+  const [nearest] = left
+    .flatMap((a) => right.map((b) => ({ a, b, d: distance(nodes[a].clusterPos, nodes[b].clusterPos) })))
+    .sort((p, q) => p.d - q.d)
+  return [[nearest.a, nearest.b]]
 }

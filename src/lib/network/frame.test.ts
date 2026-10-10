@@ -133,6 +133,31 @@ describe('frameAt', () => {
     }
   })
 
+  it('beyond: the Saaniq group (left cluster) mixes teal and coral, and a trunk links the two branches', () => {
+    const before = frameAt({ ...UNITED, connect: 1, cluster: 1 }, scene)
+    const after = frameAt({ ...UNITED, connect: 1, cluster: 1, reach: 1 }, scene)
+    const saaniq = scene.nodes.flatMap((n, i) => (n.cluster === PRODUCT.endyra ? [i] : []))
+    const tones = new Set(saaniq.map((i) => after.nodes[i].tone))
+    expect(tones).toEqual(new Set(['teal', 'coral']))
+    for (const i of saaniq) expect(after.nodes[i].toneAmount).toBeGreaterThan(0.5)
+    expect(edgesOf(before, 'trunk').every((e) => e.alpha === 0)).toBe(true)
+    expect(edgesOf(after, 'trunk').length).toBeGreaterThan(0)
+    expect(edgesOf(after, 'trunk').every((e) => e.alpha === 1)).toBe(true)
+  })
+
+  it('beyond colours fade through ink from Endyra teal, never jumping', () => {
+    const saaniq = scene.nodes.flatMap((n, i) => (n.cluster === PRODUCT.endyra ? [i] : []))
+    const colourAt = (reach: number, shape: number, i: number) => {
+      const n = frameAt({ ...UNITED, connect: 1, cluster: 1, shape, reach }, scene).nodes[i]
+      return n.tone === 'teal' ? n.toneAmount : n.tone === 'coral' ? -n.toneAmount : 0
+    }
+    for (const i of saaniq) {
+      for (let r = 0; r < 1; r += 0.01) {
+        expect(Math.abs(colourAt(r + 0.002, 0.4, i) - colourAt(r, 0.4, i))).toBeLessThan(0.05)
+      }
+    }
+  })
+
   it('passes reach through for the renderer', () => {
     expect(frameAt({ ...UNITED, cluster: 1, reach: 0.4 }, scene).reach).toBe(0.4)
   })

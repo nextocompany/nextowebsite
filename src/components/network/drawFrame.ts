@@ -3,6 +3,7 @@ import { mixHex, type Rgb } from '@/lib/network/color'
 import type { Frame, Tone } from '@/lib/network/frame'
 import { polylineAt } from '@/lib/network/path'
 import type { StageRect } from '@/lib/network/progress'
+import type { ReachSignal } from '@/lib/network/reachSignals'
 import type { Signals } from '@/lib/network/signals'
 import { STROKE } from '@/lib/network/stages'
 
@@ -14,6 +15,8 @@ export interface ReachTarget {
   entry: Point
   /** Gutter corner and the point just left of the name. */
   route: ReadonlyArray<Point>
+  /** The signal on its way down this line, once the lines are drawn. */
+  signal?: ReachSignal
 }
 
 const paint = (palette: Palette, tone: Tone, amount: number) => mixHex(palette.ink, palette[tone], amount)
@@ -114,16 +117,23 @@ function drawReach(
       const p = { x: px(n.x), y: py(n.y) }
       if (Math.hypot(p.x - t.entry.x, p.y - t.entry.y) < Math.hypot(start.x - t.entry.x, start.y - t.entry.y)) start = p
     }
-    const [first, ...rest] = polylineAt([start, t.entry, ...t.route], frame.reach)
+    const path = [start, t.entry, ...t.route]
+    const [first, ...rest] = polylineAt(path, frame.reach)
     ctx.beginPath()
     ctx.moveTo(first.x, first.y)
     for (const p of rest) ctx.lineTo(p.x, p.y)
     ctx.stroke()
     if (frame.reach >= 1) {
       const end = t.route[t.route.length - 1]
-      ctx.beginPath()
-      ctx.arc(end.x, end.y, STROKE.reach * scale * 2.2, 0, Math.PI * 2)
-      ctx.fill()
+      dot(ctx, end.x, end.y, STROKE.reach * scale * 2.2)
+      if (t.signal?.travelling) {
+        const at = polylineAt(path, t.signal.along).at(-1) ?? start
+        const r = STROKE.reach * scale * 2.6
+        ctx.globalAlpha = fade * PULSE.haloAlpha
+        dot(ctx, at.x, at.y, r * PULSE.halo / PULSE.core)
+        ctx.globalAlpha = fade
+        dot(ctx, at.x, at.y, r)
+      }
     }
   }
 }

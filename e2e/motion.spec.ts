@@ -81,6 +81,21 @@ test.describe('desktop 1440×900', () => {
     expect(await topOf(page, HOW_COLUMN)).toBeLessThan(0)
   })
 
+  test('beyond lights each engineering partner in turn as a signal reaches it', async ({ page }) => {
+    await page.goto('/#beyond')
+    await settle(page)
+    const seen = new Set<string>()
+    for (let i = 0; i < 60; i++) {
+      const lit = await page.locator('[data-partner-group] [data-partner][data-lit="true"]').evaluateAll((els) =>
+        els.map((el) => el.getAttribute('data-partner')!),
+      )
+      expect(lit.length, 'one name at a time').toBeLessThanOrEqual(1)
+      lit.forEach((name) => seen.add(name))
+      await page.waitForTimeout(100)
+    }
+    expect([...seen].sort()).toEqual(['500 Miles', 'Tech It Up', 'The Enterprise Resources Training', 'Touch Technologies'])
+  })
+
   for (const id of ['approach', 'how-we-work', 'products', 'beyond', 'contact']) {
     test(`a link to #${id} lands under the header`, async ({ page }) => {
       await page.goto(`/#${id}`)
@@ -172,6 +187,7 @@ test.describe('reduced motion', () => {
     expect(await page.evaluate(() => document.documentElement.classList.contains('lenis'))).toBe(false)
     expect(await pinStarts(page)).toEqual([])
     expect(await page.locator('[data-stepping]').count()).toBe(0)
+    expect(await page.locator('[data-lit]').count()).toBe(0)
     expect(await page.locator('[data-stage] .network-still:visible').count()).toBeGreaterThanOrEqual(6)
   })
 })

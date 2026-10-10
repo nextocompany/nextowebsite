@@ -49,9 +49,9 @@ describe('beatsAt', () => {
     expect(beatsAt(5)).toEqual({ form: 1, split: 0, start: 1, connect: 1, grow: 1, cluster: 1, shape: 0, reach: 1 })
   })
 
-  it('matches every stage still frame at the stage position (stills never draw reach lines)', () => {
+  it('matches every stage still frame at the stage position', () => {
     STAGE_ORDER.forEach((name, i) => {
-      expect({ ...beatsAt(i), reach: 0 }).toEqual({ ...STAGE_STATE[name], reach: 0 })
+      expect(beatsAt(i)).toEqual(STAGE_STATE[name])
     })
   })
 

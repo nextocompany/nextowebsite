@@ -7,6 +7,7 @@ import { frameAt, type BeatState } from '@/lib/network/frame'
 import { smoothstep } from '@/lib/network/math'
 import { anchorAt, beatsAt, scrollPosition, stageScrollTargets, type StageRect } from '@/lib/network/progress'
 import { buildScene, type Variant } from '@/lib/network/scene'
+import { reachSignalsAt } from '@/lib/network/reachSignals'
 import { signalsAt } from '@/lib/network/signals'
 import { howWeWorkExtent } from '@/lib/network/zoom'
 import { STAGE_EXTENT, STAGE_FIT, STAGE_ORDER, stageScale, type StageName } from '@/lib/network/stages'
@@ -48,16 +49,21 @@ function stageRect(stage: MeasuredStage, variant: Variant, beats: BeatState): St
 const GUTTER = 16
 const NAME_GAP = 8
 
-function measureTargets(): ReachTarget[] {
+/** Every partner name in the beyond list (page order), with the gutter route a reach line takes to it. */
+function measureTargets() {
   return Array.from(document.querySelectorAll<HTMLElement>('[data-partner-group] [data-partner]')).flatMap((el) => {
     const r = el.getBoundingClientRect()
     const group = el.closest('[data-partner-group]')?.getBoundingClientRect()
-    if (!group || r.bottom < 0 || r.top > window.innerHeight) return []
+    if (!group) return []
     const x = Math.max(NAME_GAP, group.left - GUTTER)
     const y = r.top + r.height / 2
-    return [{ entry: { x, y: group.top - GUTTER }, route: [{ x, y }, { x: r.left - NAME_GAP, y }] }]
+    const target: ReachTarget = { entry: { x, y: group.top - GUTTER }, route: [{ x, y }, { x: r.left - NAME_GAP, y }] }
+    return [{ el, target, visible: r.bottom > 0 && r.top < window.innerHeight }]
   })
 }
+
+/** Names light up (CSS, data-lit) while a reach signal has just arrived at them. */
+const LIT_FROM = 0.35
 
 /**
  * The Nexto brain across four beats, drawn on one fixed canvas that travels
@@ -107,7 +113,12 @@ export function NetworkCanvas() {
         const seconds = (now - start) / 1000
         const frame = frameAt({ ...beats, time: seconds }, scene)
         const anchor = anchorAt(stages.map((s) => stageRect(s, scene.variant, beats)), shown)
-        drawFrame(ctx, frame, anchor, palette, fade, measureTargets(), signalsAt(frame, seconds))
+        const partners = measureTargets()
+        const reaching = reachSignalsAt(seconds, partners.length)
+        const arrived = frame.reach >= 1
+        partners.forEach((p, i) => (p.el.dataset.lit = String(arrived && reaching[i].lit > LIT_FROM)))
+        const targets = partners.flatMap((p, i) => (p.visible ? [{ ...p.target, signal: reaching[i] }] : []))
+        drawFrame(ctx, frame, anchor, palette, fade, targets, signalsAt(frame, seconds))
         // Signals keep moving while the network is on screen; off screen the loop rests until the next scroll.
         schedule()
       }

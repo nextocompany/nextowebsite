@@ -35,7 +35,7 @@ export interface FrameNode {
   toneAmount: number
 }
 
-export type EdgeKind = 'core' | 'cluster' | 'satellite' | 'scatter' | 'partner' | 'ring' | 'spoke' | 'trace'
+export type EdgeKind = 'core' | 'cluster' | 'satellite' | 'scatter' | 'partner' | 'ring' | 'spoke' | 'trace' | 'trunk'
 
 export interface FrameEdge {
   kind: EdgeKind
@@ -82,7 +82,7 @@ export function frameAt(state: BeatState, scene: Scene): Frame {
   const detail = lerp(SCATTER_DETAIL, 1, form)
   const litByWave = startWave(state.start, scene)
 
-  const nodes = scene.nodes.map((n): FrameNode => {
+  const nodes = scene.nodes.map((n, index): FrameNode => {
     // Offset from time 0, so a still frame sits exactly on the scatter.
     const wave = (shift: number) =>
       Math.sin(time * n.drift.speed + n.drift.phase + shift) - Math.sin(n.drift.phase + shift)
@@ -109,7 +109,12 @@ export function frameAt(state: BeatState, scene: Scene): Frame {
       y: lerp(gy, ty, cluster),
       r: NODE_RADIUS * detail * (n.isHub ? lerp(1, 1.5, cluster) : 1) * (isProduct(n.cluster) ? lerp(1, SHAPE_NODE, shown) : 1),
       alpha,
-      ...productTone(n.cluster, shown, lit > toneAmount ? { tone: 'teal', toneAmount: lit } : { tone, toneAmount }),
+      ...beyondTone(
+        n.cluster,
+        index,
+        state.reach * cluster,
+        productTone(n.cluster, shown, lit > toneAmount ? { tone: 'teal', toneAmount: lit } : { tone, toneAmount }),
+      ),
     }
   })
 
@@ -150,6 +155,7 @@ export function frameAt(state: BeatState, scene: Scene): Frame {
       })),
       ...scene.satelliteEdges.map(plain('satellite', connect * (1 - cluster))),
       ...scene.partnerEdges.map(plain('partner', grow * (1 - cluster))),
+      ...scene.trunkEdges.map(plain('trunk', state.reach * cluster)),
       ...scene.scatterEdges.map(plain('scatter', SCATTER_EDGE * (1 - smoothstep(0, 0.6, state.form)))),
     ],
     trace: scene.trace,
@@ -178,21 +184,28 @@ function startWave(start: number, scene: Scene): (n: Scene['nodes'][number]) => 
 const PRODUCT_TONE: Readonly<Record<number, Tone>> = { [PRODUCT.endyra]: 'teal', [PRODUCT.anvira]: 'coral' }
 const isProduct = (cluster: number) => cluster in PRODUCT_TONE
 
+type Toned = { tone: Tone; toneAmount: number }
+
 /**
- * Endyra's nodes turn teal and Anvira's coral as their shapes form. A node already
- * in the other accent (Anvira's hub) fades to ink first, so colours never jump.
+ * Moves a node's colour towards `tone` by `amount`. A node already in the other
+ * accent fades to ink first, so colours never jump from teal to coral.
  */
-function productTone(
-  cluster: number,
-  shown: number,
-  base: { tone: Tone; toneAmount: number },
-): { tone: Tone; toneAmount: number } {
-  const tone = PRODUCT_TONE[cluster]
-  if (!tone || shown <= 0) return base
+function crossTone(base: Toned, tone: Tone, amount: number): Toned {
+  if (amount <= 0) return base
   if (base.tone === tone || base.toneAmount <= 0) {
-    return { tone, toneAmount: Math.max(base.tone === tone ? base.toneAmount : 0, shown) }
+    return { tone, toneAmount: Math.max(base.tone === tone ? base.toneAmount : 0, amount) }
   }
-  return shown < 0.5
-    ? { tone: base.tone, toneAmount: base.toneAmount * (1 - 2 * shown) }
-    : { tone, toneAmount: 2 * shown - 1 }
+  return amount < 0.5 ? { tone: base.tone, toneAmount: base.toneAmount * (1 - 2 * amount) } : { tone, toneAmount: 2 * amount - 1 }
+}
+
+/** Endyra's nodes turn teal and Anvira's coral as their shapes form. */
+function productTone(cluster: number, shown: number, base: Toned): Toned {
+  const tone = PRODUCT_TONE[cluster]
+  return tone ? crossTone(base, tone, shown) : base
+}
+
+/** Beyond: the left cluster becomes the Saaniq branch, data and people side by side (teal and coral). */
+function beyondTone(cluster: number, index: number, amount: number, base: Toned): Toned {
+  if (cluster !== PRODUCT.endyra) return base
+  return crossTone(base, index % 2 === 0 ? 'teal' : 'coral', amount)
 }
