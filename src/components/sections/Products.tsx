@@ -5,7 +5,7 @@ import { StatusChip } from '@/components/ui/StatusChip'
 import type { Dictionary } from '@/lib/i18n'
 import { SECTION_IDS } from '@/lib/site/sections'
 
-const CARD = 'flex min-h-56 flex-col justify-between gap-10 rounded-3xl bg-ground-raised p-8 sm:p-10'
+const CARD = 'flex min-h-56 flex-col justify-between gap-10 rounded-3xl bg-ground-raised p-6 sm:p-10'
 
 export function Products({ dict }: { dict: Dictionary['products'] }) {
   const { endyra, anvira } = dict
@@ -22,7 +22,7 @@ export function Products({ dict }: { dict: Dictionary['products'] }) {
       <NetworkStage name="products" className="mt-8 aspect-[4/3] w-full md:aspect-[4/1]" />
       <ul className="mt-8 grid gap-4 md:grid-cols-2">
         <li data-fade className={CARD}>
-          <div className="flex items-start justify-between gap-4">
+          <div className="flex flex-wrap items-start justify-between gap-4">
             {/* Endyra as text: the current Endyra logo is off-system. */}
             <h3 lang="en" className="text-4xl font-semibold tracking-tight">
               {endyra.name}
@@ -32,7 +32,7 @@ export function Products({ dict }: { dict: Dictionary['products'] }) {
           <p className="max-w-sm text-lg text-ink-muted">{endyra.description}</p>
         </li>
         <li data-fade className={CARD}>
-          <div className="flex items-start justify-between gap-4">
+          <div className="flex flex-wrap items-start justify-between gap-4">
             <h3>
               <BrandLogo basePath="/brand/anvira-wordmark" alt={anvira.name} width={165} height={42} className="h-10 w-auto" />
             </h3>

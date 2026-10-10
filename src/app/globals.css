@@ -93,6 +93,8 @@
    */
   .grid-section {
     border-top: 1px solid var(--grid-line);
+    /* A full-width column puts the edge dots half off-screen; clip them there instead of widening the page. */
+    overflow-x: clip;
   }
 
   .grid-column {
