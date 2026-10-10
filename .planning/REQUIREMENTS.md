@@ -64,7 +64,7 @@
 
 ### Launch gates (must all be true before production)
 
-- [x] **GATE-01**: Written consent received from all customers and partners (2026-10-10). Hero "Working with" lists Meditop, Touch Technologies and 500 Miles as text; logos replace names as the files arrive (`WORKING_WITH` in src/lib/site/constants.ts).
+- [x] **GATE-01**: Written consent received from all customers and partners (2026-10-10). Hero "Working with" shows the logos of Meditop, Touch Technologies, Anantariverhills Resort, Leaf Lake Kans, 500 Miles, VDS Business Center, The Enterprise Resources Training (ERT) and Tech It Up (TiU) (`WORKING_WITH` in src/lib/site/constants.ts).
 - [x] **GATE-02**: Decided 2026-10-10: the Anvira logo may be shown on the site (user accepted the pre-filing risk).
 - [x] **GATE-03**: Decided 2026-10-10: link the Saaniq card to saaniq.com (a new Saaniq site is coming).
 - [ ] **GATE-04**: User reviews a preview deployment and explicitly approves production.

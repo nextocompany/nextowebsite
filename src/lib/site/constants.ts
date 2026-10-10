@@ -6,14 +6,23 @@ export const SAANIQ_URL = 'https://saaniq.com'
 
 export interface Organisation {
   name: string
-  /** Light-on-dark logo in public/partners/; the name shows as text until it arrives. */
+  /** White, transparent logo in public/partners/; without one the name shows as text. */
   logo?: { src: string; width: number; height: number }
 }
 
-/** Customers and partners in the hero "Working with" row. Written consent received 2026-10-10. */
+/**
+ * Customers and partners in the hero "Working with" row (written consent received 2026-10-10).
+ * Logos are single-colour white marks made from the partners' files (see public/partners/).
+ */
 export const WORKING_WITH: ReadonlyArray<Organisation> = [
-  { name: 'Meditop' },
-  { name: 'Touch Technologies' },
-  { name: '500 Miles' },
+  { name: 'Meditop', logo: { src: '/partners/meditop.png', width: 170, height: 160 } },
+  { name: 'Touch Technologies', logo: { src: '/partners/touch-technologies.png', width: 377, height: 160 } },
+  { name: 'Anantariverhills Resort', logo: { src: '/partners/ananta-river-hills.png', width: 202, height: 160 } },
+  { name: 'Leaf Lake Kans', logo: { src: '/partners/leaf-lake-kan.png', width: 170, height: 160 } },
+  { name: '500 Miles', logo: { src: '/partners/500-miles.png', width: 160, height: 160 } },
+  { name: 'VDS Business Center', logo: { src: '/partners/vds.png', width: 232, height: 160 } },
+  { name: 'The Enterprise Resources Training', logo: { src: '/partners/ert.png', width: 666, height: 160 } },
+  { name: 'Tech It Up', logo: { src: '/partners/tiu.png', width: 792, height: 160 } },
 ]
+
 export const ENGINEERING_PARTNERS = ['Touch Technologies', '500 Miles'] as const

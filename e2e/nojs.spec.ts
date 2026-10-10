@@ -17,9 +17,9 @@ for (const locale of LOCALES) {
   })
 }
 
-test('the hero "Working with" row names every customer and partner', async ({ page }) => {
+test('the hero "Working with" row shows every customer and partner logo', async ({ page }) => {
   await page.goto('/')
   const names = await page.locator('#partners [data-partner]').evaluateAll((items) => items.map((li) => li.getAttribute('data-partner')))
-  expect(names).toEqual(['Meditop', 'Touch Technologies', '500 Miles'])
-  for (const name of names) await expect(page.locator(`#partners [data-partner="${name}"]`)).toBeVisible()
+  expect(names).toEqual(['Meditop', 'Touch Technologies', 'Anantariverhills Resort', 'Leaf Lake Kans', '500 Miles', 'VDS Business Center', 'The Enterprise Resources Training', 'Tech It Up'])
+  for (const name of names) await expect(page.getByRole('img', { name: name! })).toBeVisible()
 })
