@@ -119,7 +119,7 @@ Rebuild the single page around the new positioning, in Thai and English, light a
 **Depends on**: Phase 6
 **Requirements**: QA-01..05, GATE-01..04
 **Success Criteria**:
-  1. Playwright screenshots (320/768/1024/1440 × light/dark × TH/EN, plus reduced motion) reviewed
+  1. Playwright screenshots (320/768/1024/1440 × TH/EN, dark only since the redesign, plus reduced motion) reviewed
   2. Lighthouse mobile 90+, LCP < 2.5s, CLS < 0.1; landing JS gzipped size measured and under 150 kB
   3. hreflang, canonical, sitemap and per-locale OG verified in the built `out/`
   4. Preview deployed (Cloudflare preview branch or version upload) and link given to the user
@@ -136,9 +136,9 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7
 | 2. Page | 3/3 | Complete | 2026-02-22 |
 | 3. Quality + Ship | 3/3 | Complete | 2026-02-22 |
 | 4. Foundation v2 | 1/1 | Complete | 2026-10-10 |
-| 5. Sections + copy | 0/? | Not started | - |
-| 6. Network + motion | 0/? | Not started | - |
-| 7. Quality + preview | 0/? | Not started | - |
+| 5. Sections + copy | 1/1 | Complete | 2026-10-10 |
+| 6. Network + motion | 1/1 | Complete (redesigned) | 2026-10-10 |
+| 7. Quality + preview | 0/1 | In progress (QA done; preview deploy pending) | - |
 
 ---
 *Roadmap created: 2026-02-17*

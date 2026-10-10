@@ -56,15 +56,15 @@
 
 ### Quality
 
-- [ ] **QA-01**: Vitest: network layout/interpolation, TH/EN key parity, mailto builder (Thai subjects encoded).
-- [ ] **QA-02**: Playwright screenshots at 320, 768, 1024, 1440 in light and dark, plus one reduced-motion run, for `/` and `/en`.
-- [ ] **QA-03**: Lighthouse mobile 90+, LCP < 2.5s, CLS < 0.1. JS budget waived by the user on 2026-10-10 for Lenis + GSAP: landing JS measured 193 kB gz (Playwright, all loaded .js), motion chunks load after hydration.
-- [ ] **QA-04**: Keyboard reaches every link and button with a visible focus ring; automated a11y check passes.
-- [ ] **QA-05**: OG image regenerated with the new brand; titles and descriptions per locale.
+- [x] **QA-01**: Vitest: network layout/interpolation, TH/EN key parity, mailto builder (Thai subjects encoded).
+- [x] **QA-02**: Playwright suite (`npm run test:e2e`, against `out/`): screenshots at 320, 768, 1024, 1440 for `/` and `/en/` (dark only since the redesign), overflow and clipped-content checks at 320–1920, motion/pin/anchor/language-switch flows, reduced-motion and no-JS runs, production CSP applied with zero violations or console errors.
+- [ ] **QA-03**: Lighthouse mobile 90+, LCP < 2.5s, CLS < 0.1. JS budget waived by the user on 2026-10-10 for Lenis + GSAP: landing JS measured 193 kB gz (Playwright, all loaded .js), motion chunks load after hydration. Measured 2026-10-10 (local, gzip server, Lighthouse 13.5 mobile, 3 runs): performance 93–97, CLS 0, TBT ≤ 70 ms, FCP 1.2 s, accessibility/best practices/SEO 100; LCP 2.5–3.1 s (simulated). With all JS blocked LCP is still 2.3 s, so the remaining gap is the Next/React runtime. Re-measure on the preview.
+- [x] **QA-04**: Keyboard reaches every link and button with a visible focus ring; automated a11y check passes.
+- [x] **QA-05**: OG image per locale (`public/og-th.png`, `public/og-en.png`, rendered from the built site by `npm run og`); titles and descriptions per locale.
 
 ### Launch gates (must all be true before production)
 
-- [ ] **GATE-01**: Written consent and logo files from Meditop, Touch Technologies and 500 Miles — or the page ships with names as text.
+- [x] **GATE-01**: Written consent received from all customers and partners (2026-10-10). Hero "Working with" lists Meditop, Touch Technologies and 500 Miles as text; logos replace names as the files arrive (`WORKING_WITH` in src/lib/site/constants.ts).
 - [x] **GATE-02**: Decided 2026-10-10: the Anvira logo may be shown on the site (user accepted the pre-filing risk).
 - [x] **GATE-03**: Decided 2026-10-10: link the Saaniq card to saaniq.com (a new Saaniq site is coming).
 - [ ] **GATE-04**: User reviews a preview deployment and explicitly approves production.
