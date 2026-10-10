@@ -48,6 +48,8 @@ See `.planning/REQUIREMENTS.md` (v2 section). v1 requirements are archived there
 | Montserrat + Anuphan via `next/font` | Brand book typography; self-hosting satisfies CSP | v2 |
 | No team-experience section, no founder section | User decision 2026-10-09/10 | v2 |
 | Manverra and Careyra removed | Discontinued products | v2 |
+| Approach copy: "Everything we build draws a clear line…" / "ทุกระบบที่เราสร้างแบ่งหน้าที่ชัดเจน…" | Drops the logo reference; user approved 2026-10-10 | v2 |
+| Approach is pinned (ScrollTrigger) for one viewport at lg+ and min-height 640px; the split plays inside the pin | Reference-style pinned beat; the page column is pinned, not the section, so anchors and the language switch keep the real section top. Narrow, short, reduced-motion and no-JS screens scroll freely | v2 |
 | Light theme only, neutral palette, no motion (v1) | Superseded by v2 | Replaced |
 
 ---

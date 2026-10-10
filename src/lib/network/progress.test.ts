@@ -71,6 +71,34 @@ describe('beatsAt', () => {
   })
 })
 
+describe('beatsAt with the approach pin', () => {
+  // When Approach is pinned, its pin progress (0 → 1) drives the split instead of the page position.
+  it('stays whole on the way in, before the pin starts', () => {
+    expect(beatsAt(1.6, 0).split).toBe(0)
+    expect(beatsAt(1.99, 0).split).toBe(0)
+  })
+
+  it('splits fully in the middle of the pin, wherever the page position sits', () => {
+    expect(beatsAt(2, 0.55).split).toBe(1)
+    expect(beatsAt(1.98, 0.55).split).toBe(1)
+  })
+
+  it('rejoins before the pin releases, so the way out to how we work is whole', () => {
+    expect(beatsAt(2, 1).split).toBe(0)
+    expect(beatsAt(2.3, 1).split).toBe(0)
+  })
+
+  it('leaves the other beats to the page position', () => {
+    expect({ ...beatsAt(3, 1), split: 0 }).toEqual({ ...beatsAt(3), split: 0 })
+  })
+
+  it('never jumps across the pin', () => {
+    for (let p = 0; p < 1; p += 0.01) {
+      expect(Math.abs(beatsAt(2, p).split - beatsAt(2, p + 0.001).split)).toBeLessThan(0.05)
+    }
+  })
+})
+
 describe('anchorAt', () => {
   const rects: StageRect[] = [
     { cx: 100, cy: 100, scale: 50 },

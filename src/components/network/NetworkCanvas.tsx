@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
+import { getApproachPin, subscribeApproachPin } from '@/lib/motion/pinStore'
 import { parseHex, type Rgb } from '@/lib/network/color'
 import { frameAt } from '@/lib/network/frame'
 import { smoothstep } from '@/lib/network/math'
@@ -89,7 +90,7 @@ export function NetworkCanvas() {
       const targets = stageScrollTargets(stages.map((s) => s.rect.cy), window.scrollY, window.innerHeight, maxScroll)
       // Lenis already glides the scroll, so the network follows it directly.
       const shown = scrollPosition(targets, window.scrollY)
-      const beats = beatsAt(shown)
+      const beats = beatsAt(shown, getApproachPin())
       const drifting = beats.form < 1 && stages[0].visible
 
       ctx.clearRect(0, 0, window.innerWidth, window.innerHeight)
@@ -117,12 +118,14 @@ export function NetworkCanvas() {
 
     resize()
     schedule()
+    const unsubscribePin = subscribeApproachPin(schedule)
     window.addEventListener('scroll', schedule, { passive: true })
     window.addEventListener('resize', onResize)
     document.addEventListener('visibilitychange', schedule)
 
     return () => {
       cancelAnimationFrame(raf)
+      unsubscribePin()
       window.removeEventListener('scroll', schedule)
       window.removeEventListener('resize', onResize)
       document.removeEventListener('visibilitychange', schedule)

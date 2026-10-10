@@ -39,11 +39,16 @@ export function scrollPosition(centers: ReadonlyArray<number>, viewportCenter: n
 /**
  * Every beat as a function of scroll position along the stages
  * (0 hero, 1 intro, 2 approach, 3 how we work, 4 products, 5 beyond).
+ * While Approach is pinned, `approachPin` (its pin progress, 0 → 1) drives
+ * the whole split, so it plays out inside the pin and is whole on either side.
  */
-export function beatsAt(u: number): BeatState {
+export function beatsAt(u: number, approachPin?: number): BeatState {
   return {
     form: smoothstep(0.1, 0.9, u),
-    split: window01(u, 1.3, 1.85, 2.15, 2.7),
+    split:
+      approachPin === undefined
+        ? window01(u, 1.3, 1.85, 2.15, 2.7)
+        : window01(approachPin, 0.05, 0.4, 0.7, 0.95),
     connect: smoothstep(2.4, 3, u),
     cluster: smoothstep(3.3, 4, u),
     reach: smoothstep(4.3, 5, u),
