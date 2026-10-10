@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest'
 import { frameAt, type BeatState } from './frame'
-import { buildScene } from './scene'
+import { buildScene, PRODUCT } from './scene'
 
 const scene = buildScene('wide')
-const SCATTERED: BeatState = { form: 0, split: 0, start: 0, connect: 0, grow: 0, cluster: 0, reach: 0 }
+const SCATTERED: BeatState = { form: 0, split: 0, start: 0, connect: 0, grow: 0, cluster: 0, shape: 0, reach: 0 }
 const UNITED: BeatState = { ...SCATTERED, form: 1 }
 const core = scene.nodes.flatMap((n, i) => (n.role === 'core' ? [i] : []))
 const edgesOf = (frame: ReturnType<typeof frameAt>, kind: string) => frame.edges.filter((e) => e.kind === kind)
@@ -109,6 +109,30 @@ describe('frameAt', () => {
     expect(edgesOf(frame, 'partner').every((e) => e.alpha === 0)).toBe(true)
   })
 
+  it('shape turns the two product clusters into a teal ring (Endyra) and a coral trace (Anvira)', () => {
+    const frame = frameAt({ ...UNITED, connect: 1, cluster: 1, shape: 1 }, scene)
+    scene.nodes.forEach((node, i) => {
+      if (node.cluster < 0) return // ambient nodes are hidden once clustered
+      expect(frame.nodes[i].x).toBeCloseTo(node.shapePos.x)
+      expect(frame.nodes[i].y).toBeCloseTo(node.shapePos.y)
+      if (node.cluster === PRODUCT.endyra) expect([frame.nodes[i].tone, frame.nodes[i].toneAmount]).toEqual(['teal', 1])
+      if (node.cluster === PRODUCT.anvira) expect([frame.nodes[i].tone, frame.nodes[i].toneAmount]).toEqual(['coral', 1])
+    })
+    const shapeKinds = ['ring', 'spoke', 'trace']
+    for (const e of frame.edges.filter((f) => shapeKinds.includes(f.kind))) expect(e.alpha).toBe(1)
+    const productCluster = frame.edges.filter(
+      (e) => e.kind === 'cluster' && ([PRODUCT.endyra, PRODUCT.anvira] as number[]).includes(scene.nodes[e.a].cluster),
+    )
+    expect(productCluster.every((e) => e.alpha === 0)).toBe(true)
+  })
+
+  it('shows no shapes before the clusters form or once shape is back to 0', () => {
+    for (const state of [{ ...UNITED, shape: 1 }, { ...UNITED, connect: 1, cluster: 1, shape: 0 }]) {
+      const frame = frameAt(state, scene)
+      expect(frame.edges.filter((e) => ['ring', 'spoke', 'trace'].includes(e.kind)).every((e) => e.alpha === 0)).toBe(true)
+    }
+  })
+
   it('passes reach through for the renderer', () => {
     expect(frameAt({ ...UNITED, cluster: 1, reach: 0.4 }, scene).reach).toBe(0.4)
   })
@@ -122,10 +146,11 @@ describe('frameAt', () => {
 
   it('changes continuously as any beat moves', () => {
     const eps = 1e-4
-    for (const key of ['form', 'split', 'start', 'connect', 'grow', 'cluster'] as const) {
+    for (const key of ['form', 'split', 'start', 'connect', 'grow', 'cluster', 'shape'] as const) {
       for (const v of [0.25, 0.5, 0.75]) {
-        const a = frameAt({ ...UNITED, connect: key === 'cluster' ? 1 : 0, [key]: v - eps }, scene)
-        const b = frameAt({ ...UNITED, connect: key === 'cluster' ? 1 : 0, [key]: v + eps }, scene)
+        const base = { ...UNITED, connect: key === 'cluster' || key === 'shape' ? 1 : 0, cluster: key === 'shape' ? 1 : 0 }
+        const a = frameAt({ ...base, [key]: v - eps }, scene)
+        const b = frameAt({ ...base, [key]: v + eps }, scene)
         a.nodes.forEach((n, i) => {
           expect(Math.abs(n.x - b.nodes[i].x)).toBeLessThan(0.01)
           expect(Math.abs(n.alpha - b.nodes[i].alpha)).toBeLessThan(0.01)

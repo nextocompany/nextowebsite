@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { STAGE_EXTENT } from './stages'
 import { howWeWorkExtent } from './zoom'
 
-const beats = (connect: number, grow: number) => ({ form: 1, split: 0, start: 1, connect, grow, cluster: 0, reach: 0 })
+const beats = (connect: number, grow: number) => ({ form: 1, split: 0, start: 1, connect, grow, cluster: 0, shape: 0, reach: 0 })
 
 describe('howWeWorkExtent', () => {
   it('starts close on the network, where the work happens', () => {

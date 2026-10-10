@@ -1,12 +1,14 @@
 import { easeInOutCubic, lerp, smoothstep, window01 } from './math'
 import { distance } from './point'
-import type { Scene } from './scene'
+import { PRODUCT, type Scene } from './scene'
 
 /**
  * Each beat as 0..1. form: scattered → one network; split: data and people
  * pull apart; start: a wave spreads from one node (where the work happens);
  * connect: outer nodes link in; grow: partner groups join at the rim;
- * cluster: the network opens into clusters; reach: lines to the partner names.
+ * cluster: the network opens into clusters; shape: the two product clusters
+ * take their product's shape (Endyra ring, Anvira trace); reach: lines to the
+ * partner names.
  */
 export interface BeatState {
   form: number
@@ -15,6 +17,7 @@ export interface BeatState {
   connect: number
   grow: number
   cluster: number
+  shape: number
   reach: number
   /** Seconds, for the drift of the scattered network. */
   time?: number
@@ -32,7 +35,7 @@ export interface FrameNode {
   toneAmount: number
 }
 
-export type EdgeKind = 'core' | 'cluster' | 'satellite' | 'scatter' | 'partner'
+export type EdgeKind = 'core' | 'cluster' | 'satellite' | 'scatter' | 'partner' | 'ring' | 'spoke' | 'trace'
 
 export interface FrameEdge {
   kind: EdgeKind
@@ -46,6 +49,8 @@ export interface FrameEdge {
 export interface Frame {
   nodes: FrameNode[]
   edges: FrameEdge[]
+  /** Anvira's nodes left to right, for the monitor sweep. */
+  trace: ReadonlyArray<number>
   reach: number
   /** Size factor for dots and lines: the scattered hero network is drawn finer. */
   detail: number
@@ -58,6 +63,8 @@ const SCATTER_EDGE = 0.5
 const SCATTER_DETAIL = 0.35
 /** Links between data and people stay visible in the split beat, dimmed. */
 const BRIDGE = 0.35
+/** Nodes of the product shapes shrink so the shape's lines read first. */
+const SHAPE_NODE = 0.7
 /** Half-width of the start wave's bright band, in brain units. */
 const WAVE_WIDTH = 0.25
 
@@ -67,6 +74,8 @@ export function frameAt(state: BeatState, scene: Scene): Frame {
   const connect = easeInOutCubic(state.connect)
   const grow = easeInOutCubic(state.grow)
   const cluster = easeInOutCubic(state.cluster)
+  const shape = easeInOutCubic(state.shape)
+  const shown = shape * cluster
   const united = smoothstep(0.55, 1, state.form)
   const time = state.time ?? 0
   const drift = DRIFT * (1 - form)
@@ -86,8 +95,8 @@ export function frameAt(state: BeatState, scene: Scene): Frame {
     // Ambient nodes come back as partner groups at the rim (grow), then leave with the clusters.
     const gx = n.role === 'ambient' ? lerp(lx, n.partnerPos.x, grow) : lx
     const gy = n.role === 'ambient' ? lerp(ly, n.partnerPos.y, grow) : ly
-    const tx = n.cluster >= 0 ? n.clusterPos.x : gx
-    const ty = n.cluster >= 0 ? n.clusterPos.y : gy
+    const tx = n.cluster >= 0 ? lerp(n.clusterPos.x, n.shapePos.x, shape) : gx
+    const ty = n.cluster >= 0 ? lerp(n.clusterPos.y, n.shapePos.y, shape) : gy
 
     const formAlpha = n.role === 'core' ? 1 : n.role === 'ambient' ? Math.max(1 - united, grow) : 1 - united
     const alpha = n.cluster >= 0 ? lerp(lerp(formAlpha, 1, linked), 1, cluster) : formAlpha * (1 - cluster)
@@ -98,9 +107,9 @@ export function frameAt(state: BeatState, scene: Scene): Frame {
     return {
       x: lerp(gx, tx, cluster),
       y: lerp(gy, ty, cluster),
-      r: NODE_RADIUS * detail * (n.isHub ? lerp(1, 1.5, cluster) : 1),
+      r: NODE_RADIUS * detail * (n.isHub ? lerp(1, 1.5, cluster) : 1) * (isProduct(n.cluster) ? lerp(1, SHAPE_NODE, shown) : 1),
       alpha,
-      ...(lit > toneAmount ? { tone: 'teal' as const, toneAmount: lit } : { tone, toneAmount }),
+      ...productTone(n.cluster, shown, lit > toneAmount ? { tone: 'teal', toneAmount: lit } : { tone, toneAmount }),
     }
   })
 
@@ -130,11 +139,20 @@ export function frameAt(state: BeatState, scene: Scene): Frame {
     nodes,
     edges: [
       ...coreEdges,
-      ...scene.clusterEdges.map(plain('cluster', cluster)),
+      ...scene.clusterEdges.map(([a, b]) => plain('cluster', isProduct(scene.nodes[a].cluster) ? cluster * (1 - shape) : cluster)([a, b])),
+      ...scene.shapeEdges.map((e): FrameEdge => ({
+        kind: e.kind,
+        a: e.a,
+        b: e.b,
+        alpha: shown,
+        tone: e.kind === 'trace' ? 'coral' : 'teal',
+        toneAmount: shape,
+      })),
       ...scene.satelliteEdges.map(plain('satellite', connect * (1 - cluster))),
       ...scene.partnerEdges.map(plain('partner', grow * (1 - cluster))),
       ...scene.scatterEdges.map(plain('scatter', SCATTER_EDGE * (1 - smoothstep(0, 0.6, state.form)))),
     ],
+    trace: scene.trace,
     reach: state.reach,
     detail,
   }
@@ -155,4 +173,26 @@ function startWave(start: number, scene: Scene): (n: Scene['nodes'][number]) => 
     const off = (distance(n.united, origin) - front) / WAVE_WIDTH
     return strength * Math.exp(-off * off)
   }
+}
+
+const PRODUCT_TONE: Readonly<Record<number, Tone>> = { [PRODUCT.endyra]: 'teal', [PRODUCT.anvira]: 'coral' }
+const isProduct = (cluster: number) => cluster in PRODUCT_TONE
+
+/**
+ * Endyra's nodes turn teal and Anvira's coral as their shapes form. A node already
+ * in the other accent (Anvira's hub) fades to ink first, so colours never jump.
+ */
+function productTone(
+  cluster: number,
+  shown: number,
+  base: { tone: Tone; toneAmount: number },
+): { tone: Tone; toneAmount: number } {
+  const tone = PRODUCT_TONE[cluster]
+  if (!tone || shown <= 0) return base
+  if (base.tone === tone || base.toneAmount <= 0) {
+    return { tone, toneAmount: Math.max(base.tone === tone ? base.toneAmount : 0, shown) }
+  }
+  return shown < 0.5
+    ? { tone: base.tone, toneAmount: base.toneAmount * (1 - 2 * shown) }
+    : { tone, toneAmount: 2 * shown - 1 }
 }

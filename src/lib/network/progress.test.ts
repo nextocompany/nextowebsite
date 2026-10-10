@@ -22,8 +22,8 @@ describe('scrollPosition', () => {
   })
 })
 
-const BEAT_KEYS = ['form', 'split', 'start', 'connect', 'grow', 'cluster', 'reach'] as const
-const ZERO = { form: 0, split: 0, start: 0, connect: 0, grow: 0, cluster: 0, reach: 0 }
+const BEAT_KEYS = ['form', 'split', 'start', 'connect', 'grow', 'cluster', 'shape', 'reach'] as const
+const ZERO = { form: 0, split: 0, start: 0, connect: 0, grow: 0, cluster: 0, shape: 0, reach: 0 }
 
 describe('beatsAt', () => {
   // Stages: 0 hero, 1 intro, 2 approach, 3 how we work, 4 products, 5 beyond.
@@ -44,10 +44,9 @@ describe('beatsAt', () => {
     expect(beatsAt(3)).toEqual({ ...ZERO, form: 1, start: 1, connect: 1, grow: 1 })
   })
 
-  it('is clustered at products and reaching at the last stage', () => {
-    expect(beatsAt(4).cluster).toBe(1)
-    expect(beatsAt(4).reach).toBe(0)
-    expect(beatsAt(5)).toEqual({ form: 1, split: 0, start: 1, connect: 1, grow: 1, cluster: 1, reach: 1 })
+  it('shapes the products at products, then relaxes them and reaches at the last stage', () => {
+    expect(beatsAt(4)).toMatchObject({ cluster: 1, shape: 1, reach: 0 })
+    expect(beatsAt(5)).toEqual({ form: 1, split: 0, start: 1, connect: 1, grow: 1, cluster: 1, shape: 0, reach: 1 })
   })
 
   it('matches every stage still frame at the stage position (stills never draw reach lines)', () => {

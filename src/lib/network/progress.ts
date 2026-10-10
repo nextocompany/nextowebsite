@@ -60,6 +60,8 @@ export function beatsAt(u: number, pins: PinProgress = {}): BeatState {
     connect: how === undefined ? smoothstep(2.4, 3, u) : smoothstep(0.36, 0.64, how),
     grow: how === undefined ? smoothstep(2.6, 3, u) : smoothstep(0.7, 0.96, how),
     cluster: smoothstep(3.3, 4, u),
+    // Products hold their shapes, then relax back into the network on the way to beyond.
+    shape: window01(u, 3.4, 4, 4.2, 4.7),
     reach: smoothstep(4.3, 5, u),
   }
 }

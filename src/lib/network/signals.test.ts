@@ -4,9 +4,9 @@ import { buildScene } from './scene'
 import { SIGNAL, signalsAt } from './signals'
 
 const scene = buildScene('wide')
-const formed = frameAt({ form: 1, split: 0, start: 0, connect: 0, grow: 0, cluster: 0, reach: 0 }, scene)
-const split = frameAt({ form: 1, split: 1, start: 0, connect: 0, grow: 0, cluster: 0, reach: 0 }, scene)
-const scattered = frameAt({ form: 0, split: 0, start: 0, connect: 0, grow: 0, cluster: 0, reach: 0, time: 0 }, scene)
+const formed = frameAt({ form: 1, split: 0, start: 0, connect: 0, grow: 0, cluster: 0, shape: 0, reach: 0 }, scene)
+const split = frameAt({ form: 1, split: 1, start: 0, connect: 0, grow: 0, cluster: 0, shape: 0, reach: 0 }, scene)
+const scattered = frameAt({ form: 0, split: 0, start: 0, connect: 0, grow: 0, cluster: 0, shape: 0, reach: 0, time: 0 }, scene)
 
 const times = Array.from({ length: 200 }, (_, i) => i * 0.137)
 
@@ -73,5 +73,48 @@ describe('signalsAt', () => {
         expect(formed.nodes[g.node].alpha).toBeGreaterThan(0)
       }
     }
+  })
+})
+
+describe('signalsAt on the product shapes', () => {
+  const shaped = frameAt({ form: 1, split: 0, start: 1, connect: 1, grow: 1, cluster: 1, shape: 1, reach: 0 }, scene)
+  const lens = shaped.nodes[scene.lens]
+  const distToLens = (x: number, y: number) => Math.hypot(x - lens.x, y - lens.y)
+
+  it('flows into the Endyra lens along the spokes, and along the Anvira trace from left to right', () => {
+    let spokes = 0
+    let traces = 0
+    for (let t = 0; t < 40; t += 0.05) {
+      for (const p of signalsAt(shaped, t).pulses) {
+        const later = signalsAt(shaped, t + 0.02).pulses.find((q) => q.slot === p.slot && q.edge === p.edge)
+        if (!later) continue
+        const kind = shaped.edges[p.edge].kind
+        if (kind === 'spoke') {
+          spokes++
+          expect(distToLens(later.x, later.y)).toBeLessThanOrEqual(distToLens(p.x, p.y) + 1e-9)
+        }
+        if (kind === 'trace') {
+          traces++
+          expect(later.x).toBeGreaterThanOrEqual(p.x - 1e-9)
+        }
+      }
+    }
+    expect(spokes).toBeGreaterThan(0)
+    expect(traces).toBeGreaterThan(0)
+  })
+
+  it('sweeps one coral dot along the whole Anvira trace, like a monitor', () => {
+    const sweep = (t: number) => signalsAt(shaped, t).pulses.find((p) => p.slot === SIGNAL.sweepSlot)
+    const xs = Array.from({ length: 30 }, (_, i) => sweep(i * 0.05)?.x)
+    expect(xs.every((x) => x !== undefined)).toBe(true)
+    expect(sweep(0)?.tone).toBe('coral')
+    const first = scene.trace[0]
+    const last = scene.trace[scene.trace.length - 1]
+    const span = shaped.nodes[last].x - shaped.nodes[first].x
+    expect(Math.max(...(xs as number[])) - Math.min(...(xs as number[]))).toBeGreaterThan(span * 0.4)
+  })
+
+  it('has no sweep when the trace is not shown', () => {
+    for (let t = 0; t < 5; t += 0.3) expect(signalsAt(formed, t).pulses.some((p) => p.slot === SIGNAL.sweepSlot)).toBe(false)
   })
 })

@@ -19,6 +19,9 @@ export const SIGNAL = {
   tries: 16,
   /** The network counts as connected (pulses travel) from this level of detail up. */
   connectedDetail: 0.9,
+  /** Anvira's monitor sweep: its own slot, crossing the whole trace in this many seconds. */
+  sweepSlot: -1,
+  sweepPeriod: 2.4,
 } as const
 
 const SEED = 4404
@@ -86,8 +89,10 @@ export function signalsAt(frame: Frame, time: number): Signals {
     const toneA = accent(frame.nodes[edge.a].tone)
     const toneB = accent(frame.nodes[edge.b].tone)
     const tone: SignalTone = toneA && toneB && toneA === toneB ? toneA : (toneA ?? toneB ?? coin)
-    // Leave from the end that owns the colour, so data flows out of the data side.
-    const fromA = toneA === tone || (toneB !== tone && random() < 0.5)
+    // Product shapes flow one way: into Endyra's lens, left to right along Anvira's trace.
+    // Elsewhere, leave from the end that owns the colour, so data flows out of the data side.
+    const directed = edge.kind === 'spoke' || edge.kind === 'trace'
+    const fromA = directed || toneA === tone || (toneB !== tone && random() < 0.5)
     const [from, to] = fromA ? [edge.a, edge.b] : [edge.b, edge.a]
     const start = frame.nodes[from]
     const end = frame.nodes[to]
@@ -107,5 +112,29 @@ export function signalsAt(frame: Frame, time: number): Signals {
       glows.push({ node: to, tone, amount: Math.max(easeInOutSine(fade), 1e-3) })
     }
   }
-  return { pulses, glows }
+  const sweep = sweepAt(frame, time)
+  return { pulses: sweep ? [...pulses, sweep] : pulses, glows }
+}
+
+/** One coral dot running the length of Anvira's trace and starting again, like a monitor. */
+function sweepAt(frame: Frame, time: number): Pulse | null {
+  const segments = frame.trace.slice(1).map((b, k) => {
+    const a = frame.trace[k]
+    const edge = frame.edges.findIndex((e) => e.kind === 'trace' && e.a === a && e.b === b)
+    const pa = frame.nodes[a]
+    const pb = frame.nodes[b]
+    return { edge, pa, pb, length: Math.hypot(pb.x - pa.x, pb.y - pa.y) }
+  })
+  const alpha = Math.min(...segments.map((s) => (s.edge >= 0 ? frame.edges[s.edge].alpha : 0)))
+  if (segments.length === 0 || !(alpha >= SIGNAL.minEdgeAlpha)) return null
+  const total = segments.reduce((sum, s) => sum + s.length, 0)
+  let along = ((time / SIGNAL.sweepPeriod) % 1) * total
+  for (const s of segments) {
+    if (along <= s.length || s === segments[segments.length - 1]) {
+      const t = s.length > 0 ? Math.min(along / s.length, 1) : 0
+      return { slot: SIGNAL.sweepSlot, edge: s.edge, x: lerp(s.pa.x, s.pb.x, t), y: lerp(s.pa.y, s.pb.y, t), tone: 'coral', alpha }
+    }
+    along -= s.length
+  }
+  return null
 }

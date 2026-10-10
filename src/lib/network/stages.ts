@@ -32,12 +32,12 @@ export const STAGE_EXTENT: Readonly<Record<StageName, Readonly<Record<Variant, P
 
 /** The still frame each stage shows without motion (no JS or reduced motion). */
 export const STAGE_STATE: Readonly<Record<StageName, BeatState>> = {
-  hero: { form: 0, split: 0, start: 0, connect: 0, grow: 0, cluster: 0, reach: 0 },
-  intro: { form: 1, split: 0, start: 0, connect: 0, grow: 0, cluster: 0, reach: 0 },
-  approach: { form: 1, split: 1, start: 0, connect: 0, grow: 0, cluster: 0, reach: 0 },
-  'how-we-work': { form: 1, split: 0, start: 1, connect: 1, grow: 1, cluster: 0, reach: 0 },
-  products: { form: 1, split: 0, start: 1, connect: 1, grow: 1, cluster: 1, reach: 0 },
-  beyond: { form: 1, split: 0, start: 1, connect: 1, grow: 1, cluster: 1, reach: 0 },
+  hero: { form: 0, split: 0, start: 0, connect: 0, grow: 0, cluster: 0, shape: 0, reach: 0 },
+  intro: { form: 1, split: 0, start: 0, connect: 0, grow: 0, cluster: 0, shape: 0, reach: 0 },
+  approach: { form: 1, split: 1, start: 0, connect: 0, grow: 0, cluster: 0, shape: 0, reach: 0 },
+  'how-we-work': { form: 1, split: 0, start: 1, connect: 1, grow: 1, cluster: 0, shape: 0, reach: 0 },
+  products: { form: 1, split: 0, start: 1, connect: 1, grow: 1, cluster: 1, shape: 1, reach: 0 },
+  beyond: { form: 1, split: 0, start: 1, connect: 1, grow: 1, cluster: 1, shape: 0, reach: 0 },
 }
 
 /** px per brain unit for a stage box, matching SVG preserveAspectRatio meet (contain) or slice (cover). */

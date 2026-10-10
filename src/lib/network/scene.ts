@@ -3,6 +3,17 @@ import { distance, type Point } from './point'
 
 export type Variant = 'wide' | 'narrow'
 
+/** The two product clusters, in both layouts: Endyra first, Anvira second. */
+export const PRODUCT = { endyra: 0, anvira: 1 } as const
+
+/** Lines of the product shapes: Endyra's ring and its spokes into the lens, Anvira's monitor trace. */
+export interface ShapeEdge {
+  readonly kind: 'ring' | 'spoke' | 'trace'
+  /** For spokes and the trace, signals flow from a to b. */
+  readonly a: number
+  readonly b: number
+}
+
 export const KIND = { data: 'data', people: 'people' } as const
 export type Kind = (typeof KIND)[keyof typeof KIND]
 
@@ -31,6 +42,8 @@ export interface SceneNode {
   readonly partnerPos: Point
   /** Partner group index, or -1 for non-ambient nodes. */
   readonly partnerGroup: number
+  /** Product clusters: place in the product's shape. Others: their cluster position. */
+  readonly shapePos: Point
   readonly drift: { readonly phase: number; readonly speed: number }
 }
 
@@ -46,6 +59,11 @@ export interface Scene {
   readonly partnerEdges: ReadonlyArray<readonly [number, number]>
   /** Core node nearest the centre: where the work happens (how we work, step 1). */
   readonly origin: number
+  readonly shapeEdges: ReadonlyArray<ShapeEdge>
+  /** Centre of the Endyra ring. */
+  readonly lens: number
+  /** Anvira nodes from left to right along the trace. */
+  readonly trace: ReadonlyArray<number>
   readonly scatterLinkMax: number
   readonly scatterBounds: Point
   readonly clusterCount: number
@@ -68,6 +86,54 @@ const PARTNER_LAYOUT = {
   narrow: { radius: 1.72, spread: 0.2, angles: [-0.5, 1.6, 3.7] },
 } as const satisfies Record<Variant, unknown>
 const PARTNER_GROUPS = 3
+
+/** Product shapes, sized to sit inside each product's cluster area. */
+const SHAPE_LAYOUT = {
+  wide: { ring: 0.5, spokes: 6, traceHalf: 0.9, spike: 0.42 },
+  narrow: { ring: 0.34, spokes: 5, traceHalf: 0.52, spike: 0.3 },
+} as const satisfies Record<Variant, unknown>
+
+/**
+ * One stylised monitor beat (x 0..1, y up negative, in units of the spike height):
+ * a small bump, a sharp spike with a dip either side, a gentle hump. Not real
+ * clinical data, just the rhythm. `flat` vertices may be dropped to fit fewer nodes.
+ */
+const BEAT: ReadonlyArray<{ x: number; y: number; flat?: true }> = [
+  { x: 0, y: 0, flat: true },
+  { x: 0.14, y: -0.06 },
+  { x: 0.22, y: 0, flat: true },
+  { x: 0.3, y: 0, flat: true },
+  { x: 0.34, y: 0.28 },
+  { x: 0.4, y: -1 },
+  { x: 0.46, y: 0.3 },
+  { x: 0.52, y: 0, flat: true },
+  { x: 0.66, y: -0.15 },
+  { x: 0.8, y: 0, flat: true },
+]
+
+/** Two beats across the trace, resampled to exactly `count` vertices (spikes always kept). */
+function traceTemplate(count: number): Array<{ x: number; y: number }> {
+  let points: Array<{ x: number; y: number; flat?: true }> = [
+    ...BEAT.map((p) => ({ ...p, x: p.x / 2 })),
+    ...BEAT.map((p) => ({ ...p, x: 0.5 + p.x / 2 })),
+    { x: 1, y: 0 },
+  ]
+  while (points.length > count) {
+    const droppable = points.flatMap((p, i) => (p.flat && i > 0 && i < points.length - 1 ? [i] : []))
+    if (droppable.length === 0) break
+    const drop = droppable[Math.floor(droppable.length / 2)]
+    points = points.filter((_, i) => i !== drop)
+  }
+  while (points.length < count) {
+    let widest = 0
+    points.forEach((p, i) => {
+      if (i > 0 && p.x - points[i - 1].x > points[widest + 1].x - points[widest].x) widest = i - 1
+    })
+    const [a, b] = [points[widest], points[widest + 1]]
+    points = [...points.slice(0, widest + 1), { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2, flat: true }, ...points.slice(widest + 1)]
+  }
+  return points.map(({ x, y }) => ({ x, y }))
+}
 const GOLDEN_ANGLE = Math.PI * (3 - Math.sqrt(5))
 
 const LAYOUT = {
@@ -193,7 +259,7 @@ export function buildScene(variant: Variant): Scene {
   const partnerRand = mulberry32(PARTNER_SEED)
   const partner = PARTNER_LAYOUT[variant]
   const perGroup = Math.ceil(layout.ambient / PARTNER_GROUPS)
-  const nodes: SceneNode[] = baseNodes.map((n, i) => {
+  const withPartners = baseNodes.map((n, i) => {
     if (n.role !== 'ambient') return { ...n, partnerPos: n.satellite, partnerGroup: -1 }
     const member = i - clustered
     const group = Math.floor(member / perGroup)
@@ -204,6 +270,9 @@ export function buildScene(variant: Variant): Scene {
     const centre = { x: Math.cos(angle) * partner.radius, y: Math.sin(angle) * partner.radius }
     return { ...n, partnerPos: { x: centre.x + Math.cos(a) * r, y: centre.y + Math.sin(a) * r }, partnerGroup: group }
   })
+
+  const shapes = productShapes(withPartners, layout.clusters, SHAPE_LAYOUT[variant])
+  const nodes: SceneNode[] = withPartners.map((n, i) => ({ ...n, shapePos: shapes.positions.get(i) ?? n.clusterPos }))
 
   const corePoints = nodes.flatMap((n, index) => (n.role === 'core' ? [{ index, pos: n.united }] : []))
   const coreEdges = fromKeys(new Set([...spanningLinks(corePoints), ...nearLinks(corePoints, 3, 0.45)]))
@@ -252,6 +321,9 @@ export function buildScene(variant: Variant): Scene {
     nodes,
     partnerEdges,
     origin,
+    shapeEdges: shapes.edges,
+    lens: shapes.lens,
+    trace: shapes.trace,
     coreEdges,
     clusterEdges,
     satelliteEdges,
@@ -260,4 +332,46 @@ export function buildScene(variant: Variant): Scene {
     scatterBounds: layout.scatter,
     clusterCount: layout.clusters.length,
   }
+}
+
+type ShapeLayout = (typeof SHAPE_LAYOUT)[Variant]
+type Placed = { readonly cluster: number; readonly clusterPos: Point }
+
+/**
+ * Endyra: members on a ring round the member nearest the cluster centre (the
+ * lens), in the order they already sit, with evenly spaced spokes into it.
+ * Anvira: members left to right along a stylised monitor trace.
+ */
+function productShapes(nodes: ReadonlyArray<Placed>, clusters: ReadonlyArray<ClusterSpec>, layout: ShapeLayout) {
+  const positions = new Map<number, Point>()
+  const edges: ShapeEdge[] = []
+  const membersOf = (c: number) => nodes.flatMap((n, i) => (n.cluster === c ? [i] : []))
+
+  const ringCentre = clusters[PRODUCT.endyra].centre
+  const endyra = membersOf(PRODUCT.endyra)
+  const lens = endyra.reduce((best, i) =>
+    distance(nodes[i].clusterPos, ringCentre) < distance(nodes[best].clusterPos, ringCentre) ? i : best,
+  )
+  const angleOf = (i: number) => Math.atan2(nodes[i].clusterPos.y - ringCentre.y, nodes[i].clusterPos.x - ringCentre.x)
+  const ring = endyra.filter((i) => i !== lens).sort((a, b) => angleOf(a) - angleOf(b))
+  positions.set(lens, ringCentre)
+  ring.forEach((i, k) => {
+    const angle = angleOf(ring[0]) + (k / ring.length) * Math.PI * 2
+    positions.set(i, { x: ringCentre.x + Math.cos(angle) * layout.ring, y: ringCentre.y + Math.sin(angle) * layout.ring })
+    edges.push({ kind: 'ring', a: i, b: ring[(k + 1) % ring.length] })
+  })
+  const spokeStep = ring.length / layout.spokes
+  for (let k = 0; k < layout.spokes; k++) edges.push({ kind: 'spoke', a: ring[Math.floor(k * spokeStep)], b: lens })
+
+  const traceCentre = clusters[PRODUCT.anvira].centre
+  const trace = membersOf(PRODUCT.anvira).sort((a, b) => nodes[a].clusterPos.x - nodes[b].clusterPos.x)
+  traceTemplate(trace.length).forEach((p, k) => {
+    positions.set(trace[k], {
+      x: traceCentre.x + (p.x * 2 - 1) * layout.traceHalf,
+      y: traceCentre.y + layout.spike * 0.25 + p.y * layout.spike,
+    })
+    if (k > 0) edges.push({ kind: 'trace', a: trace[k - 1], b: trace[k] })
+  })
+
+  return { positions, edges, lens, trace }
 }

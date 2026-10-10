@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { buildScene, KIND } from './scene'
+import { buildScene, KIND, PRODUCT } from './scene'
 import { STAGE_EXTENT } from './stages'
 
 const VARIANTS = ['wide', 'narrow'] as const
@@ -147,6 +147,61 @@ describe('origin (how we work, step 1)', () => {
       expect(origin.role).toBe('core')
       for (const n of scene.nodes.filter((m) => m.role === 'core')) {
         expect(Math.hypot(origin.united.x, origin.united.y)).toBeLessThanOrEqual(Math.hypot(n.united.x, n.united.y))
+      }
+    }
+  })
+})
+
+describe('product shapes (products stage)', () => {
+  const members = (scene: ReturnType<typeof buildScene>, c: number) => scene.nodes.flatMap((n, i) => (n.cluster === c ? [i] : []))
+
+  it('Endyra: a ring round a lens centre, with spokes into it', () => {
+    for (const variant of VARIANTS) {
+      const scene = buildScene(variant)
+      const ring = members(scene, PRODUCT.endyra).filter((i) => i !== scene.lens)
+      const centre = scene.nodes[scene.lens].shapePos
+      expect(scene.nodes[scene.lens].cluster).toBe(PRODUCT.endyra)
+      const radii = ring.map((i) => Math.hypot(scene.nodes[i].shapePos.x - centre.x, scene.nodes[i].shapePos.y - centre.y))
+      for (const r of radii) expect(r).toBeCloseTo(radii[0], 6)
+      const spokes = scene.shapeEdges.filter((e) => e.kind === 'spoke')
+      expect(spokes.length).toBeGreaterThanOrEqual(3)
+      for (const e of spokes) expect(e.b).toBe(scene.lens)
+      const rim = scene.shapeEdges.filter((e) => e.kind === 'ring')
+      expect(rim).toHaveLength(ring.length)
+    }
+  })
+
+  it('Anvira: one trace from left to right with a monitor-like spike', () => {
+    for (const variant of VARIANTS) {
+      const scene = buildScene(variant)
+      const trace = scene.trace
+      expect(new Set(trace)).toEqual(new Set(members(scene, PRODUCT.anvira)))
+      const xs = trace.map((i) => scene.nodes[i].shapePos.x)
+      xs.slice(1).forEach((x, i) => expect(x).toBeGreaterThan(xs[i]))
+      const ys = trace.map((i) => scene.nodes[i].shapePos.y)
+      const baseline = ys[0]
+      expect(Math.min(...ys)).toBeLessThan(baseline - 0.25)
+      const traceEdges = scene.shapeEdges.filter((e) => e.kind === 'trace')
+      expect(traceEdges.map((e) => [e.a, e.b])).toEqual(trace.slice(1).map((b, i) => [trace[i], b]))
+    }
+  })
+
+  it('leave every other node where its cluster put it', () => {
+    for (const variant of VARIANTS) {
+      const scene = buildScene(variant)
+      for (const n of scene.nodes) {
+        if (n.cluster !== PRODUCT.endyra && n.cluster !== PRODUCT.anvira) expect(n.shapePos).toEqual(n.clusterPos)
+      }
+    }
+  })
+
+  it('fit inside the products stage', () => {
+    for (const variant of VARIANTS) {
+      const scene = buildScene(variant)
+      const extent = STAGE_EXTENT.products[variant]
+      for (const n of scene.nodes) {
+        expect(Math.abs(n.shapePos.x)).toBeLessThan(extent.x)
+        expect(Math.abs(n.shapePos.y)).toBeLessThan(extent.y)
       }
     }
   })
