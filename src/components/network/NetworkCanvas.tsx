@@ -18,6 +18,8 @@ const MAX_DPR = 2
 const TRAVEL_DIM = 0.75
 /** The full-screen network sits behind the hero headline, so it stays quiet. */
 const HERO_ALPHA = 0.45
+/** Behind the closing line and footer links it is quieter still. */
+const CLOSING_ALPHA = 0.4
 const REDUCED_MOTION = '(prefers-reduced-motion: reduce)'
 const WIDE = '(min-width: 768px)'
 const FALLBACK: Rgb = [65, 65, 66]
@@ -109,7 +111,9 @@ export function NetworkCanvas() {
         // Hero → intro is the gathering itself, so it stays visible; later moves dim.
         const travel = shown < 1 ? 0 : Math.abs(shown - Math.round(shown))
         const fade =
-          (1 - TRAVEL_DIM * smoothstep(0.1, 0.35, travel)) * (HERO_ALPHA + (1 - HERO_ALPHA) * beats.form)
+          (1 - TRAVEL_DIM * smoothstep(0.1, 0.35, travel)) *
+          (HERO_ALPHA + (1 - HERO_ALPHA) * beats.form) *
+          (1 - (1 - CLOSING_ALPHA) * beats.close)
         const seconds = (now - start) / 1000
         const frame = frameAt({ ...beats, time: seconds }, scene)
         const anchor = anchorAt(stages.map((s) => stageRect(s, scene.variant, beats)), shown)

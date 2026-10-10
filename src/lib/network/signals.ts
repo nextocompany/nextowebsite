@@ -17,8 +17,6 @@ export const SIGNAL = {
   minEdgeAlpha: 0.3,
   /** Picks per cycle before a slot rests (most lines are hidden in any one beat). */
   tries: 16,
-  /** The network counts as connected (pulses travel) from this level of detail up. */
-  connectedDetail: 0.9,
   /** Anvira's monitor sweep: its own slot, crossing the whole trace in this many seconds. */
   sweepSlot: -1,
   sweepPeriod: 2.4,
@@ -66,7 +64,7 @@ function pickVisible(count: number, visible: (i: number) => boolean, random: () 
 export function signalsAt(frame: Frame, time: number): Signals {
   const pulses: Pulse[] = []
   const glows: Glow[] = []
-  const travels = frame.detail >= SIGNAL.connectedDetail
+  const travels = frame.connected
 
   for (let slot = 0; slot < SIGNAL.slots; slot++) {
     const phase = time / SIGNAL.period + slot / SIGNAL.slots

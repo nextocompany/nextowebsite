@@ -4,9 +4,9 @@ import { buildScene } from './scene'
 import { SIGNAL, signalsAt } from './signals'
 
 const scene = buildScene('wide')
-const formed = frameAt({ form: 1, split: 0, start: 0, connect: 0, grow: 0, cluster: 0, shape: 0, reach: 0 }, scene)
-const split = frameAt({ form: 1, split: 1, start: 0, connect: 0, grow: 0, cluster: 0, shape: 0, reach: 0 }, scene)
-const scattered = frameAt({ form: 0, split: 0, start: 0, connect: 0, grow: 0, cluster: 0, shape: 0, reach: 0, time: 0 }, scene)
+const formed = frameAt({ form: 1, split: 0, start: 0, connect: 0, grow: 0, cluster: 0, shape: 0, reach: 0, close: 0 }, scene)
+const split = frameAt({ form: 1, split: 1, start: 0, connect: 0, grow: 0, cluster: 0, shape: 0, reach: 0, close: 0 }, scene)
+const scattered = frameAt({ form: 0, split: 0, start: 0, connect: 0, grow: 0, cluster: 0, shape: 0, reach: 0, close: 0, time: 0 }, scene)
 
 const times = Array.from({ length: 200 }, (_, i) => i * 0.137)
 
@@ -77,7 +77,7 @@ describe('signalsAt', () => {
 })
 
 describe('signalsAt on the product shapes', () => {
-  const shaped = frameAt({ form: 1, split: 0, start: 1, connect: 1, grow: 1, cluster: 1, shape: 1, reach: 0 }, scene)
+  const shaped = frameAt({ form: 1, split: 0, start: 1, connect: 1, grow: 1, cluster: 1, shape: 1, reach: 0, close: 0 }, scene)
   const lens = shaped.nodes[scene.lens]
   const distToLens = (x: number, y: number) => Math.hypot(x - lens.x, y - lens.y)
 

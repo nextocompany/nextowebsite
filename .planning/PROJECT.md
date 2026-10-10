@@ -52,6 +52,10 @@ See `.planning/REQUIREMENTS.md` (v2 section). v1 requirements are archived there
 | Approach is pinned (ScrollTrigger) for one viewport at lg+ and min-height 640px; the split plays inside the pin | Reference-style pinned beat; the page column is pinned, not the section, so anchors and the language switch keep the real section top. Narrow, short, reduced-motion and no-JS screens scroll freely | v2 |
 | English only for now, at `/`; Thai hidden (copy kept in `th.ts`, returns at `/th/`); `/en/` → `/` via `public/_redirects` | User decision 2026-10-10 | v2 |
 | Hero headline max `5xl`; "Working with" is one row of every customer and partner | User review 2026-10-10 | v2 |
+| Teal carries data, coral carries people, across the whole network (signal pulses) | User choice 2026-10-10 over random twinkles | v2 |
+| How we work pinned with three synced steps; stacked screens follow the stage's own pass, no dimming | User choice 2026-10-10; stacked change because the stage sits below the list | v2 |
+| Product shapes: Endyra ring, Anvira stylised monitor trace (no values) | User choice 2026-10-10 | v2 |
+| Footer is a closing stage: the hero's points, all linked | User choice 2026-10-10 | v2 |
 | Light theme only, neutral palette, no motion (v1) | Superseded by v2 | Replaced |
 
 ---

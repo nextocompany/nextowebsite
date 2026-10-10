@@ -22,8 +22,8 @@ describe('scrollPosition', () => {
   })
 })
 
-const BEAT_KEYS = ['form', 'split', 'start', 'connect', 'grow', 'cluster', 'shape', 'reach'] as const
-const ZERO = { form: 0, split: 0, start: 0, connect: 0, grow: 0, cluster: 0, shape: 0, reach: 0 }
+const BEAT_KEYS = ['form', 'split', 'start', 'connect', 'grow', 'cluster', 'shape', 'reach', 'close'] as const
+const ZERO = { form: 0, split: 0, start: 0, connect: 0, grow: 0, cluster: 0, shape: 0, reach: 0, close: 0 }
 
 describe('beatsAt', () => {
   // Stages: 0 hero, 1 intro, 2 approach, 3 how we work, 4 products, 5 beyond.
@@ -46,7 +46,11 @@ describe('beatsAt', () => {
 
   it('shapes the products at products, then relaxes them and reaches at the last stage', () => {
     expect(beatsAt(4)).toMatchObject({ cluster: 1, shape: 1, reach: 0 })
-    expect(beatsAt(5)).toEqual({ form: 1, split: 0, start: 1, connect: 1, grow: 1, cluster: 1, shape: 0, reach: 1 })
+    expect(beatsAt(5)).toEqual({ form: 1, split: 0, start: 1, connect: 1, grow: 1, cluster: 1, shape: 0, reach: 1, close: 0 })
+  })
+
+  it('closes at the footer: the whole network linked', () => {
+    expect(beatsAt(6)).toEqual({ form: 1, split: 0, start: 1, connect: 1, grow: 1, cluster: 1, shape: 0, reach: 1, close: 1 })
   })
 
   it('matches every stage still frame at the stage position', () => {
@@ -56,7 +60,7 @@ describe('beatsAt', () => {
   })
 
   it('never jumps', () => {
-    for (let u = 0; u < 5; u += 0.01) {
+    for (let u = 0; u < 6; u += 0.01) {
       const a = beatsAt(u)
       const b = beatsAt(u + 0.001)
       for (const key of BEAT_KEYS) expect(Math.abs(a[key] - b[key])).toBeLessThan(0.05)

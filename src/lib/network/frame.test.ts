@@ -3,7 +3,7 @@ import { frameAt, type BeatState } from './frame'
 import { buildScene, PRODUCT } from './scene'
 
 const scene = buildScene('wide')
-const SCATTERED: BeatState = { form: 0, split: 0, start: 0, connect: 0, grow: 0, cluster: 0, shape: 0, reach: 0 }
+const SCATTERED: BeatState = { form: 0, split: 0, start: 0, connect: 0, grow: 0, cluster: 0, shape: 0, reach: 0, close: 0 }
 const UNITED: BeatState = { ...SCATTERED, form: 1 }
 const core = scene.nodes.flatMap((n, i) => (n.role === 'core' ? [i] : []))
 const edgesOf = (frame: ReturnType<typeof frameAt>, kind: string) => frame.edges.filter((e) => e.kind === kind)
@@ -158,6 +158,19 @@ describe('frameAt', () => {
     }
   })
 
+  it('close brings every node back to where the page began, now all linked, in plain ink', () => {
+    const END = { ...UNITED, start: 1, connect: 1, grow: 1, cluster: 1, reach: 1, close: 1 }
+    const frame = frameAt(END, scene)
+    frame.nodes.forEach((n, i) => {
+      expect(n.x).toBeCloseTo(scene.nodes[i].scatter.x)
+      expect(n.y).toBeCloseTo(scene.nodes[i].scatter.y)
+      expect(n.alpha).toBe(1)
+      expect(n.toneAmount).toBe(0)
+    })
+    for (const e of frame.edges) expect(e.alpha).toBe(e.kind === 'close' ? 1 : 0)
+    expect(frame.connected).toBe(true)
+  })
+
   it('passes reach through for the renderer', () => {
     expect(frameAt({ ...UNITED, cluster: 1, reach: 0.4 }, scene).reach).toBe(0.4)
   })
@@ -171,7 +184,7 @@ describe('frameAt', () => {
 
   it('changes continuously as any beat moves', () => {
     const eps = 1e-4
-    for (const key of ['form', 'split', 'start', 'connect', 'grow', 'cluster', 'shape'] as const) {
+    for (const key of ['form', 'split', 'start', 'connect', 'grow', 'cluster', 'shape', 'close'] as const) {
       for (const v of [0.25, 0.5, 0.75]) {
         const base = { ...UNITED, connect: key === 'cluster' || key === 'shape' ? 1 : 0, cluster: key === 'shape' ? 1 : 0 }
         const a = frameAt({ ...base, [key]: v - eps }, scene)

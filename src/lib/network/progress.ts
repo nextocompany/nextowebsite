@@ -46,7 +46,7 @@ export interface PinProgress {
 
 /**
  * Every beat as a function of scroll position along the stages
- * (0 hero, 1 intro, 2 approach, 3 how we work, 4 products, 5 beyond).
+ * (0 hero, 1 intro, 2 approach, 3 how we work, 4 products, 5 beyond, 6 closing).
  * A beat with its own trigger plays out entirely inside it, so the network
  * is settled on either side; without one it follows the page position.
  */
@@ -63,6 +63,7 @@ export function beatsAt(u: number, pins: PinProgress = {}): BeatState {
     // Products hold their shapes, then relax back into the network on the way to beyond.
     shape: window01(u, 3.4, 4, 4.2, 4.7),
     reach: smoothstep(4.3, 5, u),
+    close: smoothstep(5.2, 6, u),
   }
 }
 

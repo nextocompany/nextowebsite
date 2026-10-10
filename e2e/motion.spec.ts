@@ -96,6 +96,20 @@ test.describe('desktop 1440×900', () => {
     expect([...seen].sort()).toEqual(['500 Miles', 'Tech It Up', 'The Enterprise Resources Training', 'Touch Technologies'])
   })
 
+  test('the footer closes on the whole network, live behind the closing line', async ({ page }) => {
+    await page.goto('/')
+    await settle(page)
+    await scrollToY(page, await page.evaluate(() => document.documentElement.scrollHeight))
+    const drawn = await page.evaluate(() => {
+      const canvas = document.querySelector('canvas')!
+      const { data } = canvas.getContext('2d')!.getImageData(0, 0, canvas.width, canvas.height)
+      let count = 0
+      for (let i = 3; i < data.length; i += 4) if (data[i] > 0) count++
+      return count
+    })
+    expect(drawn, 'painted canvas pixels at the footer').toBeGreaterThan(2000)
+  })
+
   for (const id of ['approach', 'how-we-work', 'products', 'beyond', 'contact']) {
     test(`a link to #${id} lands under the header`, async ({ page }) => {
       await page.goto(`/#${id}`)
@@ -188,6 +202,6 @@ test.describe('reduced motion', () => {
     expect(await pinStarts(page)).toEqual([])
     expect(await page.locator('[data-stepping]').count()).toBe(0)
     expect(await page.locator('[data-lit]').count()).toBe(0)
-    expect(await page.locator('[data-stage] .network-still:visible').count()).toBeGreaterThanOrEqual(6)
+    expect(await page.locator('[data-stage] .network-still:visible').count()).toBeGreaterThanOrEqual(7)
   })
 })

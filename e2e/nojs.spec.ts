@@ -12,7 +12,7 @@ for (const locale of LOCALES) {
     }
     // Each stage shows its server-rendered network still.
     const stills = page.locator('[data-stage] .network-still:visible')
-    expect(await stills.count()).toBeGreaterThanOrEqual(6)
+    expect(await stills.count()).toBeGreaterThanOrEqual(7)
     await expect(page.locator('.pin-spacer')).toHaveCount(0)
   })
 }

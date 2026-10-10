@@ -57,7 +57,7 @@ const VARIANTS: ReadonlyArray<{ variant: Variant; className: string }> = [
   { variant: 'wide', className: 'hidden md:block' },
 ]
 
-function StillFrames({ name, still }: { name: StageName; still: boolean }) {
+function StillFrames({ name }: { name: StageName }) {
   return VARIANTS.map(({ variant, className: visibility }) => {
     const extent = STAGE_EXTENT[name][variant]
     return (
@@ -67,7 +67,7 @@ function StillFrames({ name, still }: { name: StageName; still: boolean }) {
         extentX={extent.x}
         extentY={extent.y}
         fit={STAGE_FIT[name]}
-        className={`${still ? 'network-still ' : ''}${visibility}`}
+        className={`network-still ${visibility}`}
       />
     )
   })
@@ -80,16 +80,7 @@ function StillFrames({ name, still }: { name: StageName; still: boolean }) {
 export function NetworkStage({ name, className = '' }: { name: StageName; className?: string }) {
   return (
     <div data-stage={name} aria-hidden="true" className={className}>
-      <StillFrames name={name} still />
-    </div>
-  )
-}
-
-/** A stage's still frame as plain decoration: never animated, never hidden by the canvas. */
-export function NetworkBackdrop({ name, className = '' }: { name: StageName; className?: string }) {
-  return (
-    <div aria-hidden="true" className={className}>
-      <StillFrames name={name} still={false} />
+      <StillFrames name={name} />
     </div>
   )
 }
