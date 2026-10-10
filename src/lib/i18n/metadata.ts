@@ -2,7 +2,8 @@ import type { Metadata } from 'next'
 import { getDictionary, languageAlternates, LOCALE_PATH, SITE_URL } from './index'
 import type { Locale } from './types'
 
-const OG_IMAGE = { url: '/og-placeholder.png', width: 1200, height: 630 }
+/** Rendered from the built site by `npm run og` (scripts/og-image.mjs). */
+const ogImage = (locale: Locale) => ({ url: `/og-${locale}.png`, width: 1200, height: 630 })
 
 export function buildHomeMetadata(locale: Locale): Metadata {
   const dict = getDictionary(locale)
@@ -22,7 +23,7 @@ export function buildHomeMetadata(locale: Locale): Metadata {
       description: dict.meta.description,
       url: path,
       siteName: 'Nexto',
-      images: [{ ...OG_IMAGE, alt: dict.meta.title }],
+      images: [{ ...ogImage(locale), alt: dict.meta.title }],
       locale: dict.meta.ogLocale,
       type: 'website',
     },

@@ -25,6 +25,6 @@ describe('published locales', () => {
   it('gives the English home a root canonical and no alternates', () => {
     const metadata = buildHomeMetadata('en')
     expect(metadata.alternates).toEqual({ canonical: '/' })
-    expect(metadata.openGraph).toMatchObject({ url: '/' })
+    expect(metadata.openGraph).toMatchObject({ url: '/', images: [expect.objectContaining({ url: '/og-en.png' })] })
   })
 })
