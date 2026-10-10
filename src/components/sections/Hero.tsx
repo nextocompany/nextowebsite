@@ -22,7 +22,7 @@ export function Hero({ dict, partners }: HeroProps) {
           <h1
             id="hero-title"
             data-hero-title
-            className="max-w-[16ch] text-[2.75rem] leading-[1.05] font-normal tracking-tight text-balance sm:text-6xl lg:text-7xl th:max-w-[20ch] th:leading-[1.3] th:tracking-normal"
+            className="max-w-[16ch] text-[2.75rem] leading-[1.05] font-normal tracking-tight text-balance sm:text-5xl th:max-w-[20ch] th:leading-[1.3] th:tracking-normal"
           >
             {dict.title}
           </h1>

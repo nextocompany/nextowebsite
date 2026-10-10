@@ -19,9 +19,8 @@ export const metadata: Metadata = {
 export default function PrivacyPage() {
   return (
     <>
-      <SiteHeader locale="th" />
-      {/* Policy text is English only for now */}
-      <main lang="en" className="mx-auto max-w-3xl px-4 py-24 sm:px-6">
+      <SiteHeader locale="en" />
+      <main className="mx-auto max-w-3xl px-4 py-24 sm:px-6">
         <h1 className="text-3xl font-semibold text-ink mb-8">Privacy Policy</h1>
 
         <section className="mb-8">
@@ -86,7 +85,7 @@ export default function PrivacyPage() {
 
         <p className="text-sm text-ink-muted">Last updated: February 2026</p>
       </main>
-      <SiteFooter locale="th" />
+      <SiteFooter locale="en" />
     </>
   )
 }

@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { getDictionary, LOCALE_PATH, otherLocale, type Locale } from '@/lib/i18n'
+import { getDictionary, LOCALE_PATH, switchTarget, type Locale } from '@/lib/i18n'
 import { NAV_SECTIONS, SECTION_IDS } from '@/lib/site/sections'
 import { BrandLogo } from './BrandLogo'
 import { LanguageSwitch } from './LanguageSwitch'
@@ -13,7 +13,7 @@ const NAV_LINK = 'rounded-full px-3 py-2 text-ink-muted transition-colors hover:
 
 export function SiteHeader({ locale }: SiteHeaderProps) {
   const dict = getDictionary(locale)
-  const target = otherLocale(locale)
+  const target = switchTarget(locale)
   // Full path, so the anchors also work from /privacy/.
   const home = LOCALE_PATH[locale]
   const navLinks = NAV_SECTIONS.map(({ key, id }) => ({ label: dict.nav[key], href: `${home}#${id}` }))
@@ -38,12 +38,14 @@ export function SiteHeader({ locale }: SiteHeaderProps) {
         </nav>
 
         <div className="flex items-center gap-2">
-          <LanguageSwitch
-            href={LOCALE_PATH[target]}
-            hrefLang={target}
-            label={dict.nav.switchLanguage}
-            ariaLabel={dict.nav.switchLanguageLabel}
-          />
+          {target && (
+            <LanguageSwitch
+              href={LOCALE_PATH[target]}
+              hrefLang={target}
+              label={dict.nav.switchLanguage}
+              ariaLabel={dict.nav.switchLanguageLabel}
+            />
+          )}
           <Link
             prefetch={false}
             href={`${home}#${SECTION_IDS.contact}`}
