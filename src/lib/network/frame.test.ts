@@ -3,7 +3,7 @@ import { frameAt, type BeatState } from './frame'
 import { buildScene } from './scene'
 
 const scene = buildScene('wide')
-const SCATTERED: BeatState = { form: 0, split: 0, connect: 0, cluster: 0, reach: 0 }
+const SCATTERED: BeatState = { form: 0, split: 0, start: 0, connect: 0, grow: 0, cluster: 0, reach: 0 }
 const UNITED: BeatState = { ...SCATTERED, form: 1 }
 const core = scene.nodes.flatMap((n, i) => (n.role === 'core' ? [i] : []))
 const edgesOf = (frame: ReturnType<typeof frameAt>, kind: string) => frame.edges.filter((e) => e.kind === kind)
@@ -74,6 +74,41 @@ describe('frameAt', () => {
     expect(edgesOf(frame, 'cluster').every((e) => e.alpha === 1)).toBe(true)
   })
 
+  it('start sends a teal wave out from the origin node, and leaves no colour once it has passed', () => {
+    const lit = (start: number) =>
+      frameAt({ ...UNITED, start }, scene).nodes.flatMap((n, i) => (n.tone === 'teal' && n.toneAmount > 0.5 ? [i] : []))
+    expect(lit(0)).toEqual([])
+    expect(lit(0.05)).toContain(scene.origin)
+    const early = lit(0.25)
+    const late = lit(0.7)
+    const reach = (ids: number[]) => Math.max(...ids.map((i) => Math.hypot(scene.nodes[i].united.x - scene.nodes[scene.origin].united.x, scene.nodes[i].united.y - scene.nodes[scene.origin].united.y)))
+    expect(early.length).toBeGreaterThan(0)
+    expect(reach(late)).toBeGreaterThan(reach(early))
+    expect(lit(1)).toEqual([])
+  })
+
+  it('grow brings the partner groups in at the rim, linked to the network', () => {
+    const before = frameAt({ ...UNITED, start: 1, connect: 1 }, scene)
+    const after = frameAt({ ...UNITED, start: 1, connect: 1, grow: 1 }, scene)
+    scene.nodes.forEach((node, i) => {
+      if (node.role !== 'ambient') return
+      expect(before.nodes[i].alpha).toBe(0)
+      expect(after.nodes[i].alpha).toBe(1)
+      expect(after.nodes[i].x).toBeCloseTo(node.partnerPos.x)
+      expect(after.nodes[i].y).toBeCloseTo(node.partnerPos.y)
+    })
+    expect(edgesOf(before, 'partner').every((e) => e.alpha === 0)).toBe(true)
+    expect(edgesOf(after, 'partner').every((e) => e.alpha === 1)).toBe(true)
+  })
+
+  it('lets the partner groups go when the network opens into the product clusters', () => {
+    const frame = frameAt({ ...UNITED, start: 1, connect: 1, grow: 1, cluster: 1 }, scene)
+    scene.nodes.forEach((node, i) => {
+      if (node.role === 'ambient') expect(frame.nodes[i].alpha).toBe(0)
+    })
+    expect(edgesOf(frame, 'partner').every((e) => e.alpha === 0)).toBe(true)
+  })
+
   it('passes reach through for the renderer', () => {
     expect(frameAt({ ...UNITED, cluster: 1, reach: 0.4 }, scene).reach).toBe(0.4)
   })
@@ -87,7 +122,7 @@ describe('frameAt', () => {
 
   it('changes continuously as any beat moves', () => {
     const eps = 1e-4
-    for (const key of ['form', 'split', 'connect', 'cluster'] as const) {
+    for (const key of ['form', 'split', 'start', 'connect', 'grow', 'cluster'] as const) {
       for (const v of [0.25, 0.5, 0.75]) {
         const a = frameAt({ ...UNITED, connect: key === 'cluster' ? 1 : 0, [key]: v - eps }, scene)
         const b = frameAt({ ...UNITED, connect: key === 'cluster' ? 1 : 0, [key]: v + eps }, scene)

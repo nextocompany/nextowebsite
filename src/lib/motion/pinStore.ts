@@ -1,24 +1,27 @@
+import type { PinProgress } from '@/lib/network/progress'
+
 /**
- * Progress of the pinned Approach section, shared between MotionRoot (which
- * owns the ScrollTrigger pin) and NetworkCanvas (which draws the split).
- * `undefined` means Approach is not pinned (narrow or short screens, reduced motion).
+ * Progress of the scroll-driven beats (Approach pin, How we work steps), shared
+ * between MotionRoot, which owns the ScrollTriggers, and NetworkCanvas, which
+ * draws them. A missing key means that beat has no trigger running.
  */
 type Listener = () => void
 
-let progress: number | undefined
+let pins: PinProgress = {}
 const listeners = new Set<Listener>()
 
-export function getApproachPin(): number | undefined {
-  return progress
+export function getPins(): PinProgress {
+  return pins
 }
 
-export function setApproachPin(next: number | undefined): void {
-  if (next === progress) return
-  progress = next
+export function setPin(key: keyof PinProgress, progress: number | undefined): void {
+  if (pins[key] === progress) return
+  const rest: PinProgress = Object.fromEntries(Object.entries(pins).filter(([k]) => k !== key))
+  pins = progress === undefined ? rest : { ...rest, [key]: progress }
   listeners.forEach((listener) => listener())
 }
 
-export function subscribeApproachPin(listener: Listener): () => void {
+export function subscribePins(listener: Listener): () => void {
   listeners.add(listener)
   return () => {
     listeners.delete(listener)

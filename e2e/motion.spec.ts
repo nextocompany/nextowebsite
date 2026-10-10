@@ -6,11 +6,16 @@ const COLUMN = '#approach .grid-column'
 /** Landing JS was 193.7 kB gz when the user waived the 150 kB budget for Lenis + GSAP; catch regressions past that. */
 const JS_BUDGET_GZ = 200_000
 
-const pinStart = (page: Page) =>
-  page.evaluate(() => {
-    const spacer = document.querySelector('.pin-spacer')
-    return spacer ? Math.round(spacer.getBoundingClientRect().top + window.scrollY) : null
-  })
+/** Document offsets of the pin spacers, in page order (Approach, then How we work). */
+const pinStarts = (page: Page) =>
+  page.evaluate(() =>
+    Array.from(document.querySelectorAll('.pin-spacer'), (s) => Math.round(s.getBoundingClientRect().top + window.scrollY)),
+  )
+const pinStart = async (page: Page) => (await pinStarts(page))[0] ?? null
+
+const HOW_COLUMN = '#how-we-work .grid-column'
+const currentStep = (page: Page) =>
+  page.evaluate(() => document.querySelector('[data-steps] [data-current="true"]')?.getAttribute('data-step') ?? null)
 
 /** Pixels on the network canvas close to the brand coral: the "people" half of the split. */
 const coralPixels = (page: Page) =>
@@ -54,6 +59,28 @@ test.describe('desktop 1440×900', () => {
     expect(await topOf(page, COLUMN)).toBeLessThan(0)
   })
 
+  test('pins How we work and steps through its three items, one third each', async ({ page }) => {
+    await page.goto('/')
+    await settle(page)
+    const starts = await pinStarts(page)
+    expect(starts, 'Approach and How we work pins').toHaveLength(2)
+    const start = starts[1]
+    const length = 1.5 * 900
+
+    for (const [progress, step] of [
+      [0.05, '0'],
+      [0.5, '1'],
+      [0.9, '2'],
+    ] as const) {
+      await scrollToY(page, start + progress * length)
+      expectNear(await topOf(page, HOW_COLUMN), 0, `column at ${progress}`)
+      expect(await currentStep(page), `item told at ${progress}`).toBe(step)
+    }
+
+    await scrollToY(page, start + length + 400)
+    expect(await topOf(page, HOW_COLUMN)).toBeLessThan(0)
+  })
+
   for (const id of ['approach', 'how-we-work', 'products', 'beyond', 'contact']) {
     test(`a link to #${id} lands under the header`, async ({ page }) => {
       await page.goto(`/#${id}`)
@@ -80,12 +107,14 @@ test.describe('desktop 1440×900', () => {
   test('the pin survives a resize below the breakpoint and back', async ({ page }) => {
     await page.goto('/')
     await settle(page)
+    const before = await pinStarts(page)
+    expect(before).toHaveLength(2)
     await page.setViewportSize({ width: 900, height: 900 })
     await page.waitForTimeout(800)
-    expect(await pinStart(page)).toBeNull()
+    expect(await pinStarts(page)).toEqual([])
     await page.setViewportSize({ width: 1440, height: 900 })
     await page.waitForTimeout(800)
-    expect(await pinStart(page)).not.toBeNull()
+    expect(await pinStarts(page)).toEqual(before)
     await page.evaluate(() => document.querySelector<HTMLAnchorElement>('header a[href="/#products"]')!.click())
     await page.waitForTimeout(2600)
     expectNear(await topOf(page, '#products'), 80)
@@ -119,18 +148,19 @@ test('no route payloads are prefetched (every link is a same-page jump or a full
   expect(payloads).toEqual([])
 })
 
-test('stacked tablet layout scrolls freely (no pin)', async ({ page }) => {
+test('stacked tablet layout scrolls freely (no pin, no dimmed items)', async ({ page }) => {
   await page.setViewportSize({ width: 768, height: 1024 })
   await page.goto('/')
   await settle(page)
-  expect(await pinStart(page)).toBeNull()
+  expect(await pinStarts(page)).toEqual([])
+  expect(await page.locator('[data-stepping]').count()).toBe(0)
 })
 
 test('short laptop screens scroll freely (no pin)', async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 600 })
   await page.goto('/')
   await settle(page)
-  expect(await pinStart(page)).toBeNull()
+  expect(await pinStarts(page)).toEqual([])
 })
 
 test.describe('reduced motion', () => {
@@ -140,7 +170,8 @@ test.describe('reduced motion', () => {
     await page.goto('/')
     await settle(page)
     expect(await page.evaluate(() => document.documentElement.classList.contains('lenis'))).toBe(false)
-    expect(await pinStart(page)).toBeNull()
+    expect(await pinStarts(page)).toEqual([])
+    expect(await page.locator('[data-stepping]').count()).toBe(0)
     expect(await page.locator('[data-stage] .network-still:visible').count()).toBeGreaterThanOrEqual(6)
   })
 })

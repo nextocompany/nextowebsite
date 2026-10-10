@@ -4,9 +4,9 @@ import { buildScene } from './scene'
 import { SIGNAL, signalsAt } from './signals'
 
 const scene = buildScene('wide')
-const formed = frameAt({ form: 1, split: 0, connect: 0, cluster: 0, reach: 0 }, scene)
-const split = frameAt({ form: 1, split: 1, connect: 0, cluster: 0, reach: 0 }, scene)
-const scattered = frameAt({ form: 0, split: 0, connect: 0, cluster: 0, reach: 0, time: 0 }, scene)
+const formed = frameAt({ form: 1, split: 0, start: 0, connect: 0, grow: 0, cluster: 0, reach: 0 }, scene)
+const split = frameAt({ form: 1, split: 1, start: 0, connect: 0, grow: 0, cluster: 0, reach: 0 }, scene)
+const scattered = frameAt({ form: 0, split: 0, start: 0, connect: 0, grow: 0, cluster: 0, reach: 0, time: 0 }, scene)
 
 const times = Array.from({ length: 200 }, (_, i) => i * 0.137)
 

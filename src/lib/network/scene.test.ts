@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { buildScene, KIND } from './scene'
+import { STAGE_EXTENT } from './stages'
 
 const VARIANTS = ['wide', 'narrow'] as const
 
@@ -94,6 +95,58 @@ describe('clusters', () => {
       for (let c = 0; c < scene.clusterCount; c++) {
         const members = scene.nodes.flatMap((n, i) => (n.cluster === c ? [i] : []))
         expect(connected(members, scene.clusterEdges)).toBe(true)
+      }
+    }
+  })
+})
+
+describe('partner groups (how we work, step 3)', () => {
+  it('gather the ambient nodes into three small groups beyond the satellites', () => {
+    for (const variant of VARIANTS) {
+      const scene = buildScene(variant)
+      const ambient = scene.nodes.filter((n) => n.role === 'ambient')
+      expect(new Set(ambient.map((n) => n.partnerGroup))).toEqual(new Set([0, 1, 2]))
+      const orbit = Math.max(...scene.nodes.filter((n) => n.role === 'outer').map((n) => Math.hypot(n.satellite.x, n.satellite.y)))
+      for (const n of ambient) expect(Math.hypot(n.partnerPos.x, n.partnerPos.y)).toBeGreaterThan(orbit)
+      for (const n of scene.nodes.filter((m) => m.role !== 'ambient')) expect(n.partnerGroup).toBe(-1)
+    }
+  })
+
+  it('link each group into one piece and bridge it to an outer node', () => {
+    for (const variant of VARIANTS) {
+      const scene = buildScene(variant)
+      for (let g = 0; g < 3; g++) {
+        const members = scene.nodes.flatMap((n, i) => (n.partnerGroup === g ? [i] : []))
+        expect(connected(members, scene.partnerEdges)).toBe(true)
+        const bridges = scene.partnerEdges.filter(([a, b]) => members.includes(a) !== members.includes(b))
+        expect(bridges).toHaveLength(1)
+        const outside = bridges[0].find((i) => !members.includes(i))!
+        expect(scene.nodes[outside].role).toBe('outer')
+      }
+    }
+  })
+
+  it('fit inside the how-we-work stage', () => {
+    for (const variant of VARIANTS) {
+      const scene = buildScene(variant)
+      const extent = STAGE_EXTENT['how-we-work'][variant]
+      for (const n of scene.nodes) {
+        const p = n.role === 'ambient' ? n.partnerPos : n.satellite
+        expect(Math.abs(p.x)).toBeLessThan(extent.x)
+        expect(Math.abs(p.y)).toBeLessThan(extent.y)
+      }
+    }
+  })
+})
+
+describe('origin (how we work, step 1)', () => {
+  it('is the core node nearest the centre', () => {
+    for (const variant of VARIANTS) {
+      const scene = buildScene(variant)
+      const origin = scene.nodes[scene.origin]
+      expect(origin.role).toBe('core')
+      for (const n of scene.nodes.filter((m) => m.role === 'core')) {
+        expect(Math.hypot(origin.united.x, origin.united.y)).toBeLessThanOrEqual(Math.hypot(n.united.x, n.united.y))
       }
     }
   })

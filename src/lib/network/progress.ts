@@ -36,20 +36,29 @@ export function scrollPosition(centers: ReadonlyArray<number>, viewportCenter: n
   return centers.length - 1
 }
 
+/** Progress (0 → 1) of the scroll-driven beats that have their own trigger; absent when not running. */
+export interface PinProgress {
+  /** Approach pin: the data/people split. */
+  approach?: number
+  /** How we work, pinned or (stacked screens) the stage's own pass: start, connect, grow. */
+  howWeWork?: number
+}
+
 /**
  * Every beat as a function of scroll position along the stages
  * (0 hero, 1 intro, 2 approach, 3 how we work, 4 products, 5 beyond).
- * While Approach is pinned, `approachPin` (its pin progress, 0 → 1) drives
- * the whole split, so it plays out inside the pin and is whole on either side.
+ * A beat with its own trigger plays out entirely inside it, so the network
+ * is settled on either side; without one it follows the page position.
  */
-export function beatsAt(u: number, approachPin?: number): BeatState {
+export function beatsAt(u: number, pins: PinProgress = {}): BeatState {
+  const { approach, howWeWork: how } = pins
   return {
     form: smoothstep(0.1, 0.9, u),
-    split:
-      approachPin === undefined
-        ? window01(u, 1.3, 1.85, 2.15, 2.7)
-        : window01(approachPin, 0.05, 0.4, 0.7, 0.95),
-    connect: smoothstep(2.4, 3, u),
+    split: approach === undefined ? window01(u, 1.3, 1.85, 2.15, 2.7) : window01(approach, 0.05, 0.4, 0.7, 0.95),
+    // How we work, one third each: start where the work happens, connect what's there, grow with partners.
+    start: how === undefined ? smoothstep(2.3, 2.6, u) : smoothstep(0.02, 0.3, how),
+    connect: how === undefined ? smoothstep(2.4, 3, u) : smoothstep(0.36, 0.64, how),
+    grow: how === undefined ? smoothstep(2.6, 3, u) : smoothstep(0.7, 0.96, how),
     cluster: smoothstep(3.3, 4, u),
     reach: smoothstep(4.3, 5, u),
   }

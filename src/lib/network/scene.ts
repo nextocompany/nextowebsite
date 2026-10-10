@@ -27,6 +27,10 @@ export interface SceneNode {
   readonly cluster: number
   /** One outer node per cluster is drawn teal there. */
   readonly isHub: boolean
+  /** Ambient only: its place in a partner group at the rim (how we work, step 3). Others: their satellite position. */
+  readonly partnerPos: Point
+  /** Partner group index, or -1 for non-ambient nodes. */
+  readonly partnerGroup: number
   readonly drift: { readonly phase: number; readonly speed: number }
 }
 
@@ -38,6 +42,10 @@ export interface Scene {
   /** [outer index, core index]. */
   readonly satelliteEdges: ReadonlyArray<readonly [number, number]>
   readonly scatterEdges: ReadonlyArray<readonly [number, number]>
+  /** Links inside each partner group, plus one bridge per group to an outer node. */
+  readonly partnerEdges: ReadonlyArray<readonly [number, number]>
+  /** Core node nearest the centre: where the work happens (how we work, step 1). */
+  readonly origin: number
   readonly scatterLinkMax: number
   readonly scatterBounds: Point
   readonly clusterCount: number
@@ -51,6 +59,15 @@ interface ClusterSpec {
 }
 
 const SEED = 20261010
+/** A separate stream for the partner groups, so adding them left every other position unchanged. */
+const PARTNER_SEED = SEED + 1
+
+/** Three partner groups just beyond the satellites' orbit, spaced around the rim. */
+const PARTNER_LAYOUT = {
+  wide: { radius: 1.98, spread: 0.22, angles: [-0.5, 1.6, 3.7] },
+  narrow: { radius: 1.72, spread: 0.2, angles: [-0.5, 1.6, 3.7] },
+} as const satisfies Record<Variant, unknown>
+const PARTNER_GROUPS = 3
 const GOLDEN_ANGLE = Math.PI * (3 - Math.sqrt(5))
 
 const LAYOUT = {
@@ -145,7 +162,7 @@ export function buildScene(variant: Variant): Scene {
   const slots = clusterSlots(layout.clusters, clustered)
   const hubTaken = new Set<number>()
 
-  const nodes: SceneNode[] = Array.from({ length: clustered + layout.ambient }, (_, i) => {
+  const baseNodes = Array.from({ length: clustered + layout.ambient }, (_, i) => {
     const role: Role = i < coreCount ? 'core' : i < clustered ? 'outer' : 'ambient'
     const edgeAngle = rand() * Math.PI * 2
     const united = role === 'core' ? discRaw[i] : { x: Math.cos(edgeAngle) * 1.05, y: Math.sin(edgeAngle) * 1.05 }
@@ -173,6 +190,21 @@ export function buildScene(variant: Variant): Scene {
     }
   })
 
+  const partnerRand = mulberry32(PARTNER_SEED)
+  const partner = PARTNER_LAYOUT[variant]
+  const perGroup = Math.ceil(layout.ambient / PARTNER_GROUPS)
+  const nodes: SceneNode[] = baseNodes.map((n, i) => {
+    if (n.role !== 'ambient') return { ...n, partnerPos: n.satellite, partnerGroup: -1 }
+    const member = i - clustered
+    const group = Math.floor(member / perGroup)
+    const slot = member % perGroup
+    const angle = partner.angles[group]
+    const r = partner.spread * Math.sqrt((slot + 0.5) / perGroup)
+    const a = slot * GOLDEN_ANGLE + partnerRand() * 0.6
+    const centre = { x: Math.cos(angle) * partner.radius, y: Math.sin(angle) * partner.radius }
+    return { ...n, partnerPos: { x: centre.x + Math.cos(a) * r, y: centre.y + Math.sin(a) * r }, partnerGroup: group }
+  })
+
   const corePoints = nodes.flatMap((n, index) => (n.role === 'core' ? [{ index, pos: n.united }] : []))
   const coreEdges = fromKeys(new Set([...spanningLinks(corePoints), ...nearLinks(corePoints, 3, 0.45)]))
 
@@ -195,9 +227,31 @@ export function buildScene(variant: Variant): Scene {
     ),
   )
 
+  const outerPoints = nodes.flatMap((n, index) => (n.role === 'outer' ? [{ index, pos: n.satellite }] : []))
+  const partnerEdges = Array.from({ length: PARTNER_GROUPS }, (_, g) => {
+    const members = nodes.flatMap((n, index) => (n.partnerGroup === g ? [{ index, pos: n.partnerPos }] : []))
+    let bridge = { member: members[0], outer: outerPoints[0], d: Infinity }
+    for (const member of members) {
+      for (const outer of outerPoints) {
+        const d = distance(member.pos, outer.pos)
+        if (d < bridge.d) bridge = { member, outer, d }
+      }
+    }
+    return [
+      ...fromKeys(new Set([...spanningLinks(members), ...nearLinks(members, 1, partner.spread * 1.2)])),
+      [bridge.member.index, bridge.outer.index] as [number, number],
+    ]
+  }).flat()
+
+  const origin = corePoints.reduce((best, p) =>
+    Math.hypot(p.pos.x, p.pos.y) < Math.hypot(best.pos.x, best.pos.y) ? p : best,
+  ).index
+
   return {
     variant,
     nodes,
+    partnerEdges,
+    origin,
     coreEdges,
     clusterEdges,
     satelliteEdges,

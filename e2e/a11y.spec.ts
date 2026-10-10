@@ -83,6 +83,8 @@ for (const { width, motion } of KEYBOARD_RUNS) {
   test(`keyboard reaches every link and button with a visible, unobscured ring at ${width}px (motion: ${motion})`, async ({
     page,
   }) => {
+    // Two walks over every stop, with time for Lenis to settle on each: longer than the default budget.
+    test.setTimeout(120_000)
     await page.emulateMedia({ reducedMotion: motion })
     await page.setViewportSize({ width, height: 900 })
     await page.goto('/')

@@ -22,14 +22,17 @@ describe('scrollPosition', () => {
   })
 })
 
+const BEAT_KEYS = ['form', 'split', 'start', 'connect', 'grow', 'cluster', 'reach'] as const
+const ZERO = { form: 0, split: 0, start: 0, connect: 0, grow: 0, cluster: 0, reach: 0 }
+
 describe('beatsAt', () => {
   // Stages: 0 hero, 1 intro, 2 approach, 3 how we work, 4 products, 5 beyond.
   it('is a scattered network at the hero', () => {
-    expect(beatsAt(0)).toEqual({ form: 0, split: 0, connect: 0, cluster: 0, reach: 0 })
+    expect(beatsAt(0)).toEqual(ZERO)
   })
 
-  it('has formed the brain at the intro', () => {
-    expect(beatsAt(1)).toEqual({ form: 1, split: 0, connect: 0, cluster: 0, reach: 0 })
+  it('has formed the network at the intro', () => {
+    expect(beatsAt(1)).toEqual({ ...ZERO, form: 1 })
   })
 
   it('splits at the approach stage and rejoins before how we work', () => {
@@ -37,26 +40,19 @@ describe('beatsAt', () => {
     expect(beatsAt(2.75).split).toBe(0)
   })
 
-  it('links outer nodes into the formed brain at how we work', () => {
-    expect(beatsAt(3)).toEqual({ form: 1, split: 0, connect: 1, cluster: 0, reach: 0 })
+  it('has played all three how-we-work steps at how we work', () => {
+    expect(beatsAt(3)).toEqual({ ...ZERO, form: 1, start: 1, connect: 1, grow: 1 })
   })
 
   it('is clustered at products and reaching at the last stage', () => {
     expect(beatsAt(4).cluster).toBe(1)
     expect(beatsAt(4).reach).toBe(0)
-    expect(beatsAt(5)).toEqual({ form: 1, split: 0, connect: 1, cluster: 1, reach: 1 })
+    expect(beatsAt(5)).toEqual({ form: 1, split: 0, start: 1, connect: 1, grow: 1, cluster: 1, reach: 1 })
   })
 
   it('matches every stage still frame at the stage position (stills never draw reach lines)', () => {
     STAGE_ORDER.forEach((name, i) => {
-      const { form, split, connect, cluster } = beatsAt(i)
-      const still = STAGE_STATE[name]
-      expect({ form, split, connect, cluster }).toEqual({
-        form: still.form,
-        split: still.split,
-        connect: still.connect,
-        cluster: still.cluster,
-      })
+      expect({ ...beatsAt(i), reach: 0 }).toEqual({ ...STAGE_STATE[name], reach: 0 })
     })
   })
 
@@ -64,9 +60,7 @@ describe('beatsAt', () => {
     for (let u = 0; u < 5; u += 0.01) {
       const a = beatsAt(u)
       const b = beatsAt(u + 0.001)
-      for (const key of ['form', 'split', 'connect', 'cluster', 'reach'] as const) {
-        expect(Math.abs(a[key] - b[key])).toBeLessThan(0.05)
-      }
+      for (const key of BEAT_KEYS) expect(Math.abs(a[key] - b[key])).toBeLessThan(0.05)
     }
   })
 })
@@ -74,27 +68,64 @@ describe('beatsAt', () => {
 describe('beatsAt with the approach pin', () => {
   // When Approach is pinned, its pin progress (0 → 1) drives the split instead of the page position.
   it('stays whole on the way in, before the pin starts', () => {
-    expect(beatsAt(1.6, 0).split).toBe(0)
-    expect(beatsAt(1.99, 0).split).toBe(0)
+    expect(beatsAt(1.6, { approach: 0 }).split).toBe(0)
+    expect(beatsAt(1.99, { approach: 0 }).split).toBe(0)
   })
 
   it('splits fully in the middle of the pin, wherever the page position sits', () => {
-    expect(beatsAt(2, 0.55).split).toBe(1)
-    expect(beatsAt(1.98, 0.55).split).toBe(1)
+    expect(beatsAt(2, { approach: 0.55 }).split).toBe(1)
+    expect(beatsAt(1.98, { approach: 0.55 }).split).toBe(1)
   })
 
   it('rejoins before the pin releases, so the way out to how we work is whole', () => {
-    expect(beatsAt(2, 1).split).toBe(0)
-    expect(beatsAt(2.3, 1).split).toBe(0)
+    expect(beatsAt(2, { approach: 1 }).split).toBe(0)
+    expect(beatsAt(2.3, { approach: 1 }).split).toBe(0)
   })
 
   it('leaves the other beats to the page position', () => {
-    expect({ ...beatsAt(3, 1), split: 0 }).toEqual({ ...beatsAt(3), split: 0 })
+    expect({ ...beatsAt(4, { approach: 1 }), split: 0 }).toEqual({ ...beatsAt(4), split: 0 })
   })
 
   it('never jumps across the pin', () => {
     for (let p = 0; p < 1; p += 0.01) {
-      expect(Math.abs(beatsAt(2, p).split - beatsAt(2, p + 0.001).split)).toBeLessThan(0.05)
+      expect(Math.abs(beatsAt(2, { approach: p }).split - beatsAt(2, { approach: p + 0.001 }).split)).toBeLessThan(0.05)
+    }
+  })
+})
+
+describe('beatsAt with the how-we-work steps', () => {
+  // Pinned (or, on stacked screens, the stage's own pass): progress 0 → 1 plays three steps in order.
+  const at = (h: number) => beatsAt(3, { approach: 1, howWeWork: h })
+
+  it('has not started on the way in: the network is whole and unlinked', () => {
+    for (const u of [2.3, 2.7, 2.99]) {
+      const b = beatsAt(u, { approach: 1, howWeWork: 0 })
+      expect({ start: b.start, connect: b.connect, grow: b.grow }).toEqual({ start: 0, connect: 0, grow: 0 })
+    }
+  })
+
+  it('plays start, then connect, then grow, one third each', () => {
+    expect(at(1 / 6).start).toBeGreaterThan(0.3)
+    expect(at(1 / 6).connect).toBe(0)
+    expect(at(0.34).start).toBe(1)
+    expect(at(0.5).connect).toBeGreaterThan(0.3)
+    expect(at(0.5).grow).toBe(0)
+    expect(at(0.67).connect).toBe(1)
+    expect(at(5 / 6).grow).toBeGreaterThan(0.3)
+    expect(at(1)).toMatchObject({ start: 1, connect: 1, grow: 1 })
+  })
+
+  it('hands over to products without a jump: after the pin everything has played', () => {
+    const released = beatsAt(3.2, { approach: 1, howWeWork: 1 })
+    const free = beatsAt(3.2)
+    expect(released).toEqual(free)
+  })
+
+  it('never jumps across the steps', () => {
+    for (let h = 0; h < 1; h += 0.005) {
+      const a = at(h)
+      const b = at(h + 0.001)
+      for (const key of BEAT_KEYS) expect(Math.abs(a[key] - b[key])).toBeLessThan(0.05)
     }
   })
 })

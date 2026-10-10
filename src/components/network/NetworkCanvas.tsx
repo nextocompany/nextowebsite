@@ -1,13 +1,14 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
-import { getApproachPin, subscribeApproachPin } from '@/lib/motion/pinStore'
+import { getPins, subscribePins } from '@/lib/motion/pinStore'
 import { parseHex, type Rgb } from '@/lib/network/color'
-import { frameAt } from '@/lib/network/frame'
+import { frameAt, type BeatState } from '@/lib/network/frame'
 import { smoothstep } from '@/lib/network/math'
 import { anchorAt, beatsAt, scrollPosition, stageScrollTargets, type StageRect } from '@/lib/network/progress'
 import { buildScene, type Variant } from '@/lib/network/scene'
 import { signalsAt } from '@/lib/network/signals'
+import { howWeWorkExtent } from '@/lib/network/zoom'
 import { STAGE_EXTENT, STAGE_FIT, STAGE_ORDER, stageScale, type StageName } from '@/lib/network/stages'
 import { drawFrame, type Palette, type ReachTarget } from './drawFrame'
 
@@ -26,18 +27,22 @@ function readPalette(): Palette {
   return { ink: read('--ink'), teal: read('--teal'), coral: read('--coral') }
 }
 
-function measureStages(variant: Variant) {
+/** Each stage box on screen, in scroll order; scale is worked out once the beats are known. */
+function measureStages() {
   return STAGE_ORDER.flatMap((name: StageName) => {
     const el = document.querySelector<HTMLElement>(`[data-stage="${name}"]`)
     if (!el) return []
     const r = el.getBoundingClientRect()
-    const rect: StageRect = {
-      cx: r.left + r.width / 2,
-      cy: r.top + r.height / 2,
-      scale: stageScale(r.width, r.height, STAGE_EXTENT[name][variant], STAGE_FIT[name]),
-    }
-    return [{ rect, visible: r.bottom > 0 && r.top < window.innerHeight }]
+    return [{ name, cx: r.left + r.width / 2, cy: r.top + r.height / 2, width: r.width, height: r.height, visible: r.bottom > 0 && r.top < window.innerHeight }]
   })
+}
+
+type MeasuredStage = ReturnType<typeof measureStages>[number]
+
+/** How we work zooms out as its story widens; every other stage keeps its fixed extent. */
+function stageRect(stage: MeasuredStage, variant: Variant, beats: BeatState): StageRect {
+  const extent = stage.name === 'how-we-work' ? howWeWorkExtent(variant, beats) : STAGE_EXTENT[stage.name][variant]
+  return { cx: stage.cx, cy: stage.cy, scale: stageScale(stage.width, stage.height, extent, STAGE_FIT[stage.name]) }
 }
 
 const GUTTER = 16
@@ -85,13 +90,13 @@ export function NetworkCanvas() {
 
     const tick = (now: number) => {
       raf = 0
-      const stages = measureStages(scene.variant)
+      const stages = measureStages()
       if (stages.length === 0) return
       const maxScroll = document.documentElement.scrollHeight - window.innerHeight
-      const targets = stageScrollTargets(stages.map((s) => s.rect.cy), window.scrollY, window.innerHeight, maxScroll)
+      const targets = stageScrollTargets(stages.map((s) => s.cy), window.scrollY, window.innerHeight, maxScroll)
       // Lenis already glides the scroll, so the network follows it directly.
       const shown = scrollPosition(targets, window.scrollY)
-      const beats = beatsAt(shown, getApproachPin())
+      const beats = beatsAt(shown, getPins())
 
       ctx.clearRect(0, 0, window.innerWidth, window.innerHeight)
       if (stages.some((s) => s.visible)) {
@@ -101,7 +106,7 @@ export function NetworkCanvas() {
           (1 - TRAVEL_DIM * smoothstep(0.1, 0.35, travel)) * (HERO_ALPHA + (1 - HERO_ALPHA) * beats.form)
         const seconds = (now - start) / 1000
         const frame = frameAt({ ...beats, time: seconds }, scene)
-        const anchor = anchorAt(stages.map((s) => s.rect), shown)
+        const anchor = anchorAt(stages.map((s) => stageRect(s, scene.variant, beats)), shown)
         drawFrame(ctx, frame, anchor, palette, fade, measureTargets(), signalsAt(frame, seconds))
         // Signals keep moving while the network is on screen; off screen the loop rests until the next scroll.
         schedule()
@@ -120,7 +125,7 @@ export function NetworkCanvas() {
 
     resize()
     schedule()
-    const unsubscribePin = subscribeApproachPin(schedule)
+    const unsubscribePin = subscribePins(schedule)
     window.addEventListener('scroll', schedule, { passive: true })
     window.addEventListener('resize', onResize)
     document.addEventListener('visibilitychange', schedule)
