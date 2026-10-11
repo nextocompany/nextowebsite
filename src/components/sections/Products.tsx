@@ -23,9 +23,8 @@ export function Products({ dict }: { dict: Dictionary['products'] }) {
       <ul className="mt-8 grid gap-4 md:grid-cols-2">
         <li data-fade className={CARD}>
           <div className="flex flex-wrap items-start justify-between gap-4">
-            {/* Endyra as text: the current Endyra logo is off-system. */}
-            <h3 lang="en" className="text-4xl font-semibold tracking-tight">
-              {endyra.name}
+            <h3>
+              <BrandLogo basePath="/brand/endyra-logo" alt={endyra.name} width={194} height={40} className="h-10 w-auto" />
             </h3>
             <StatusChip tone="available">{endyra.status}</StatusChip>
           </div>
