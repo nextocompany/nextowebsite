@@ -55,7 +55,8 @@ See `.planning/REQUIREMENTS.md` (v2 section). v1 requirements are archived there
 | Teal carries data, coral carries people, across the whole network (signal pulses) | User choice 2026-10-10 over random twinkles | v2 |
 | How we work pinned with three synced steps; stacked screens follow the stage's own pass, no dimming | User choice 2026-10-10; stacked change because the stage sits below the list | v2 |
 | Product shapes: Endyra ring, Anvira stylised monitor trace (no values) | User choice 2026-10-10 | v2 |
-| Footer is a closing stage: the hero's points, all linked | User choice 2026-10-10 | v2 |
+| Footer is a closing stage: the Nexto brain gathers above the closing line, still, with an occasional signal; the network fades out over Contact | User review 2026-10-12: the hero-like full-screen ending looked darker and busier than the hero (replaces "the hero's points, all linked", 2026-10-10) | v2 |
+| Beyond: no lines to the engineering partners; each name has a marker and they light in turn (CSS) | User review 2026-10-12: the reach lines looked busy, worse as they ran down the page | v2 |
 | Light theme only, neutral palette, no motion (v1) | Superseded by v2 | Replaced |
 
 ---
