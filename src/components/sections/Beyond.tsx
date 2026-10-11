@@ -1,3 +1,4 @@
+import { BrandLogo } from '@/components/layout/BrandLogo'
 import { NetworkStage } from '@/components/network/NetworkStill'
 import { Section } from '@/components/ui/Section'
 import type { Dictionary } from '@/lib/i18n'
@@ -15,8 +16,8 @@ export function Beyond({ dict }: { dict: Dictionary['beyond'] }) {
       </h2>
       <div className="mt-6 grid gap-12 border-t border-ink/15 pt-10 md:grid-cols-2 md:gap-8">
         <article aria-labelledby="saaniq-title" data-fade>
-          <h3 id="saaniq-title" lang="en" className="text-3xl font-semibold tracking-tight">
-            {saaniq.name}
+          <h3 id="saaniq-title">
+            <BrandLogo basePath="/brand/saaniq-logo" alt={saaniq.name} width={172} height={40} className="h-10 w-auto" />
           </h3>
           <p className="mt-3 max-w-md text-ink-muted">{saaniq.description}</p>
           <a
