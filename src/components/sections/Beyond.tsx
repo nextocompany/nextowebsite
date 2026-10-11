@@ -1,3 +1,4 @@
+import type { CSSProperties } from 'react'
 import { BrandLogo } from '@/components/layout/BrandLogo'
 import { NetworkStage } from '@/components/network/NetworkStill'
 import { Section } from '@/components/ui/Section'
@@ -30,15 +31,20 @@ export function Beyond({ dict }: { dict: Dictionary['beyond'] }) {
             <span aria-hidden="true">↗</span>
           </a>
         </article>
-        {/* data-partner-group: beat 4 routes its lines down this column's left gutter. */}
+        {/* data-partner-group: the names light in turn (globals.css). */}
         <article aria-labelledby="engineering-title" data-partner-group data-fade>
           <h3 id="engineering-title" className="text-3xl font-medium tracking-tight th:tracking-normal">
             {engineering.title}
           </h3>
           <p className="mt-3 max-w-md text-ink-muted">{engineering.body}</p>
           <ul lang="en" className="mt-6 flex flex-col gap-2">
-            {ENGINEERING_PARTNERS.map((name) => (
-              <li key={name} data-partner={name} className="text-lg font-semibold">
+            {ENGINEERING_PARTNERS.map((name, i) => (
+              <li
+                key={name}
+                data-partner={name}
+                style={{ '--i': i, '--n': ENGINEERING_PARTNERS.length } as CSSProperties}
+                className="text-lg font-semibold"
+              >
                 {name}
               </li>
             ))}

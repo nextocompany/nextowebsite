@@ -25,7 +25,7 @@ export const STAGE_FIT: Readonly<Record<StageName, StageFit>> = {
   'how-we-work': 'contain',
   products: 'contain',
   beyond: 'contain',
-  closing: 'cover',
+  closing: 'contain',
 }
 
 /** Half-width and half-height (in brain units) each stage must fit. */
@@ -37,11 +37,11 @@ export const STAGE_EXTENT: Readonly<Record<StageName, Readonly<Record<Variant, P
   'how-we-work': { wide: { x: 2.3, y: 2.3 }, narrow: { x: 2.05, y: 2.05 } },
   products: { wide: { x: 3, y: 0.95 }, narrow: { x: 1.3, y: 1.2 } },
   beyond: { wide: { x: 3, y: 0.95 }, narrow: { x: 1.3, y: 1.2 } },
-  // The footer is full screen, like the hero, and shows the same points.
-  closing: { wide: { x: 3.2, y: 1.6 }, narrow: { x: 1.2, y: 2 } },
+  // The brain alone, gathered above the closing line.
+  closing: { wide: { x: 1, y: 1 }, narrow: { x: 1, y: 1 } },
 }
 
-/** The still frame each stage shows without motion (no JS or reduced motion). Stills never draw the reach lines themselves. */
+/** The still frame each stage shows without motion (no JS or reduced motion). */
 export const STAGE_STATE: Readonly<Record<StageName, BeatState>> = {
   hero: { form: 0, split: 0, start: 0, connect: 0, grow: 0, cluster: 0, shape: 0, reach: 0, close: 0 },
   intro: { form: 1, split: 0, start: 0, connect: 0, grow: 0, cluster: 0, shape: 0, reach: 0, close: 0 },
@@ -60,4 +60,4 @@ export function stageScale(width: number, height: number, extent: Point, fit: St
 }
 
 /** Line widths in brain units, shared by the SVG stills and the canvas. */
-export const STROKE = { edge: 0.012, reach: 0.012 } as const
+export const STROKE = { edge: 0.012 } as const

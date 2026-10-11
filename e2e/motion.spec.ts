@@ -81,13 +81,14 @@ test.describe('desktop 1440×900', () => {
     expect(await topOf(page, HOW_COLUMN)).toBeLessThan(0)
   })
 
-  test('beyond lights each engineering partner in turn as a signal reaches it', async ({ page }) => {
+  test('beyond lights each engineering partner in turn, one at a time', async ({ page }) => {
     await page.goto('/#beyond')
     await settle(page)
     const seen = new Set<string>()
     for (let i = 0; i < 60; i++) {
-      const lit = await page.locator('[data-partner-group] [data-partner][data-lit="true"]').evaluateAll((els) =>
-        els.map((el) => el.getAttribute('data-partner')!),
+      // Lit: the name has turned from ink (#e7e8e9) towards teal text (#5ed3d7).
+      const lit = await page.locator('[data-partner-group] [data-partner]').evaluateAll((els) =>
+        els.filter((el) => Number(getComputedStyle(el).color.match(/\d+/)![0]) < 160).map((el) => el.getAttribute('data-partner')!),
       )
       expect(lit.length, 'one name at a time').toBeLessThanOrEqual(1)
       lit.forEach((name) => seen.add(name))
@@ -96,18 +97,30 @@ test.describe('desktop 1440×900', () => {
     expect([...seen].sort()).toEqual(['500 Miles', 'Tech It Up', 'The Enterprise Resources Training', 'Touch Technologies'])
   })
 
-  test('the footer closes on the whole network, live behind the closing line', async ({ page }) => {
+  test('the footer closes on the brain above the closing line, and nothing else', async ({ page }) => {
     await page.goto('/')
     await settle(page)
     await scrollToY(page, await page.evaluate(() => document.documentElement.scrollHeight))
-    const drawn = await page.evaluate(() => {
+    const { inside, outside } = await page.evaluate(() => {
       const canvas = document.querySelector('canvas')!
+      const dpr = canvas.width / window.innerWidth
+      const box = document.querySelector('[data-stage="closing"]')!.getBoundingClientRect()
       const { data } = canvas.getContext('2d')!.getImageData(0, 0, canvas.width, canvas.height)
-      let count = 0
-      for (let i = 3; i < data.length; i += 4) if (data[i] > 0) count++
-      return count
+      let inside = 0
+      let outside = 0
+      for (let i = 3; i < data.length; i += 4) {
+        if (data[i] === 0) continue
+        const x = ((i - 3) / 4) % canvas.width / dpr
+        const y = Math.floor((i - 3) / 4 / canvas.width) / dpr
+        // A few px of slack for the signal halo at the brain's edge.
+        const near = x > box.left - 8 && x < box.right + 8 && y > box.top - 8 && y < box.bottom + 8
+        if (near) inside++
+        else outside++
+      }
+      return { inside, outside }
     })
-    expect(drawn, 'painted canvas pixels at the footer').toBeGreaterThan(2000)
+    expect(inside, 'painted canvas pixels in the closing box').toBeGreaterThan(1000)
+    expect(outside, 'painted canvas pixels anywhere else').toBe(0)
   })
 
   for (const id of ['approach', 'how-we-work', 'products', 'beyond', 'contact']) {
@@ -201,7 +214,8 @@ test.describe('reduced motion', () => {
     expect(await page.evaluate(() => document.documentElement.classList.contains('lenis'))).toBe(false)
     expect(await pinStarts(page)).toEqual([])
     expect(await page.locator('[data-stepping]').count()).toBe(0)
-    expect(await page.locator('[data-lit]').count()).toBe(0)
+    const animations = await page.locator('[data-partner]').evaluateAll((els) => els.map((el) => getComputedStyle(el).animationName))
+    expect(animations.every((name) => name === 'none')).toBe(true)
     expect(await page.locator('[data-stage] .network-still:visible').count()).toBeGreaterThanOrEqual(7)
   })
 })

@@ -7,8 +7,9 @@ import { PRODUCT, type Scene } from './scene'
  * pull apart; start: a wave spreads from one node (where the work happens);
  * connect: outer nodes link in; grow: partner groups join at the rim;
  * cluster: the network opens into clusters; shape: the two product clusters
- * take their product's shape (Endyra ring, Anvira trace); reach: lines to the
- * partner names; close: every node returns to where the page began, now all linked.
+ * take their product's shape (Endyra ring, Anvira trace); reach: the network
+ * reaches beyond healthcare as the Saaniq branch; close: the story fades out,
+ * then the brain gathers again above the closing line and rests.
  */
 export interface BeatState {
   form: number
@@ -52,11 +53,12 @@ export interface Frame {
   edges: FrameEdge[]
   /** Anvira's nodes left to right, for the monitor sweep. */
   trace: ReadonlyArray<number>
-  reach: number
   /** Size factor for dots and lines: the scattered hero and closing networks are drawn finer. */
   detail: number
   /** Whether the network is linked up, so signals can travel along it (not in the scattered hero). */
   connected: boolean
+  /** The resting closing brain: signals are few and slow. */
+  calm: boolean
 }
 
 const SPLIT_DISTANCE = 0.35
@@ -66,9 +68,10 @@ const SCATTER_EDGE = 0.5
 const SCATTER_DETAIL = 0.35
 /** Links between data and people stay visible in the split beat, dimmed. */
 const BRIDGE = 0.35
-/** The closing network sits behind the footer text, so it is drawn finer, with a slower drift. */
-const CLOSE_DETAIL = 0.6
-const CLOSE_DRIFT = 0.6
+/** Close: the story has faded out by this point; after it the brain gathers. */
+const CLOSE_OUT = 0.75
+/** The closing brain gathers from this share of the way out to the nodes' scatter positions. */
+const GATHER_SPREAD = 0.35
 /** The network counts as linked up from this level of formed detail. */
 const CONNECTED_DETAIL = 0.9
 /** Nodes of the product shapes shrink so the shape's lines read first. */
@@ -84,12 +87,15 @@ export function frameAt(state: BeatState, scene: Scene): Frame {
   const cluster = easeInOutCubic(state.cluster)
   const shape = easeInOutCubic(state.shape)
   const shown = shape * cluster
-  const close = easeInOutCubic(state.close)
+  const leave = smoothstep(0, CLOSE_OUT, state.close)
+  const closing = state.close >= CLOSE_OUT
+  const arrive = smoothstep(CLOSE_OUT, CLOSE_OUT + 0.2, state.close)
+  const gather = easeInOutCubic(smoothstep(CLOSE_OUT, 1, state.close))
   const united = smoothstep(0.55, 1, state.form)
   const time = state.time ?? 0
   const drift = DRIFT * (1 - form)
   const formedDetail = lerp(SCATTER_DETAIL, 1, form)
-  const detail = lerp(formedDetail, CLOSE_DETAIL, close)
+  const detail = closing ? 1 : formedDetail
   const litByWave = startWave(state.start, scene)
 
   const nodes = scene.nodes.map((n, index): FrameNode => {
@@ -110,9 +116,6 @@ export function frameAt(state: BeatState, scene: Scene): Frame {
 
     const formAlpha = n.role === 'core' ? 1 : n.role === 'ambient' ? Math.max(1 - united, grow) : 1 - united
     const alpha = n.cluster >= 0 ? lerp(lerp(formAlpha, 1, linked), 1, cluster) : formAlpha * (1 - cluster)
-    const closeDrift = DRIFT * CLOSE_DRIFT * close
-    const cx = n.scatter.x + closeDrift * wave(0)
-    const cy = n.scatter.y + closeDrift * wave(1.7)
     const tone: Tone = n.kind === 'people' ? 'coral' : n.kind === 'data' || n.isHub ? 'teal' : 'ink'
     const toneAmount = n.kind ? split : n.isHub ? cluster : 0
     const lit = litByWave(n)
@@ -123,13 +126,24 @@ export function frameAt(state: BeatState, scene: Scene): Frame {
       state.reach * cluster,
       productTone(n.cluster, shown, lit > toneAmount ? { tone: 'teal', toneAmount: lit } : { tone, toneAmount }),
     )
+    if (closing) {
+      // The story has faded out unseen; only the brain's own nodes gather back, still.
+      return {
+        x: lerp(lerp(n.united.x, n.scatter.x, GATHER_SPREAD), n.united.x, gather),
+        y: lerp(lerp(n.united.y, n.scatter.y, GATHER_SPREAD), n.united.y, gather),
+        r: NODE_RADIUS,
+        alpha: n.role === 'core' ? arrive : 0,
+        tone,
+        toneAmount: 0,
+      }
+    }
     return {
-      x: lerp(lerp(gx, tx, cluster), cx, close),
-      y: lerp(lerp(gy, ty, cluster), cy, close),
+      x: lerp(gx, tx, cluster),
+      y: lerp(gy, ty, cluster),
       r: NODE_RADIUS * detail * (n.isHub ? lerp(1, 1.5, cluster) : 1) * (isProduct(n.cluster) ? lerp(1, SHAPE_NODE, shown) : 1),
-      alpha: lerp(alpha, 1, close),
+      alpha: alpha * (1 - leave),
       tone: toned.tone,
-      toneAmount: toned.toneAmount * (1 - close),
+      toneAmount: toned.toneAmount,
     }
   })
 
@@ -174,13 +188,14 @@ export function frameAt(state: BeatState, scene: Scene): Frame {
 
   return {
     nodes,
-    edges: [
-      ...storyEdges.map((e) => (close > 0 ? { ...e, alpha: e.alpha * (1 - close) } : e)),
-      ...scene.closeEdges.map(plain('close', close)),
-    ],
+    edges: closing
+      ? scene.coreEdges.map(plain('close', arrive * gather))
+      : leave > 0
+        ? storyEdges.map((e) => ({ ...e, alpha: e.alpha * (1 - leave) }))
+        : storyEdges,
     connected: formedDetail >= CONNECTED_DETAIL,
+    calm: closing,
     trace: scene.trace,
-    reach: state.reach,
     detail,
   }
 }

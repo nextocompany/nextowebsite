@@ -219,20 +219,6 @@ describe('trunk (beyond)', () => {
   })
 })
 
-describe('closing (footer)', () => {
-  it('links every node, at its opening scatter position, into one piece of short links', () => {
-    for (const variant of VARIANTS) {
-      const scene = buildScene(variant)
-      const all = scene.nodes.map((_, i) => i)
-      expect(connected(all, scene.closeEdges)).toBe(true)
-      const length = ([a, b]: readonly [number, number]) =>
-        Math.hypot(scene.nodes[a].scatter.x - scene.nodes[b].scatter.x, scene.nodes[a].scatter.y - scene.nodes[b].scatter.y)
-      const longest = Math.max(...scene.closeEdges.map(length))
-      expect(longest).toBeLessThan(scene.scatterBounds.x)
-    }
-  })
-})
-
 function connected(members: number[], edges: ReadonlyArray<readonly [number, number]>): boolean {
   const reached = new Set([members[0]])
   let grew = true

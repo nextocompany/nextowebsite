@@ -22,12 +22,12 @@ _Avoid_: stage, step, phase
 A dot travelling along the network; teal carries data, coral carries people.
 _Avoid_: pulse, particle
 
-**Reach line**:
-A line from the network to one engineering partner's name in Beyond. Every name has its reach line whether or not the name is on screen.
-_Avoid_: connector, pointer
+**Closing**:
+The last stage: the network gathered back into the Nexto brain above the closing line, still, with an occasional signal.
+_Avoid_: outro, end state
 
 ### People
 
 **Engineering partner**:
-A company Nexto builds with, named in Beyond and reached by a reach line.
+A company Nexto builds with, named in Beyond. Its marker lights in turn with the others; no line joins it to the network.
 _Avoid_: vendor, supplier

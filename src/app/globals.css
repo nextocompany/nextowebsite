@@ -142,12 +142,54 @@
     opacity: 0.78;
   }
 
-  /* Beyond: a partner name lights teal while a reach signal arrives at it (NetworkCanvas sets data-lit). */
+  /*
+   * Beyond: each engineering partner has a small marker; with motion on, the
+   * names light teal one at a time, a turn of --partner-turn each (Beyond.tsx
+   * sets --i and --n). No-JS and reduced motion keep them all plain.
+   */
   [data-partner-group] [data-partner] {
-    transition: color 600ms ease;
+    --partner-turn: 1.2s;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
   }
-  [data-motion='on'] [data-partner-group] [data-partner][data-lit='true'] {
-    color: var(--teal-text);
+  [data-partner-group] [data-partner]::before {
+    content: '';
+    flex: none;
+    width: 6px;
+    height: 6px;
+    border-radius: 9999px;
+    background: var(--ink-muted);
+  }
+  [data-motion='on'] [data-partner-group] [data-partner] {
+    animation: partner-name calc(var(--n) * var(--partner-turn)) ease-out infinite;
+    animation-delay: calc(var(--i) * var(--partner-turn));
+  }
+  [data-motion='on'] [data-partner-group] [data-partner]::before {
+    animation: partner-marker calc(var(--n) * var(--partner-turn)) ease-out infinite;
+    animation-delay: calc(var(--i) * var(--partner-turn));
+  }
+  @keyframes partner-name {
+    0%,
+    4% {
+      color: var(--teal-text);
+    }
+    24%,
+    100% {
+      color: var(--ink);
+    }
+  }
+  @keyframes partner-marker {
+    0%,
+    4% {
+      background: var(--teal);
+      box-shadow: 0 0 0 4px color-mix(in srgb, var(--teal) 22%, transparent);
+    }
+    24%,
+    100% {
+      background: var(--ink-muted);
+      box-shadow: 0 0 0 4px transparent;
+    }
   }
 
   /* MotionRoot splits [data-reveal] text into these while a reveal runs. */

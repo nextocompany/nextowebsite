@@ -20,6 +20,8 @@ export const SIGNAL = {
   /** Anvira's monitor sweep: its own slot, crossing the whole trace in this many seconds. */
   sweepSlot: -1,
   sweepPeriod: 2.4,
+  /** The resting closing brain: one slot, which runs one cycle in this many. */
+  calmEvery: 2,
 } as const
 
 const SEED = 4404
@@ -66,9 +68,10 @@ export function signalsAt(frame: Frame, time: number): Signals {
   const glows: Glow[] = []
   const travels = frame.connected
 
-  for (let slot = 0; slot < SIGNAL.slots; slot++) {
+  for (let slot = 0; slot < (frame.calm ? 1 : SIGNAL.slots); slot++) {
     const phase = time / SIGNAL.period + slot / SIGNAL.slots
     const cycle = Math.floor(phase)
+    if (frame.calm && cycle % SIGNAL.calmEvery !== 0) continue
     const p = phase - cycle
     const random = randomFor(slot, cycle)
     const coin = random() < 0.5 ? 'teal' : 'coral'

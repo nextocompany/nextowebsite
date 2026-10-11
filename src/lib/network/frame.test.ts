@@ -158,21 +158,42 @@ describe('frameAt', () => {
     }
   })
 
-  it('close brings every node back to where the page began, now all linked, in plain ink', () => {
-    const END = { ...UNITED, start: 1, connect: 1, grow: 1, cluster: 1, reach: 1, close: 1 }
-    const frame = frameAt(END, scene)
+  it('close fades the story out, then gathers the brain back, still, in plain ink', () => {
+    const END = { ...UNITED, start: 1, connect: 1, grow: 1, cluster: 1, reach: 1 }
+    const at = (close: number, time = 0) => frameAt({ ...END, close, time }, scene)
+
+    const gone = at(0.75 - 1e-6)
+    gone.nodes.forEach((n) => expect(n.alpha).toBeLessThan(1e-3))
+    gone.edges.forEach((e) => expect(e.alpha).toBeLessThan(1e-3))
+
+    const frame = at(1, 7)
     frame.nodes.forEach((n, i) => {
-      expect(n.x).toBeCloseTo(scene.nodes[i].scatter.x)
-      expect(n.y).toBeCloseTo(scene.nodes[i].scatter.y)
-      expect(n.alpha).toBe(1)
+      const core = scene.nodes[i].role === 'core'
+      expect(n.alpha).toBe(core ? 1 : 0)
+      if (core) {
+        expect(n.x).toBeCloseTo(scene.nodes[i].united.x)
+        expect(n.y).toBeCloseTo(scene.nodes[i].united.y)
+      }
       expect(n.toneAmount).toBe(0)
     })
-    for (const e of frame.edges) expect(e.alpha).toBe(e.kind === 'close' ? 1 : 0)
+    expect(frame.edges).toHaveLength(scene.coreEdges.length)
+    for (const e of frame.edges) expect(e.alpha).toBe(1)
     expect(frame.connected).toBe(true)
+    expect(frame.calm).toBe(true)
+    expect(at(0.7).calm).toBe(false)
   })
 
-  it('passes reach through for the renderer', () => {
-    expect(frameAt({ ...UNITED, cluster: 1, reach: 0.4 }, scene).reach).toBe(0.4)
+  it('the closing brain gathers smoothly, appearing as it comes in', () => {
+    const END = { ...UNITED, start: 1, connect: 1, grow: 1, cluster: 1, reach: 1 }
+    const i = scene.nodes.findIndex((n) => n.role === 'core')
+    let prev = frameAt({ ...END, close: 0.75 }, scene).nodes[i]
+    expect(prev.alpha).toBe(0)
+    for (let c = 0.7525; c <= 1; c += 0.0025) {
+      const n = frameAt({ ...END, close: c }, scene).nodes[i]
+      expect(Math.hypot(n.x - prev.x, n.y - prev.y)).toBeLessThan(0.05)
+      expect(n.alpha).toBeGreaterThanOrEqual(prev.alpha)
+      prev = n
+    }
   })
 
   it('drifts the scattered network over time but not at time 0 or once united', () => {
@@ -190,10 +211,11 @@ describe('frameAt', () => {
         const a = frameAt({ ...base, [key]: v - eps }, scene)
         const b = frameAt({ ...base, [key]: v + eps }, scene)
         a.nodes.forEach((n, i) => {
-          expect(Math.abs(n.x - b.nodes[i].x)).toBeLessThan(0.01)
+          // Close swaps the story for the gathering brain while both are invisible; a move nobody sees is no jump.
+          if (n.alpha > 1e-3 || b.nodes[i].alpha > 1e-3) expect(Math.abs(n.x - b.nodes[i].x)).toBeLessThan(0.01)
           expect(Math.abs(n.alpha - b.nodes[i].alpha)).toBeLessThan(0.01)
         })
-        a.edges.forEach((e, i) => expect(Math.abs(e.alpha - b.edges[i].alpha)).toBeLessThan(0.01))
+        a.edges.forEach((e, i) => expect(Math.abs(e.alpha - (b.edges[i]?.alpha ?? 0))).toBeLessThan(0.01))
       }
     }
   })

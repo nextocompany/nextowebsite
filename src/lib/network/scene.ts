@@ -66,8 +66,6 @@ export interface Scene {
   readonly trace: ReadonlyArray<number>
   /** Beyond: links between the two main clusters, one network branching both ways. */
   readonly trunkEdges: ReadonlyArray<readonly [number, number]>
-  /** Closing: every node at its opening scatter position, all linked into one piece. */
-  readonly closeEdges: ReadonlyArray<readonly [number, number]>
   readonly scatterLinkMax: number
   readonly scatterBounds: Point
   readonly clusterCount: number
@@ -295,7 +293,6 @@ export function buildScene(variant: Variant): Scene {
   const scatterPoints = nodes.map((n, index) => ({ index, pos: n.scatter }))
   const scatterLinks = nearLinks(scatterPoints, 2, layout.linkMax)
   const scatterEdges = fromKeys(scatterLinks)
-  const closeEdges = fromKeys(new Set([...scatterLinks, ...spanningLinks(scatterPoints)]))
 
   const outerPoints = nodes.flatMap((n, index) => (n.role === 'outer' ? [{ index, pos: n.satellite }] : []))
   const partnerEdges = Array.from({ length: PARTNER_GROUPS }, (_, g) => {
@@ -326,7 +323,6 @@ export function buildScene(variant: Variant): Scene {
     lens: shapes.lens,
     trace: shapes.trace,
     trunkEdges: trunkLinks(nodes),
-    closeEdges,
     coreEdges,
     clusterEdges,
     satelliteEdges,

@@ -8,9 +8,22 @@ const formed = frameAt({ form: 1, split: 0, start: 0, connect: 0, grow: 0, clust
 const split = frameAt({ form: 1, split: 1, start: 0, connect: 0, grow: 0, cluster: 0, shape: 0, reach: 0, close: 0 }, scene)
 const scattered = frameAt({ form: 0, split: 0, start: 0, connect: 0, grow: 0, cluster: 0, shape: 0, reach: 0, close: 0, time: 0 }, scene)
 
+const closing = frameAt({ form: 1, split: 0, start: 1, connect: 1, grow: 1, cluster: 1, shape: 0, reach: 1, close: 1 }, scene)
+
 const times = Array.from({ length: 200 }, (_, i) => i * 0.137)
 
 describe('signalsAt', () => {
+  it('keeps the closing brain calm: one signal at a time, resting between them', () => {
+    let busy = 0
+    for (const t of times) {
+      const { pulses, glows } = signalsAt(closing, t)
+      expect(pulses.length + glows.length).toBeLessThanOrEqual(1)
+      if (pulses.length + glows.length > 0) busy++
+    }
+    expect(busy).toBeGreaterThan(0)
+    expect(busy).toBeLessThan(times.length * 0.6)
+  })
+
   it('is deterministic for the same frame and time', () => {
     expect(signalsAt(formed, 12.3)).toEqual(signalsAt(formed, 12.3))
   })

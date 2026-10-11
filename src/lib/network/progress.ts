@@ -63,7 +63,7 @@ export function beatsAt(u: number, pins: PinProgress = {}): BeatState {
     // Products hold their shapes, then relax back into the network on the way to beyond.
     shape: window01(u, 3.4, 4, 4.2, 4.7),
     reach: smoothstep(4.3, 5, u),
-    close: smoothstep(5.2, 6, u),
+    close: smoothstep(5.1, 6, u),
   }
 }
 

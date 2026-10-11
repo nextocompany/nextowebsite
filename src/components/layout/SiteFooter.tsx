@@ -12,8 +12,8 @@ interface SiteFooterProps {
 const LINK = 'underline-offset-4 transition-colors hover:text-white hover:underline'
 
 /**
- * The last page: the closing line large over the network the story began with,
- * now all connected, then the way around the site and the way to reach us.
+ * The last page: the Nexto brain gathered again above the closing line, then
+ * the way around the site and the way to reach us.
  */
 export function SiteFooter({ locale }: SiteFooterProps) {
   const dict = getDictionary(locale)
@@ -21,14 +21,16 @@ export function SiteFooter({ locale }: SiteFooterProps) {
 
   return (
     <footer className="grid-section relative isolate flex min-h-[calc(100svh-4.5rem)] flex-col overflow-hidden text-ink">
-      {/* The closing stage: the points the page opened with, now all linked (NetworkCanvas draws it live). */}
-      <NetworkStage name="closing" className="absolute inset-0 -z-10 opacity-25" />
 
       <div className="grid-column mx-auto flex w-full max-w-page grow flex-col px-4 sm:px-8">
       <div className="grid grow items-center gap-16 py-20 lg:grid-cols-12">
-        <p className="text-5xl leading-[1.05] font-medium tracking-tight text-balance sm:text-7xl lg:col-span-7 lg:text-8xl th:leading-[1.3] th:tracking-normal">
-          {dict.closing}
-        </p>
+        <div className="lg:col-span-7">
+          {/* The closing stage: the brain gathers here as the footer comes in (NetworkCanvas draws it live). */}
+          <NetworkStage name="closing" className="mb-8 aspect-square w-32 sm:w-40 lg:w-48" />
+          <p className="text-5xl leading-[1.05] font-medium tracking-tight text-balance sm:text-7xl lg:text-8xl th:leading-[1.3] th:tracking-normal">
+            {dict.closing}
+          </p>
+        </div>
 
         <div className="flex flex-col gap-12 lg:col-span-4 lg:col-start-9">
           <nav aria-label={dict.nav.menu}>
