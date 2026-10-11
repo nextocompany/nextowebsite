@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react'
 import 'lenis/dist/lenis.css'
+import { driveFrames } from '@/lib/motion/frameClock'
 import { PIN_MEDIA, STACKED_MEDIA, followHowWeWorkStage, pinApproach, pinHowWeWork } from './pins'
 import { splitIntoLines } from './splitLines'
 
@@ -26,7 +27,12 @@ export function MotionRoot() {
         // Lenis honours scroll-padding-top for anchors, so it needs no offset of its own.
         const lenis = new Lenis({ lerp: 0.085, anchors: true })
         lenis.on('scroll', ScrollTrigger.update)
-        const tick = (time: number) => lenis.raf(time * 1000)
+        // The network draws in the same tick, after Lenis has moved the page, so it never lags the text.
+        const frames = driveFrames()
+        const tick = (time: number) => {
+          lenis.raf(time * 1000)
+          frames.step(performance.now())
+        }
         gsap.ticker.add(tick)
         gsap.ticker.lagSmoothing(0)
 
@@ -57,6 +63,7 @@ export function MotionRoot() {
           ctx.revert()
           mm.revert()
           gsap.ticker.remove(tick)
+          frames.release()
           lenis.destroy()
         }
       })

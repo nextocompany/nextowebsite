@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
+import { cancelFrame, requestFrame } from '@/lib/motion/frameClock'
 import { getPins, subscribePins } from '@/lib/motion/pinStore'
 import { parseHex, type Rgb } from '@/lib/network/color'
 import { frameAt, type BeatState } from '@/lib/network/frame'
@@ -51,7 +52,7 @@ function stageRect(stage: MeasuredStage, variant: Variant, beats: BeatState): St
 const GUTTER = 16
 const NAME_GAP = 8
 
-/** Every partner name in the beyond list (page order), with the gutter route a reach line takes to it. */
+/** Every partner name in the beyond list (page order), with the gutter route a reach line takes to it, on screen or not. */
 function measureTargets() {
   return Array.from(document.querySelectorAll<HTMLElement>('[data-partner-group] [data-partner]')).flatMap((el) => {
     const r = el.getBoundingClientRect()
@@ -60,7 +61,7 @@ function measureTargets() {
     const x = Math.max(NAME_GAP, group.left - GUTTER)
     const y = r.top + r.height / 2
     const target: ReachTarget = { entry: { x, y: group.top - GUTTER }, route: [{ x, y }, { x: r.left - NAME_GAP, y }] }
-    return [{ el, target, visible: r.bottom > 0 && r.top < window.innerHeight }]
+    return [{ el, target, onScreen: r.bottom > 0 && r.top < window.innerHeight }]
   })
 }
 
@@ -86,7 +87,6 @@ export function NetworkCanvas() {
     const wideQuery = window.matchMedia(WIDE)
     let scene = buildScene(wideQuery.matches ? 'wide' : 'narrow')
     const palette = readPalette()
-    let raf = 0
     const start = performance.now()
 
     const resize = () => {
@@ -97,17 +97,18 @@ export function NetworkCanvas() {
     }
 
     const tick = (now: number) => {
-      raf = 0
       const stages = measureStages()
       if (stages.length === 0) return
       const maxScroll = document.documentElement.scrollHeight - window.innerHeight
       const targets = stageScrollTargets(stages.map((s) => s.cy), window.scrollY, window.innerHeight, maxScroll)
-      // Lenis already glides the scroll, so the network follows it directly.
+      // Lenis already glides the scroll and the frame clock runs this after it, so the network follows it directly.
       const shown = scrollPosition(targets, window.scrollY)
       const beats = beatsAt(shown, getPins())
 
       ctx.clearRect(0, 0, window.innerWidth, window.innerHeight)
-      if (stages.some((s) => s.visible)) {
+      const partners = measureTargets()
+      // A name on screen keeps its reach line even once the beyond network itself has scrolled away.
+      if (stages.some((s) => s.visible) || partners.some((p) => p.onScreen)) {
         // Hero → intro is the gathering itself, so it stays visible; later moves dim.
         const travel = shown < 1 ? 0 : Math.abs(shown - Math.round(shown))
         const fade =
@@ -117,19 +118,19 @@ export function NetworkCanvas() {
         const seconds = (now - start) / 1000
         const frame = frameAt({ ...beats, time: seconds }, scene)
         const anchor = anchorAt(stages.map((s) => stageRect(s, scene.variant, beats)), shown)
-        const partners = measureTargets()
         const reaching = reachSignalsAt(seconds, partners.length)
         const arrived = frame.reach >= 1
         partners.forEach((p, i) => (p.el.dataset.lit = String(arrived && reaching[i].lit > LIT_FROM)))
-        const targets = partners.flatMap((p, i) => (p.visible ? [{ ...p.target, signal: reaching[i] }] : []))
+        // Off-screen names keep their lines, which simply run past the edge of the screen.
+        const targets = partners.map((p, i) => ({ ...p.target, signal: reaching[i] }))
         drawFrame(ctx, frame, anchor, palette, fade, targets, signalsAt(frame, seconds))
-        // Signals keep moving while the network is on screen; off screen the loop rests until the next scroll.
+        // Signals keep moving while the network or its lines are on screen; off screen the loop rests until the next scroll.
         schedule()
       }
     }
 
     const schedule = () => {
-      if (!raf && !document.hidden) raf = requestAnimationFrame(tick)
+      if (!document.hidden) requestFrame(tick)
     }
 
     const onResize = () => {
@@ -146,7 +147,7 @@ export function NetworkCanvas() {
     document.addEventListener('visibilitychange', schedule)
 
     return () => {
-      cancelAnimationFrame(raf)
+      cancelFrame(tick)
       unsubscribePin()
       window.removeEventListener('scroll', schedule)
       window.removeEventListener('resize', onResize)
