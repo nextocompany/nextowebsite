@@ -4,7 +4,7 @@ import { WORKING_WITH } from '@/lib/site/constants'
 import { logoHeightRem } from '@/lib/site/logos'
 import { SECTION_IDS } from '@/lib/site/sections'
 
-/** "Working with" row at the foot of the hero: every customer and partner, as a logo or, without one, its name. */
+/** "In collaboration with" row at the foot of the hero: every customer and partner, as a logo or, without one, its name. */
 export function PartnerBar({ dict }: { dict: Dictionary['partners'] }) {
   return (
     <div

@@ -3,9 +3,9 @@ import type { Dictionary } from './types'
 export const en: Dictionary = {
   meta: {
     lang: 'en',
-    title: 'Nexto — Scattered data, brought together',
+    title: 'Nexto | Scattered data, brought together',
     description:
-      'Nexto builds software that connects data from many systems and medical devices, so clinical teams and organizations can work with less friction.',
+      'Nexto develops software that integrates data from multiple systems and medical devices, enabling clinical teams and healthcare organizations to work more efficiently.',
     ogLocale: 'en_US',
   },
   nav: {
@@ -20,31 +20,31 @@ export const en: Dictionary = {
   hero: {
     title: 'Scattered data, brought together.',
     subtitle:
-      'Nexto makes the complex simple, with software that connects data from many systems and devices so clinical teams and organizations can work with less friction.',
-    primaryCta: 'Partner with us',
-    secondaryCta: 'See what we build',
+      'Nexto simplifies complex workflows with software that integrates data from multiple systems and medical devices, enabling clinical teams and healthcare organizations to work more efficiently.',
+    primaryCta: 'Become a partner',
+    secondaryCta: 'Explore our products',
   },
   partners: {
-    label: 'Working with',
+    label: 'In collaboration with',
   },
   approach: {
-    title: 'Systems handle the data. People make the call.',
-    body: 'Everything we build draws a clear line. The system keeps data complete, accurate and visible at a glance. The decisions stay with the people using it.',
+    title: 'Systems handle the data. People make the decisions.',
+    body: 'Every system we build maintains a clear division of responsibility. The system ensures that data is complete, accurate and immediately accessible, while decisions remain with the professionals who use it.',
   },
   howWeWork: {
-    title: 'How we work',
+    title: 'Our working principles',
     items: [
       {
-        title: 'Start where the work happens',
-        body: 'We design from how Thai clinicians and hospital staff actually work.',
+        title: 'Designed around clinical practice',
+        body: 'We design our solutions around the actual workflows of Thai clinicians and hospital staff.',
       },
       {
-        title: "Connect to what's already there",
-        body: 'Our software links to existing devices and systems instead of replacing them.',
+        title: 'Integration with existing infrastructure',
+        body: 'Our software integrates with existing medical devices and systems rather than replacing them.',
       },
       {
-        title: 'Grow with partners',
-        body: 'We work alongside medical device companies so our software travels with the equipment hospitals already use.',
+        title: 'Growth through partnership',
+        body: 'We collaborate with medical device companies to deliver our software alongside the equipment hospitals already use.',
       },
     ],
   },
@@ -53,7 +53,7 @@ export const en: Dictionary = {
     endyra: {
       name: 'Endyra',
       status: 'Available',
-      description: 'Endoscopy video and image capture.',
+      description: 'Endoscopy video and image capture system.',
     },
     anvira: {
       name: 'Anvira',
@@ -65,21 +65,21 @@ export const en: Dictionary = {
     title: 'Beyond healthcare',
     saaniq: {
       name: 'Saaniq',
-      description: 'All-in-one hotel and resort management, from PMS to CRM, HR and finance.',
+      description: 'An integrated hotel and resort management platform covering PMS, CRM, HR and finance.',
       linkLabel: 'Visit saaniq.com',
     },
     engineering: {
       title: 'Engineering partnerships',
-      body: 'We co-build government systems with our partners.',
+      body: 'We co-develop government information systems with our engineering partners.',
     },
   },
   contact: {
-    title: 'Talk to us',
-    intro: 'Pick a topic and send us an email.',
+    title: 'Contact us',
+    intro: 'Select a topic to contact our team by email.',
     topics: [
       { label: 'Medical device partnership', subject: 'Medical device partnership' },
-      { label: 'Our products', subject: 'Nexto products' },
-      { label: 'Engineering work', subject: 'Engineering work' },
+      { label: 'Product inquiries', subject: 'Nexto product inquiry' },
+      { label: 'Engineering services', subject: 'Engineering services' },
     ],
     emailLabel: 'Email',
     lineLabel: 'LINE',

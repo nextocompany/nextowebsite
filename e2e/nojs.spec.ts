@@ -17,7 +17,7 @@ for (const locale of LOCALES) {
   })
 }
 
-test('the hero "Working with" row shows every customer and partner logo', async ({ page }) => {
+test('the hero "In collaboration with" row shows every customer and partner logo', async ({ page }) => {
   await page.goto('/')
   const names = await page.locator('#partners [data-partner]').evaluateAll((items) => items.map((li) => li.getAttribute('data-partner')))
   expect(names).toEqual(['Meditop', 'Touch Technologies', 'Anantariverhills Resort', 'Leaf Lake Kans', '500 Miles', 'VDS Business Center', 'The Enterprise Resources Training', 'Tech It Up'])

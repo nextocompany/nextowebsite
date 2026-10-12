@@ -5,12 +5,12 @@ import { SiteHeader } from '@/components/layout/SiteHeader'
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
-  title: 'Privacy Policy — Nexto',
+  title: 'Privacy Policy | Nexto',
   description: 'How Nexto handles visitor data and Google Analytics cookies.',
   robots: { index: false },
   alternates: { canonical: '/privacy' },
   openGraph: {
-    title: 'Privacy Policy — Nexto',
+    title: 'Privacy Policy | Nexto',
     description: 'How Nexto handles visitor data and Google Analytics cookies.',
     url: '/privacy',
   },
@@ -27,7 +27,7 @@ export default function PrivacyPage() {
           <h2 className="text-lg font-medium text-ink mb-3">What data we collect</h2>
           <p className="text-ink-muted leading-relaxed">
             We use Google Analytics to understand how visitors interact with this website.
-            Google Analytics collects anonymous usage data — such as page views, session duration,
+            Google Analytics collects anonymous usage data, such as page views, session duration
             and general location (country or city level). No personally identifiable information
             is collected through our website.
           </p>

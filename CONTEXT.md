@@ -18,6 +18,10 @@ _Avoid_: scene, slide, beat
 One step of the network story within or between stages (form, split, start, connect, grow, cluster, shape, reach, close).
 _Avoid_: stage, step, phase
 
+**Pin**:
+A stretch of scroll where the network holds its place on screen and changes beat by beat while the text moves past (Approach and How we work). On wide screens it sits beside the text; on narrow screens it fills the top half.
+_Avoid_: sticky, freeze
+
 **Signal**:
 A dot travelling along the network; teal carries data, coral carries people.
 _Avoid_: pulse, particle
@@ -31,3 +35,7 @@ _Avoid_: outro, end state
 **Engineering partner**:
 A company Nexto builds with, named in Beyond. Its marker lights in turn with the others; no line joins it to the network.
 _Avoid_: vendor, supplier
+
+**Partner** (Thai: พันธมิตร):
+A company Nexto works alongside, either a medical device company or an engineering partner. In Thai copy it is always พันธมิตร.
+_Avoid_: พาร์ทเนอร์, พาร์ตเนอร์, คู่ค้า

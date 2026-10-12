@@ -1,4 +1,4 @@
-/** Height of a square logo in the "Working with" row; every other logo gets the same area. */
+/** Height of a square logo in the "In collaboration with" row; every other logo gets the same area. */
 const SQUARE_REM = 2.75
 /** Wide wordmarks shrink to keep the same area, but never below this. */
 const MIN_REM = 1.5

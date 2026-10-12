@@ -19,7 +19,7 @@ export interface Organisation {
 }
 
 /**
- * Customers and partners in the hero "Working with" row (written consent received 2026-10-10).
+ * Customers and partners in the hero "In collaboration with" row (written consent received 2026-10-10).
  * Logos are single-colour white marks made from the partners' files (see public/partners/).
  */
 export const WORKING_WITH: ReadonlyArray<Organisation> = [
