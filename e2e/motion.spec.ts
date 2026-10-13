@@ -1,0 +1,314 @@
+import { gzipSync } from 'node:zlib'
+import type { Page } from '@playwright/test'
+import { expect, expectNear, scrollToY, settle, test, topOf } from './fixtures'
+
+const COLUMN = '#approach .grid-column'
+/** Landing JS was 193.7 kB gz when the user waived the 150 kB budget for Lenis + GSAP; catch regressions past that. */
+const JS_BUDGET_GZ = 200_000
+
+/** Document offsets of the pin spacers, in page order (Approach, then How we work). */
+const pinStarts = (page: Page) =>
+  page.evaluate(() =>
+    Array.from(document.querySelectorAll('.pin-spacer'), (s) => Math.round(s.getBoundingClientRect().top + window.scrollY)),
+  )
+const pinStart = async (page: Page) => (await pinStarts(page))[0] ?? null
+
+const HOW_COLUMN = '#how-we-work .grid-column'
+const currentStep = (page: Page) =>
+  page.evaluate(() => document.querySelector('[data-steps] [data-current="true"]')?.getAttribute('data-step') ?? null)
+
+/** Pixels on the network canvas close to the brand coral: the "people" half of the split. */
+const coralPixels = (page: Page) =>
+  page.evaluate(() => {
+    const canvas = document.querySelector('canvas')!
+    const { data } = canvas.getContext('2d')!.getImageData(0, 0, canvas.width, canvas.height)
+    let count = 0
+    for (let i = 0; i < data.length; i += 4) {
+      const [r, g, b, a] = [data[i], data[i + 1], data[i + 2], data[i + 3]]
+      if (a > 120 && r > 180 && g < 130 && b < 120) count++
+    }
+    return count
+  })
+
+test.describe('desktop 1440×900', () => {
+  test.use({ viewport: { width: 1440, height: 900 } })
+
+  test('pins Approach while the network splits and rejoins', async ({ page }) => {
+    await page.goto('/')
+    await settle(page)
+    const start = await pinStart(page)
+    expect(start, 'pin spacer').not.toBeNull()
+
+    await scrollToY(page, start!)
+    expectNear(await topOf(page, COLUMN), 0)
+    const atStart = await coralPixels(page)
+
+    await scrollToY(page, start! + 0.55 * 900)
+    expectNear(await topOf(page, COLUMN), 0)
+    const atMiddle = await coralPixels(page)
+
+    await scrollToY(page, start! + 900)
+    expectNear(await topOf(page, COLUMN), 0)
+    const atEnd = await coralPixels(page)
+
+    expect(atMiddle, 'coral nodes at mid-pin').toBeGreaterThan(200)
+    expect(atStart, 'whole network at pin start').toBeLessThan(atMiddle / 4)
+    expect(atEnd, 'whole network at pin end').toBeLessThan(atMiddle / 4)
+
+    await scrollToY(page, start! + 1300)
+    expect(await topOf(page, COLUMN)).toBeLessThan(0)
+  })
+
+  test('pins How we work and steps through its three items, one third each', async ({ page }) => {
+    await page.goto('/')
+    await settle(page)
+    const starts = await pinStarts(page)
+    expect(starts, 'Approach and How we work pins').toHaveLength(2)
+    const start = starts[1]
+    const length = 1.5 * 900
+
+    for (const [progress, step] of [
+      [0.05, '0'],
+      [0.5, '1'],
+      [0.9, '2'],
+    ] as const) {
+      await scrollToY(page, start + progress * length)
+      expectNear(await topOf(page, HOW_COLUMN), 0, `column at ${progress}`)
+      expect(await currentStep(page), `item told at ${progress}`).toBe(step)
+    }
+
+    await scrollToY(page, start + length + 400)
+    expect(await topOf(page, HOW_COLUMN)).toBeLessThan(0)
+  })
+
+  test('beyond lights each engineering partner in turn, one at a time', async ({ page }) => {
+    await page.goto('/#beyond')
+    await settle(page)
+    const seen = new Set<string>()
+    for (let i = 0; i < 60; i++) {
+      // Lit: the name has turned from ink (#e7e8e9) towards teal text (#5ed3d7).
+      const lit = await page.locator('[data-partner-group] [data-partner]').evaluateAll((els) =>
+        els.filter((el) => Number(getComputedStyle(el).color.match(/\d+/)![0]) < 160).map((el) => el.getAttribute('data-partner')!),
+      )
+      expect(lit.length, 'one name at a time').toBeLessThanOrEqual(1)
+      lit.forEach((name) => seen.add(name))
+      await page.waitForTimeout(100)
+    }
+    expect([...seen].sort()).toEqual(['500 Miles', 'Tech It Up', 'The Enterprise Resources Training', 'Touch Technologies'])
+  })
+
+  test('the footer closes on the brain above the closing line, and nothing else', async ({ page }) => {
+    await page.goto('/')
+    await settle(page)
+    await scrollToY(page, await page.evaluate(() => document.documentElement.scrollHeight))
+    const { inside, outside } = await page.evaluate(() => {
+      const canvas = document.querySelector('canvas')!
+      const dpr = canvas.width / window.innerWidth
+      const box = document.querySelector('[data-stage="closing"]')!.getBoundingClientRect()
+      const { data } = canvas.getContext('2d')!.getImageData(0, 0, canvas.width, canvas.height)
+      let inside = 0
+      let outside = 0
+      for (let i = 3; i < data.length; i += 4) {
+        if (data[i] === 0) continue
+        const x = ((i - 3) / 4) % canvas.width / dpr
+        const y = Math.floor((i - 3) / 4 / canvas.width) / dpr
+        // A few px of slack for the signal halo at the brain's edge.
+        const near = x > box.left - 8 && x < box.right + 8 && y > box.top - 8 && y < box.bottom + 8
+        if (near) inside++
+        else outside++
+      }
+      return { inside, outside }
+    })
+    expect(inside, 'painted canvas pixels in the closing box').toBeGreaterThan(1000)
+    expect(outside, 'painted canvas pixels anywhere else').toBe(0)
+  })
+
+  for (const id of ['approach', 'how-we-work', 'products', 'beyond', 'contact']) {
+    test(`a link to #${id} lands under the header`, async ({ page }) => {
+      await page.goto(`/#${id}`)
+      await settle(page)
+      await page.waitForTimeout(800)
+      expectNear(await topOf(page, `#${id}`), 80, `#${id}`)
+    })
+  }
+
+  test('nav to Approach from further down lands at the start of the pin', async ({ page }) => {
+    await page.goto('/#contact')
+    await settle(page)
+    await page.evaluate(() => document.querySelector<HTMLAnchorElement>('header a[href="/#approach"]')!.click())
+    await page.waitForTimeout(2600)
+    expectNear(await topOf(page, '#approach'), 80)
+  })
+
+  test('the language switch goes to Thai and back, keeping the section in view', async ({ page }) => {
+    await page.goto('/#products')
+    await settle(page)
+    // A real click without Playwright's scroll-into-view, which scrolls the page under the sticky header first.
+    await page.locator('header a[hreflang="th"]').evaluate((a: HTMLElement) => a.click())
+    await page.waitForURL(/\/th\/#products$/)
+    await expect(page.locator('html')).toHaveAttribute('lang', 'th')
+    await settle(page)
+    await page.locator('header a[hreflang="en"]').evaluate((a: HTMLElement) => a.click())
+    await page.waitForURL(/\/#products$/)
+    await expect(page.locator('html')).toHaveAttribute('lang', 'en')
+  })
+
+  test('the pin survives a resize below the breakpoint and back', async ({ page }) => {
+    await page.goto('/')
+    await settle(page)
+    const before = await pinStarts(page)
+    expect(before).toHaveLength(2)
+    await page.setViewportSize({ width: 900, height: 900 })
+    await page.waitForTimeout(800)
+    expect(await pinStarts(page)).toEqual([])
+    await page.setViewportSize({ width: 1440, height: 900 })
+    await page.waitForTimeout(800)
+    expect(await pinStarts(page)).toEqual(before)
+    await page.evaluate(() => document.querySelector<HTMLAnchorElement>('header a[href="/#products"]')!.click())
+    await page.waitForTimeout(2600)
+    expectNear(await topOf(page, '#products'), 80)
+  })
+
+  test(`landing JS stays under ${JS_BUDGET_GZ / 1000} kB gzipped`, async ({ page }) => {
+    const sizes: number[] = []
+    page.on('response', async (response) => {
+      if (new URL(response.url()).hostname === 'localhost' && response.url().endsWith('.js')) {
+        sizes.push(gzipSync(await response.body(), { level: 9 }).length)
+      }
+    })
+    await page.goto('/')
+    await settle(page)
+    const total = sizes.reduce((sum, size) => sum + size, 0)
+    test.info().annotations.push({ type: 'landing JS gz', description: `${total} bytes in ${sizes.length} files` })
+    expect(total).toBeLessThan(JS_BUDGET_GZ)
+  })
+})
+
+test('no route payloads are prefetched (every link is a same-page jump or a full page load)', async ({ page }) => {
+  const payloads: string[] = []
+  page.on('request', (request) => {
+    if (request.url().includes('_rsc=')) payloads.push(request.url())
+  })
+  await page.setViewportSize({ width: 1440, height: 900 })
+  await page.goto('/')
+  await settle(page)
+  await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight))
+  await page.waitForTimeout(1500)
+  expect(payloads).toEqual([])
+})
+
+test.describe('phone 390×844', () => {
+  test.use({ viewport: { width: 390, height: 844 } })
+
+  /** Document range of a held section: from its first line reaching mid-screen to the block's end reaching it. */
+  const holdRange = (page: Page, section: string) =>
+    page.evaluate((id) => {
+      const stage = document.querySelector<HTMLElement>(`#${id} [data-hold]`)!
+      const text = document.querySelector<HTMLElement>(`#${id} [data-under-hold]`)!
+      const line = stage.offsetHeight
+      const top = text.getBoundingClientRect().top + window.scrollY - line
+      const bottom = stage.parentElement!.getBoundingClientRect().bottom + window.scrollY - line
+      return { start: Math.round(top), end: Math.round(bottom), line }
+    }, section)
+
+  test('holds the network in the top half through Approach and How we work, no column pin', async ({ page }) => {
+    await page.goto('/')
+    await settle(page)
+    expect(await pinStarts(page)).toEqual([])
+    expect(await page.locator('[data-stepping]').count()).toBe(0)
+
+    const approach = await holdRange(page, 'approach')
+    expectNear(approach.line, 422, 'held stage is half the screen')
+    const at = async (y: number) => {
+      await scrollToY(page, y)
+      return coralPixels(page)
+    }
+    const atStart = await at(approach.start)
+    expectNear(await topOf(page, '#approach [data-hold]'), 0, 'approach stage holds')
+    const atMiddle = await at(approach.start + 0.55 * (approach.end - approach.start))
+    expectNear(await topOf(page, '#approach [data-hold]'), 0, 'approach stage holds')
+    const atEnd = await at(approach.end)
+    expect(atMiddle, 'coral nodes mid-split').toBeGreaterThan(100)
+    expect(atStart, 'whole network before the split').toBeLessThan(atMiddle / 4)
+    expect(atEnd, 'whole network after the split').toBeLessThan(atMiddle / 4)
+
+    const how = await holdRange(page, 'how-we-work')
+    // How we work carries on the pin: its text starts under the network, and its own box catches up partway.
+    await scrollToY(page, how.start + 0.8 * (how.end - how.start))
+    expectNear(await topOf(page, '#how-we-work [data-hold]'), 0, 'how we work stage holds')
+    // Text that has reached the network is faded out under it.
+    const cut = await page.evaluate(() =>
+      parseFloat(document.querySelector<HTMLElement>('#how-we-work [data-under-hold]')!.style.getPropertyValue('--hold-cut')),
+    )
+    expect(cut).toBeGreaterThan(0)
+  })
+
+  test('the header slides away reading down and comes back on the way up', async ({ page }) => {
+    await page.goto('/')
+    await settle(page)
+    const hidden = () => page.locator('header').getAttribute('data-hidden')
+    await page.mouse.wheel(0, 1200)
+    await page.waitForTimeout(1200)
+    expect(await hidden()).toBe('true')
+    await page.mouse.wheel(0, -300)
+    await page.waitForTimeout(1200)
+    expect(await hidden()).toBe('false')
+    expect(await topOf(page, 'header')).toBe(0)
+  })
+
+  test('the footer keeps only the brain, the closing line and the social links', async ({ page }) => {
+    await page.goto('/')
+    await settle(page)
+    const footer = page.locator('footer')
+    await expect(footer.locator('[data-stage="closing"]')).toBeVisible()
+    await expect(footer.getByRole('link', { name: /Nexto on/ }).first()).toBeVisible()
+    await expect(footer.getByRole('navigation', { name: 'Menu' })).toBeHidden()
+    await expect(footer.locator('dl')).toBeHidden()
+    await expect(footer.getByRole('link', { name: 'Request a demo', includeHidden: true })).toBeHidden()
+  })
+
+  test('the partner logos sit in a grid of four columns', async ({ page }) => {
+    await page.goto('/')
+    await settle(page)
+    const lefts = await page
+      .locator('#partners li')
+      .evaluateAll((items) => items.map((li) => Math.round(li.getBoundingClientRect().left)))
+    expect(new Set(lefts).size).toBe(4)
+  })
+})
+
+test('a product card leads to its page, and the language switch keeps the page', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 })
+  await page.goto('/')
+  await settle(page)
+  await page.locator('#products a[href="/endyra/"]').evaluate((a: HTMLElement) => a.click())
+  await page.waitForURL(/\/endyra\/$/)
+  await expect(page.getByRole('heading', { level: 1 })).toBeVisible()
+  await page.locator('header a[hreflang="th"]').evaluate((a: HTMLElement) => a.click())
+  await page.waitForURL(/\/th\/endyra\/$/)
+  await expect(page.locator('html')).toHaveAttribute('lang', 'th')
+  // No canvas here: the footer's brain is the server-drawn still.
+  await expect(page.locator('footer [data-stage="closing"] svg:visible')).toHaveCount(1)
+})
+
+test('short laptop screens scroll freely (no pin)', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 600 })
+  await page.goto('/')
+  await settle(page)
+  expect(await pinStarts(page)).toEqual([])
+})
+
+test.describe('reduced motion', () => {
+  test.use({ reducedMotion: 'reduce', viewport: { width: 1440, height: 900 } })
+
+  test('no smooth scroll, no pin, network stills shown', async ({ page }) => {
+    await page.goto('/')
+    await settle(page)
+    expect(await page.evaluate(() => document.documentElement.classList.contains('lenis'))).toBe(false)
+    expect(await pinStarts(page)).toEqual([])
+    expect(await page.locator('[data-stepping]').count()).toBe(0)
+    const animations = await page.locator('[data-partner]').evaluateAll((els) => els.map((el) => getComputedStyle(el).animationName))
+    expect(animations.every((name) => name === 'none')).toBe(true)
+    expect(await page.locator('[data-stage] .network-still:visible').count()).toBeGreaterThanOrEqual(7)
+  })
+})

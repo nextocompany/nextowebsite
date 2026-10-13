@@ -1,29 +1,43 @@
-export function HowWeWork() {
-  const steps = [
-    { num: '01', title: 'Assess', desc: 'We study how you operate today.' },
-    { num: '02', title: 'Fit', desc: 'Match the right solution to your workflow.' },
-    { num: '03', title: 'Deploy', desc: 'Up and running with minimal disruption.' },
-    { num: '04', title: 'Evolve', desc: 'Refine as your operations grow.' },
-  ]
+import { NetworkStage } from '@/components/network/NetworkStill'
+import { Section } from '@/components/ui/Section'
+import type { Dictionary } from '@/lib/i18n'
+import { SECTION_IDS } from '@/lib/site/sections'
 
+/**
+ * Three principles beside the network telling them in order. From lg up the
+ * section is full height so MotionRoot can pin it and step through the items.
+ */
+export function HowWeWork({ dict }: { dict: Dictionary['howWeWork'] }) {
   return (
-    <section id="how-we-work">
-      <div className="mx-auto max-w-5xl px-6 py-20">
-        <h2 className="mb-2">Process</h2>
-        <div className="w-8 h-0.5 bg-brand-teal mb-12" />
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-neutral-200 rounded-xl overflow-hidden">
-          {steps.map((step) => (
-            <div key={step.num} className="bg-white p-6 flex flex-col gap-3">
-              <span className="text-[10px] font-mono tracking-widest text-neutral-500 uppercase">
-                {step.num}
-              </span>
-              <h3 className="text-base font-semibold">{step.title}</h3>
-              <p className="text-sm text-neutral-500 leading-relaxed">{step.desc}</p>
-            </div>
-          ))}
+    <Section
+      id={SECTION_IDS.howWeWork}
+      labelledBy="how-title"
+      className="lg:flex lg:min-h-svh lg:flex-col"
+      columnClassName="lg:flex lg:flex-1 lg:flex-col lg:justify-center lg:py-16"
+    >
+      <div className="grid w-full items-center gap-12 lg:grid-cols-12">
+        {/* data-hold / data-under-hold: on narrow screens the stage holds the top half while the list passes (pins.ts). */}
+        <div data-under-hold className="lg:col-span-6">
+          <h2 id="how-title" className="text-sm text-ink-muted en:font-mono en:text-xs en:tracking-wide en:uppercase">
+            {dict.title}
+          </h2>
+          {/* Not numbered: these are principles, not steps. */}
+          {/* data-steps: while pinned, MotionRoot marks the item being told with data-current. */}
+          <ul data-steps className="mt-8 flex flex-col">
+            {dict.items.map((item, i) => (
+              <li key={item.title} data-step={i} data-fade className="border-t border-ink/15 py-7">
+                <h3 className="text-2xl font-medium tracking-tight sm:text-3xl th:tracking-normal">{item.title}</h3>
+                <p className="mt-3 max-w-xl text-lg text-ink-muted">{item.body}</p>
+              </li>
+            ))}
+          </ul>
         </div>
-        <p className="mt-8 text-xs text-neutral-500 tracking-wide">We simplify. You operate.</p>
+        <NetworkStage
+          name="how-we-work"
+          hold="continue"
+          className="mx-auto aspect-square w-full max-w-sm lg:col-span-5 lg:col-start-8 lg:max-w-none"
+        />
       </div>
-    </section>
+    </Section>
   )
 }

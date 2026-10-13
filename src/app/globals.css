@@ -1,39 +1,249 @@
 @import "tailwindcss";
 
-@theme {
-  /* Wire next/font CSS variable into Tailwind's font-sans token */
-  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+/*
+ * Colour tokens mirror the dark theme of src/lib/brand/tokens.ts (Nexto brand
+ * book): the website is dark only (SITE_THEME). contrast.test.ts fails if a
+ * value here drifts from tokens.ts.
+ */
+:root {
+  color-scheme: dark;
+  --teal: #00b0b6;
+  --coral: #f15a4b;
+  --charcoal: #414142;
+  --mist: #e7e8e9;
+  --ground: #2b2b2c;
+  --ground-raised: #414142;
+  --ink: #e7e8e9;
+  --ink-muted: #b4b5b7;
+  --teal-text: #5ed3d7;
+  --coral-text: #f6958b;
+  /* Product accents, from each product's logo; a product page sets --accent to its own. */
+  --endyra: #c4f25e;
+  --anvira: #8f94f5;
+  --anvira-text: #a5a9f7;
 
-  /* Brand colors from Nexto logo */
-  --color-brand-teal: #2EC4B6;
-  --color-brand-coral: #E85D4A;
-  --color-brand-teal-light: #e8f8f6;
-  --color-brand-coral-light: #fdf0ee;
-  --color-brand-teal-dark: #0f786f;
+  /* Page column: grows on very wide screens instead of floating in the middle. */
+  --page-width: 72rem;
+
+  /* Page grid: hairlines and the dots where they cross. */
+  --grid-line: color-mix(in srgb, var(--mist) 13%, transparent);
+  --grid-dot: color-mix(in srgb, var(--mist) 45%, transparent);
+
+}
+
+@media (min-width: 1920px) {
+  :root {
+    --page-width: 88rem;
+  }
+}
+
+@media (min-width: 2560px) {
+  :root {
+    --page-width: 100rem;
+  }
+}
+
+/* Locale variants: th:leading-* keeps tone marks clear; en:font-mono (Plex Mono has no Thai glyphs). */
+@custom-variant th (&:where(:lang(th), :lang(th) *));
+@custom-variant en (&:where(:lang(en), :lang(en) *));
+
+@theme inline {
+  --color-teal: var(--teal);
+  --color-coral: var(--coral);
+  --color-charcoal: var(--charcoal);
+  --color-mist: var(--mist);
+  --color-ground: var(--ground);
+  --color-ground-raised: var(--ground-raised);
+  --color-ink: var(--ink);
+  --color-ink-muted: var(--ink-muted);
+  --color-teal-text: var(--teal-text);
+  --color-coral-text: var(--coral-text);
+
+  --font-sans: var(--font-montserrat), var(--font-anuphan), ui-sans-serif, system-ui, sans-serif;
+  --font-thai: var(--font-anuphan), var(--font-montserrat), ui-sans-serif, sans-serif;
+  --font-mono: var(--font-plex-mono), ui-monospace, monospace;
+
+  --container-page: var(--page-width);
 }
 
 @layer base {
+  /*
+   * Everything is in rem, so the whole layout scales with this: the reader's
+   * default size up to 1600px wide, then up to 1.5× on ultra-wide screens
+   * (3440px → 24px). Percent-based so a larger browser font setting still applies.
+   */
   html {
-    font-size: 16px;
-    scroll-behavior: smooth;
-    scroll-padding-top: 4rem;
+    font-size: clamp(100%, calc(100% + (100vw - 1600px) * 0.0045), 150%);
+    scroll-padding-top: 5rem;
+  }
+
+  html:lang(th) body {
+    font-family: var(--font-thai);
+    line-height: 1.75;
   }
 
   body {
-    @apply bg-white text-neutral-900 antialiased;
+    background: var(--ground);
+    color: var(--ink);
     font-family: var(--font-sans);
     line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
   }
 
-  h1 { @apply text-4xl font-semibold; }
-  h2 { @apply text-3xl font-semibold; }
-  h3 { @apply text-xl font-semibold; }
-  h4 { @apply text-lg font-semibold; }
+  /*
+   * Page grid (after the reference): every section starts with a full-width
+   * hairline, the page column has hairline guides on both edges, and a small
+   * dot marks each place they cross.
+   */
+  .grid-section {
+    border-top: 1px solid var(--grid-line);
+    /* A full-width column puts the edge dots half off-screen; clip them there instead of widening the page. */
+    overflow-x: clip;
+  }
+
+  .grid-column {
+    position: relative;
+    border-inline: 1px solid var(--grid-line);
+  }
+
+  .grid-section > .grid-column::before,
+  .grid-section > .grid-column::after {
+    content: '';
+    position: absolute;
+    top: -3.5px;
+    width: 6px;
+    height: 6px;
+    border-radius: 9999px;
+    background: var(--grid-dot);
+  }
+
+  .grid-section > .grid-column::before {
+    left: -3.5px;
+  }
+
+  .grid-section > .grid-column::after {
+    right: -3.5px;
+  }
+
+  /* NetworkCanvas draws instead of the stills when motion is on. */
+  [data-motion='on'] .network-still {
+    visibility: hidden;
+  }
+
+  /*
+   * How we work while pinned: the item being told stays bright, the others dim.
+   * Only with motion on; no-JS and reduced motion keep all three at full strength.
+   * Floors keep WCAG contrast on the ground: headings are large text (3:1 at 0.5),
+   * body text needs 4.5:1 (0.78). See lib/brand/contrast.test.ts.
+   */
+  [data-motion='on'] [data-stepping='on'] > li > * {
+    transition: opacity var(--duration-step, 400ms) ease;
+  }
+  [data-motion='on'] [data-stepping='on'] > li[data-current='false'] > h3 {
+    opacity: 0.5;
+  }
+  [data-motion='on'] [data-stepping='on'] > li[data-current='false'] > p {
+    opacity: 0.78;
+  }
+
+  /*
+   * Beyond: each engineering partner has a small marker; with motion on, the
+   * names light teal one at a time, a turn of --partner-turn each (Beyond.tsx
+   * sets --i and --n). No-JS and reduced motion keep them all plain.
+   */
+  [data-partner-group] [data-partner] {
+    --partner-turn: 1.2s;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  [data-partner-group] [data-partner]::before {
+    content: '';
+    flex: none;
+    width: 6px;
+    height: 6px;
+    border-radius: 9999px;
+    background: var(--ink-muted);
+  }
+  [data-motion='on'] [data-partner-group] [data-partner] {
+    animation: partner-name calc(var(--n) * var(--partner-turn)) ease-out infinite;
+    animation-delay: calc(var(--i) * var(--partner-turn));
+  }
+  [data-motion='on'] [data-partner-group] [data-partner]::before {
+    animation: partner-marker calc(var(--n) * var(--partner-turn)) ease-out infinite;
+    animation-delay: calc(var(--i) * var(--partner-turn));
+  }
+  @keyframes partner-name {
+    0%,
+    4% {
+      color: var(--teal-text);
+    }
+    24%,
+    100% {
+      color: var(--ink);
+    }
+  }
+  @keyframes partner-marker {
+    0%,
+    4% {
+      background: var(--teal);
+      box-shadow: 0 0 0 4px color-mix(in srgb, var(--teal) 22%, transparent);
+    }
+    24%,
+    100% {
+      background: var(--ink-muted);
+      box-shadow: 0 0 0 4px transparent;
+    }
+  }
+
+  /* MotionRoot splits [data-reveal] text into these while a reveal runs. */
+  .reveal-line {
+    display: block;
+  }
 
   :focus-visible {
-    outline-width: 2px;
-    outline-style: solid;
+    outline: 2px solid var(--teal-text);
     outline-offset: 2px;
-    outline-color: #0f786f; /* darkened teal, 5.33:1 on white */
   }
+}
+
+/*
+ * Pins on narrow screens: the stage holds the top half of the screen while
+ * the text scrolls up under it (pins.ts holdNarrow). Text fades out as it
+ * reaches the middle of the screen, --hold-cut px from its own top. Only with
+ * motion on; no-JS and reduced motion keep the plain stacked stills.
+ * Unlayered so it wins over the stage boxes' size utilities.
+ */
+@media (max-width: 1023.98px) {
+  [data-motion='on'] [data-hold] {
+    position: sticky;
+    top: 0;
+    order: -1;
+    align-self: start;
+    height: 50svh;
+    aspect-ratio: auto;
+    max-width: none;
+  }
+  [data-motion='on'] [data-under-hold] {
+    mask-image: linear-gradient(to bottom, transparent var(--hold-cut, -3rem), #000 calc(var(--hold-cut, -3rem) + 3rem));
+  }
+  /* Carrying on a pin: the text starts under the stage instead of after it. */
+  [data-motion='on'] [data-hold='continue'] {
+    margin-bottom: -50svh;
+  }
+  /* Approach is short: room after the body so the split plays out while it passes. */
+  [data-motion='on'] [data-hold-tail] {
+    padding-bottom: 15svh;
+  }
+}
+
+/* Each product page's own colour (ProductPage sets data-product). */
+/* --accent for buttons and marks, --accent-text for small text (keeps 4.5:1 on raised cards). */
+[data-product='endyra'] {
+  --accent: var(--endyra);
+  --accent-text: var(--endyra);
+}
+[data-product='anvira'] {
+  --accent: var(--anvira);
+  --accent-text: var(--anvira-text);
 }

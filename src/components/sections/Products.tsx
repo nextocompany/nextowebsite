@@ -1,49 +1,68 @@
-import Image from 'next/image'
+import { BrandLogo } from '@/components/layout/BrandLogo'
+import { NetworkStage } from '@/components/network/NetworkStill'
+import { Section } from '@/components/ui/Section'
+import { StatusChip } from '@/components/ui/StatusChip'
+import Link from 'next/link'
+import { localePath, type Dictionary, type Locale } from '@/lib/i18n'
+import { SECTION_IDS } from '@/lib/site/sections'
+import { keepTogether } from '@/lib/text/keepTogether'
 
-const products = [
-  { name: 'Endyra', desc: 'Captures and organizes endoscopy cases. Fast, secure, and OR ready.', logo: '/endyra-logo.svg', url: 'https://endyra.nexto.co.th' },
-  { name: 'Manverra', desc: 'Manufacturing execution and traceability platform.', logo: '/manverra-logo.png', url: 'https://manverra.nexto.co.th' },
-  { name: 'Careyra', desc: 'Telemedicine platform for clinics and hospitals.', logo: '/careyra-logo.png', url: 'https://careyra.com' },
-]
+const CARD = 'flex flex-col justify-between gap-6 rounded-3xl bg-ground-raised p-6 sm:min-h-56 sm:gap-10 sm:p-10'
 
-export function Products() {
+/** "Learn more" to the product's page; the product name rides along for screen readers. */
+function ProductLink({ href, label, name }: { href: string; label: string; name: string }) {
   return (
-    <section id="products">
-      <div className="mx-auto max-w-5xl px-6 py-20">
-        <h2 className="mb-2">Products</h2>
-        <div className="w-8 h-0.5 bg-brand-teal mb-12" />
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {products.map((product) => (
-            <a
-              key={product.name}
-              href={product.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group relative rounded-xl p-6 transition-all duration-300 hover:bg-neutral-50 block"
-            >
-              <div className="absolute left-6 bottom-6 h-[2px] w-0 bg-brand-teal rounded-full group-hover:w-12 transition-all duration-500" />
-              {product.logo && (
-                <Image
-                  src={product.logo}
-                  alt={product.name}
-                  width={40}
-                  height={40}
-                  className="w-10 h-10 mb-3"
-                />
-              )}
-              <h3 className="text-lg font-semibold group-hover:text-brand-teal-dark transition-colors duration-300">{product.name}</h3>
-              <p className="mt-2 text-sm text-neutral-500 leading-relaxed">{product.desc}</p>
-              <span className="mt-4 inline-flex items-center gap-1.5 text-xs font-medium text-neutral-500 group-hover:text-brand-teal-dark group-hover:gap-3 transition-all duration-300">
-                Learn more
-                <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12h15m0 0l-6.75-6.75M19.5 12l-6.75 6.75" />
-                </svg>
-              </span>
-            </a>
-          ))}
-        </div>
-        <p className="mt-8 text-xs text-neutral-500 tracking-wide">Deployed across hospitals, corporate, and border clinics in Thailand.</p>
-      </div>
-    </section>
+    <Link
+      prefetch={false}
+      href={href}
+      className="inline-flex items-center gap-2 self-start font-medium text-teal-text underline decoration-teal-text/30 underline-offset-4 transition-colors hover:decoration-teal-text"
+    >
+      {label}
+      <span className="sr-only"> {name}</span>
+      <span aria-hidden="true">→</span>
+    </Link>
+  )
+}
+
+export function Products({ dict, locale }: { dict: Dictionary['products']; locale: Locale }) {
+  const { endyra, anvira } = dict
+
+  return (
+    <Section id={SECTION_IDS.products} labelledBy="products-title">
+      <h2
+        id="products-title"
+        data-reveal
+        className="text-4xl leading-[1.1] font-normal tracking-tight sm:text-5xl th:leading-[1.4] th:tracking-normal"
+      >
+        {dict.title}
+      </h2>
+      <NetworkStage name="products" className="mt-8 aspect-[2/1] w-full md:aspect-[4/1]" />
+      <ul className="mt-8 grid gap-4 md:grid-cols-2">
+        <li data-fade className={CARD}>
+          <div className="flex flex-wrap items-start justify-between gap-4">
+            <h3>
+              <BrandLogo basePath="/brand/endyra-logo" alt={endyra.name} width={194} height={40} className="h-10 w-auto" />
+            </h3>
+            <StatusChip tone="available">{endyra.status}</StatusChip>
+          </div>
+          <div className="flex flex-col gap-4">
+            <p className="max-w-sm text-lg text-ink-muted">{keepTogether(endyra.description)}</p>
+            <ProductLink href={localePath(locale, 'endyra/')} label={dict.learnMore} name={endyra.name} />
+          </div>
+        </li>
+        <li data-fade className={CARD}>
+          <div className="flex flex-wrap items-start justify-between gap-4">
+            <h3>
+              <BrandLogo basePath="/brand/anvira-wordmark" alt={anvira.name} width={165} height={42} className="h-10 w-auto" />
+            </h3>
+            <StatusChip tone="development">{anvira.status}</StatusChip>
+          </div>
+          <div className="flex flex-col gap-4">
+            <p className="max-w-sm text-lg text-ink-muted">{keepTogether(anvira.description)}</p>
+            <ProductLink href={localePath(locale, 'anvira/')} label={dict.learnMore} name={anvira.name} />
+          </div>
+        </li>
+      </ul>
+    </Section>
   )
 }

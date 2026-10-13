@@ -1,29 +1,34 @@
-import Image from 'next/image'
+import { NetworkStage } from '@/components/network/NetworkStill'
+import type { Dictionary } from '@/lib/i18n'
+import { SECTION_IDS } from '@/lib/site/sections'
+import { PartnerBar } from './PartnerBar'
 
-export function Hero() {
+interface HeroProps {
+  dict: Dictionary['hero']
+  partners: Dictionary['partners']
+}
+
+/** One sentence over the full-screen network; the story continues on scroll. */
+export function Hero({ dict, partners }: HeroProps) {
   return (
-    <section id="hero">
-      <div className="mx-auto max-w-5xl px-6 py-32 text-center">
-        <div className="flex flex-col items-center space-y-6">
-          <Image
-            src="/hero-icon.svg"
-            alt="Enterprise software systems"
-            width={80}
-            height={80}
-            priority
-          />
-          <h1 className="text-4xl md:text-5xl font-light text-neutral-900">
-            Your operations<br />simplified
-          </h1>
-
-        </div>
-        <div className="mt-10 flex justify-center">
-          <a
-            href="#products"
-            className="inline-flex items-center justify-center rounded-full border border-neutral-200 bg-white text-neutral-900 px-6 py-2.5 text-sm font-medium transition-colors duration-150 hover:bg-neutral-100"
+    <section
+      id={SECTION_IDS.hero}
+      aria-labelledby="hero-title"
+      className="relative isolate flex min-h-[calc(100svh-4.5rem)] flex-col overflow-hidden"
+    >
+      <NetworkStage name="hero" className="absolute inset-0 -z-10 opacity-45" />
+      <div className="grid-column mx-auto flex w-full max-w-page grow flex-col px-4 sm:px-8">
+        <div className="flex grow flex-col justify-center py-20">
+          <h1
+            id="hero-title"
+            data-hero-title
+            className="max-w-[16ch] text-[2.75rem] leading-[1.05] font-normal tracking-tight text-balance sm:text-5xl th:max-w-[20ch] th:leading-[1.3] th:tracking-normal"
           >
-            Products
-          </a>
+            {dict.title}
+          </h1>
+        </div>
+        <div className="pb-8">
+          <PartnerBar dict={partners} />
         </div>
       </div>
     </section>
