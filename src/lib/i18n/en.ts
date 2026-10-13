@@ -67,12 +67,12 @@ export const en: Dictionary = {
       meta: {
         title: 'Endyra | Endoscopy Video and Image Capture System',
         description:
-          'Endyra records endoscopy procedures in 4K, captures still images with a foot switch and organizes every case for fast retrieval. Runs without an internet connection.',
+          'Endyra captures Full HD endoscopy images with a foot switch, records and times colonoscopy withdrawal, and organizes every case with PDF reports. Runs without an internet connection.',
       },
       status: 'Available',
-      headline: 'Every endoscopy, fully recorded.',
+      headline: 'Every endoscopy, documented.',
       intro:
-        'Endyra is a video and image capture system for endoscopy units. It records each procedure, captures still images on demand and keeps every case organized for review and export.',
+        'Endyra is an image capture and documentation system for endoscopy units. It captures still images on demand, records the colonoscopy withdrawal and keeps every case organized for review and reporting.',
       note: 'In use in Thailand.',
       cta: { label: 'Request a demo', subject: 'Request a demo: Endyra' },
       blocks: [
@@ -81,8 +81,8 @@ export const en: Dictionary = {
           title: 'Features',
           items: [
             {
-              title: '4K recording',
-              body: 'Records the full procedure in 4K at 60 frames per second, started and stopped from the endoscopy workstation.',
+              title: 'Full HD image capture',
+              body: 'Captures still images in Full HD (1080p) from the endoscopy video signal, through capture cards that accept up to 4K at 60 frames per second.',
             },
             {
               title: 'Foot switch capture',
@@ -93,8 +93,12 @@ export const en: Dictionary = {
               body: 'Every recording is linked to the patient, the physician and the date, and any case can be found in under a second.',
             },
             {
-              title: 'Export',
-              body: 'Produces reports and video clips for clinical records, conferences, research and teaching.',
+              title: 'Withdrawal recording and timing',
+              body: 'Records video and times the withdrawal phase of each colonoscopy.',
+            },
+            {
+              title: 'PDF reports',
+              body: 'Physicians review each case and produce a PDF report from the clinician portal.',
             },
             {
               title: 'No internet required',
@@ -107,11 +111,11 @@ export const en: Dictionary = {
           title: 'How it works',
           items: [
             {
-              title: 'Record',
-              body: 'Start recording from the workstation. Video and still images are linked to the case as the procedure runs.',
+              title: 'Capture',
+              body: 'Open the case at the kiosk in the endoscopy room. Still images and the withdrawal video are linked to the case as the procedure runs.',
             },
             { title: 'Organize', body: 'Each case is indexed by patient, physician and date, ready to search.' },
-            { title: 'Export', body: 'Prepare reports and clips for records, teaching or research.' },
+            { title: 'Report', body: 'Review the case in the clinician portal and produce its PDF report.' },
           ],
         },
         {

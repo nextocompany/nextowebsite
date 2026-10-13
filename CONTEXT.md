@@ -33,7 +33,7 @@ _Avoid_: outro, end state
 ### Products
 
 **Endyra**:
-Nexto's endoscopy video and image capture system, in use in Thailand. Has its own page on nexto.co.th.
+Nexto's endoscopy image capture and documentation system, in use in Thailand: Full HD still images by foot switch at an OR kiosk, colonoscopy withdrawal recorded and timed, PDF reports from the clinician portal. Has its own page on nexto.co.th.
 _Avoid_: Endyra app, endyra.io
 
 **Anvira**:
