@@ -34,7 +34,15 @@ function measureStages() {
     const el = document.querySelector<HTMLElement>(`[data-stage="${name}"]`)
     if (!el) return []
     const r = el.getBoundingClientRect()
-    return [{ name, cx: r.left + r.width / 2, cy: r.top + r.height / 2, width: r.width, height: r.height, visible: r.bottom > 0 && r.top < window.innerHeight }]
+    const cy = r.top + r.height / 2
+    // A held stage (narrow pins) counts as centred from the moment it sticks, so the story stays on it while it holds.
+    const style = el.dataset.hold === undefined ? null : getComputedStyle(el)
+    const held = style?.position === 'sticky'
+    const holdTop = held ? parseFloat(style.top) : 0
+    const scrollCy = held ? r.top - holdTop + window.innerHeight / 2 : cy
+    // Where it sits while holding; two held stages in a row share this spot, so the network stays put between them.
+    const heldCy = held ? holdTop + r.height / 2 : null
+    return [{ name, cx: r.left + r.width / 2, cy, scrollCy, heldCy, width: r.width, height: r.height, visible: r.bottom > 0 && r.top < window.innerHeight }]
   })
 }
 
@@ -78,21 +86,29 @@ export function NetworkCanvas() {
       const stages = measureStages()
       if (stages.length === 0) return
       const maxScroll = document.documentElement.scrollHeight - window.innerHeight
-      const targets = stageScrollTargets(stages.map((s) => s.cy), window.scrollY, window.innerHeight, maxScroll)
+      const targets = stageScrollTargets(stages.map((s) => s.scrollCy), window.scrollY, window.innerHeight, maxScroll)
       // Lenis already glides the scroll and the frame clock runs this after it, so the network follows it directly.
       const shown = scrollPosition(targets, window.scrollY)
       const beats = beatsAt(shown, getPins())
+      const from = Math.min(Math.floor(shown), stages.length - 1)
+      const to = Math.min(from + 1, stages.length - 1)
+      const between = stages[from].heldCy !== null && stages[to].heldCy !== null
+      const placed = between
+        ? stages.map((s, i) => (i === from || i === to ? { ...s, cy: s.heldCy ?? s.cy } : s))
+        : stages
 
       ctx.clearRect(0, 0, window.innerWidth, window.innerHeight)
       if (stages.some((s) => s.visible)) {
         // Hero → intro is the gathering itself, so it stays visible; later moves dim.
-        const travel = shown < 1 ? 0 : Math.abs(shown - Math.round(shown))
+        // Heading into a held stage it rises over the empty box that will hold it, so nothing is in the way.
+        const intoHold = stages[to].heldCy !== null
+        const travel = shown < 1 || intoHold ? 0 : Math.abs(shown - Math.round(shown))
         const fade =
           (1 - TRAVEL_DIM * smoothstep(0.1, 0.35, travel)) *
           (HERO_ALPHA + (1 - HERO_ALPHA) * beats.form)
         const seconds = (now - start) / 1000
         const frame = frameAt({ ...beats, time: seconds }, scene)
-        const anchor = anchorAt(stages.map((s) => stageRect(s, scene.variant, beats)), shown)
+        const anchor = anchorAt(placed.map((s) => stageRect(s, scene.variant, beats)), shown)
         drawFrame(ctx, frame, anchor, palette, fade, signalsAt(frame, seconds))
         // Signals keep moving while the network is on screen; off screen the loop rests until the next scroll.
         schedule()

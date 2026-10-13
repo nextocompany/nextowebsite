@@ -202,3 +202,33 @@
     outline-offset: 2px;
   }
 }
+
+/*
+ * Pins on narrow screens: the stage holds the top half of the screen while
+ * the text scrolls up under it (pins.ts holdNarrow). Text fades out as it
+ * reaches the middle of the screen, --hold-cut px from its own top. Only with
+ * motion on; no-JS and reduced motion keep the plain stacked stills.
+ * Unlayered so it wins over the stage boxes' size utilities.
+ */
+@media (max-width: 1023.98px) {
+  [data-motion='on'] [data-hold] {
+    position: sticky;
+    top: 0;
+    order: -1;
+    align-self: start;
+    height: 50svh;
+    aspect-ratio: auto;
+    max-width: none;
+  }
+  [data-motion='on'] [data-under-hold] {
+    mask-image: linear-gradient(to bottom, transparent var(--hold-cut, -3rem), #000 calc(var(--hold-cut, -3rem) + 3rem));
+  }
+  /* Carrying on a pin: the text starts under the stage instead of after it. */
+  [data-motion='on'] [data-hold='continue'] {
+    margin-bottom: -50svh;
+  }
+  /* Approach is short: room after the body so the split plays out while it passes. */
+  [data-motion='on'] [data-hold-tail] {
+    padding-bottom: 15svh;
+  }
+}

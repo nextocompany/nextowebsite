@@ -190,12 +190,84 @@ test('no route payloads are prefetched (every link is a same-page jump or a full
   expect(payloads).toEqual([])
 })
 
-test('stacked tablet layout scrolls freely (no pin, no dimmed items)', async ({ page }) => {
-  await page.setViewportSize({ width: 768, height: 1024 })
-  await page.goto('/')
-  await settle(page)
-  expect(await pinStarts(page)).toEqual([])
-  expect(await page.locator('[data-stepping]').count()).toBe(0)
+test.describe('phone 390×844', () => {
+  test.use({ viewport: { width: 390, height: 844 } })
+
+  /** Document range of a held section: from its first line reaching mid-screen to the block's end reaching it. */
+  const holdRange = (page: Page, section: string) =>
+    page.evaluate((id) => {
+      const stage = document.querySelector<HTMLElement>(`#${id} [data-hold]`)!
+      const text = document.querySelector<HTMLElement>(`#${id} [data-under-hold]`)!
+      const line = stage.offsetHeight
+      const top = text.getBoundingClientRect().top + window.scrollY - line
+      const bottom = stage.parentElement!.getBoundingClientRect().bottom + window.scrollY - line
+      return { start: Math.round(top), end: Math.round(bottom), line }
+    }, section)
+
+  test('holds the network in the top half through Approach and How we work, no column pin', async ({ page }) => {
+    await page.goto('/')
+    await settle(page)
+    expect(await pinStarts(page)).toEqual([])
+    expect(await page.locator('[data-stepping]').count()).toBe(0)
+
+    const approach = await holdRange(page, 'approach')
+    expectNear(approach.line, 422, 'held stage is half the screen')
+    const at = async (y: number) => {
+      await scrollToY(page, y)
+      return coralPixels(page)
+    }
+    const atStart = await at(approach.start)
+    expectNear(await topOf(page, '#approach [data-hold]'), 0, 'approach stage holds')
+    const atMiddle = await at(approach.start + 0.55 * (approach.end - approach.start))
+    expectNear(await topOf(page, '#approach [data-hold]'), 0, 'approach stage holds')
+    const atEnd = await at(approach.end)
+    expect(atMiddle, 'coral nodes mid-split').toBeGreaterThan(100)
+    expect(atStart, 'whole network before the split').toBeLessThan(atMiddle / 4)
+    expect(atEnd, 'whole network after the split').toBeLessThan(atMiddle / 4)
+
+    const how = await holdRange(page, 'how-we-work')
+    // How we work carries on the pin: its text starts under the network, and its own box catches up partway.
+    await scrollToY(page, how.start + 0.8 * (how.end - how.start))
+    expectNear(await topOf(page, '#how-we-work [data-hold]'), 0, 'how we work stage holds')
+    // Text that has reached the network is faded out under it.
+    const cut = await page.evaluate(() =>
+      parseFloat(document.querySelector<HTMLElement>('#how-we-work [data-under-hold]')!.style.getPropertyValue('--hold-cut')),
+    )
+    expect(cut).toBeGreaterThan(0)
+  })
+
+  test('the header slides away reading down and comes back on the way up', async ({ page }) => {
+    await page.goto('/')
+    await settle(page)
+    const hidden = () => page.locator('header').getAttribute('data-hidden')
+    await page.mouse.wheel(0, 1200)
+    await page.waitForTimeout(1200)
+    expect(await hidden()).toBe('true')
+    await page.mouse.wheel(0, -300)
+    await page.waitForTimeout(1200)
+    expect(await hidden()).toBe('false')
+    expect(await topOf(page, 'header')).toBe(0)
+  })
+
+  test('the footer keeps only the brain, the closing line and the social links', async ({ page }) => {
+    await page.goto('/')
+    await settle(page)
+    const footer = page.locator('footer')
+    await expect(footer.locator('[data-stage="closing"]')).toBeVisible()
+    await expect(footer.getByRole('link', { name: /Nexto on/ }).first()).toBeVisible()
+    await expect(footer.getByRole('navigation', { name: 'Menu' })).toBeHidden()
+    await expect(footer.locator('dl')).toBeHidden()
+    await expect(footer.getByRole('link', { name: 'Become a partner', includeHidden: true })).toBeHidden()
+  })
+
+  test('the partner logos sit in a grid of four columns', async ({ page }) => {
+    await page.goto('/')
+    await settle(page)
+    const lefts = await page
+      .locator('#partners li')
+      .evaluateAll((items) => items.map((li) => Math.round(li.getBoundingClientRect().left)))
+    expect(new Set(lefts).size).toBe(4)
+  })
 })
 
 test('short laptop screens scroll freely (no pin)', async ({ page }) => {

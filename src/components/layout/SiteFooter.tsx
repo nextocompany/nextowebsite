@@ -13,7 +13,9 @@ const LINK = 'underline-offset-4 transition-colors hover:text-white hover:underl
 
 /**
  * The last page: the Nexto brain gathered again above the closing line, then
- * the way around the site and the way to reach us.
+ * the way around the site and the way to reach us. On phones only the brain,
+ * the line and the social links stay: Contact sits just above and the header
+ * menu comes back on any scroll up.
  */
 export function SiteFooter({ locale }: SiteFooterProps) {
   const dict = getDictionary(locale)
@@ -23,7 +25,7 @@ export function SiteFooter({ locale }: SiteFooterProps) {
     <footer className="grid-section relative isolate flex min-h-[calc(100svh-4.5rem)] flex-col overflow-hidden text-ink">
 
       <div className="grid-column mx-auto flex w-full max-w-page grow flex-col px-4 sm:px-8">
-      <div className="grid grow items-center gap-16 py-20 lg:grid-cols-12">
+      <div className="grid grow items-center gap-12 py-16 sm:gap-16 sm:py-20 lg:grid-cols-12">
         <div className="lg:col-span-7">
           {/* The closing stage: the brain gathers here as the footer comes in (NetworkCanvas draws it live). */}
           <NetworkStage name="closing" className="mb-8 aspect-square w-32 sm:w-40 lg:w-48" />
@@ -33,7 +35,7 @@ export function SiteFooter({ locale }: SiteFooterProps) {
         </div>
 
         <div className="flex flex-col gap-12 lg:col-span-4 lg:col-start-9">
-          <nav aria-label={dict.nav.menu}>
+          <nav aria-label={dict.nav.menu} className="max-md:hidden">
             <ul className="grid grid-cols-2 gap-x-8 gap-y-4 text-lg">
               {NAV_SECTIONS.map(({ key, id }) => (
                 <li key={id}>
@@ -54,11 +56,11 @@ export function SiteFooter({ locale }: SiteFooterProps) {
             <Link
               prefetch={false}
               href={`${home}#${SECTION_IDS.contact}`}
-              className="inline-flex min-h-12 items-center rounded-[3px] bg-mist px-6 font-medium text-charcoal transition-colors hover:bg-white"
+              className="inline-flex min-h-12 items-center max-md:hidden rounded-[3px] bg-mist px-6 font-medium text-charcoal transition-colors hover:bg-white"
             >
               {dict.hero.primaryCta}
             </Link>
-            <dl className="flex flex-wrap gap-x-10 gap-y-4">
+            <dl className="flex flex-wrap gap-x-10 gap-y-4 max-md:hidden">
               <div>
                 <dt className="text-sm">{dict.contact.emailLabel}</dt>
                 <dd className="mt-1 font-mono select-all">

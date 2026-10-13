@@ -16,7 +16,8 @@ export function HowWeWork({ dict }: { dict: Dictionary['howWeWork'] }) {
       columnClassName="lg:flex lg:flex-1 lg:flex-col lg:justify-center lg:py-16"
     >
       <div className="grid w-full items-center gap-12 lg:grid-cols-12">
-        <div className="lg:col-span-6">
+        {/* data-hold / data-under-hold: on narrow screens the stage holds the top half while the list passes (pins.ts). */}
+        <div data-under-hold className="lg:col-span-6">
           <h2 id="how-title" className="text-sm text-ink-muted en:font-mono en:text-xs en:tracking-wide en:uppercase">
             {dict.title}
           </h2>
@@ -33,6 +34,7 @@ export function HowWeWork({ dict }: { dict: Dictionary['howWeWork'] }) {
         </div>
         <NetworkStage
           name="how-we-work"
+          hold="continue"
           className="mx-auto aspect-square w-full max-w-sm lg:col-span-5 lg:col-start-8 lg:max-w-none"
         />
       </div>

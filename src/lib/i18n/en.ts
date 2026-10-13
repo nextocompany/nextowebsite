@@ -20,7 +20,7 @@ export const en: Dictionary = {
   hero: {
     title: 'Scattered data, brought together.',
     subtitle:
-      'Nexto simplifies complex workflows with software that integrates data from multiple systems and medical devices, enabling clinical teams and healthcare organizations to work more efficiently.',
+      'We develop software that connects data across systems and medical devices, so clinical teams work more efficiently.',
     primaryCta: 'Become a partner',
     secondaryCta: 'Explore our products',
   },

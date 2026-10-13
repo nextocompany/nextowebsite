@@ -3,7 +3,7 @@
 import { useEffect } from 'react'
 import 'lenis/dist/lenis.css'
 import { driveFrames } from '@/lib/motion/frameClock'
-import { PIN_MEDIA, STACKED_MEDIA, followHowWeWorkStage, pinApproach, pinHowWeWork } from './pins'
+import { NARROW_MEDIA, PIN_MEDIA, SHORT_MEDIA, followHowWeWorkStage, holdNarrow, pinApproach, pinHowWeWork } from './pins'
 import { splitIntoLines } from './splitLines'
 
 const REDUCED_MOTION = '(prefers-reduced-motion: reduce)'
@@ -46,7 +46,8 @@ export function MotionRoot() {
             approach?.()
           }
         })
-        mm.add(STACKED_MEDIA, () => followHowWeWorkStage(ScrollTrigger))
+        mm.add(NARROW_MEDIA, () => holdNarrow(ScrollTrigger))
+        mm.add(SHORT_MEDIA, () => followHowWeWorkStage(ScrollTrigger))
         const ctx = gsap.context(() => {
           heroExit(gsap)
           revealBelowFold(gsap)

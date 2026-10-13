@@ -5,7 +5,7 @@ import { StatusChip } from '@/components/ui/StatusChip'
 import type { Dictionary } from '@/lib/i18n'
 import { SECTION_IDS } from '@/lib/site/sections'
 
-const CARD = 'flex min-h-56 flex-col justify-between gap-10 rounded-3xl bg-ground-raised p-6 sm:p-10'
+const CARD = 'flex flex-col justify-between gap-6 rounded-3xl bg-ground-raised p-6 sm:min-h-56 sm:gap-10 sm:p-10'
 
 export function Products({ dict }: { dict: Dictionary['products'] }) {
   const { endyra, anvira } = dict
@@ -19,7 +19,7 @@ export function Products({ dict }: { dict: Dictionary['products'] }) {
       >
         {dict.title}
       </h2>
-      <NetworkStage name="products" className="mt-8 aspect-[4/3] w-full md:aspect-[4/1]" />
+      <NetworkStage name="products" className="mt-8 aspect-[2/1] w-full md:aspect-[4/1]" />
       <ul className="mt-8 grid gap-4 md:grid-cols-2">
         <li data-fade className={CARD}>
           <div className="flex flex-wrap items-start justify-between gap-4">

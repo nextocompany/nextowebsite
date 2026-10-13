@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { getDictionary, LOCALE_PATH, switchTarget, type Locale } from '@/lib/i18n'
 import { NAV_SECTIONS, SECTION_IDS } from '@/lib/site/sections'
 import { BrandLogo } from './BrandLogo'
+import { HeaderAutoHide } from './HeaderAutoHide'
 import { LanguageSwitch } from './LanguageSwitch'
 
 interface SiteHeaderProps {
@@ -19,7 +20,12 @@ export function SiteHeader({ locale }: SiteHeaderProps) {
   const navLinks = NAV_SECTIONS.map(({ key, id }) => ({ label: dict.nav[key], href: `${home}#${id}` }))
 
   return (
-    <header className="relative z-20 border-b border-[color:var(--grid-line)] bg-ground/80 backdrop-blur md:sticky md:top-0">
+    // Sticky everywhere; on narrow screens HeaderAutoHide slides it away while reading down.
+    <header
+      data-autohide
+      className="sticky top-0 z-20 border-b border-[color:var(--grid-line)] bg-ground/80 backdrop-blur transition-transform duration-300 motion-reduce:transition-none data-[hidden=true]:-translate-y-full"
+    >
+      <HeaderAutoHide />
       <div className="grid-column mx-auto flex h-18 max-w-page items-center justify-between gap-4 px-4 sm:px-8">
         <Link prefetch={false} href={home} aria-label="Nexto" className="shrink-0">
           <BrandLogo basePath="/brand/nexto-logo" alt="Nexto" width={124} height={29} />

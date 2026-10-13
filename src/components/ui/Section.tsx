@@ -11,7 +11,7 @@ interface SectionProps {
 export function Section({ id, labelledBy, className = '', columnClassName = '', children }: SectionProps) {
   return (
     <section id={id} aria-labelledby={labelledBy} className={`grid-section ${className}`}>
-      <div className={`grid-column mx-auto w-full max-w-page px-4 py-24 sm:px-8 sm:py-36 ${columnClassName}`}>{children}</div>
+      <div className={`grid-column mx-auto w-full max-w-page px-4 py-16 sm:px-8 sm:py-36 ${columnClassName}`}>{children}</div>
     </section>
   )
 }

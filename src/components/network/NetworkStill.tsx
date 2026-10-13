@@ -77,9 +77,20 @@ function StillFrames({ name }: { name: StageName }) {
  * A stage box the network is drawn in. Server-renders the still frame as SVG
  * (no-JS, reduced motion); NetworkCanvas hides it and animates over the box.
  */
-export function NetworkStage({ name, className = '' }: { name: StageName; className?: string }) {
+interface NetworkStageProps {
+  name: StageName
+  className?: string
+  /**
+   * On narrow screens with motion on, the stage holds the top half of the screen
+   * while its section's text passes (a pin). 'continue' carries on the previous
+   * pin: the network is already up there, so the text starts right away.
+   */
+  hold?: boolean | 'continue'
+}
+
+export function NetworkStage({ name, className = '', hold = false }: NetworkStageProps) {
   return (
-    <div data-stage={name} aria-hidden="true" className={className}>
+    <div data-stage={name} data-hold={hold === 'continue' ? 'continue' : hold || undefined} aria-hidden="true" className={className}>
       <StillFrames name={name} />
     </div>
   )

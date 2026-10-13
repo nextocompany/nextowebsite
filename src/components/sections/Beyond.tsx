@@ -11,7 +11,7 @@ export function Beyond({ dict }: { dict: Dictionary['beyond'] }) {
 
   return (
     <Section id={SECTION_IDS.beyond} labelledBy="beyond-title">
-      <NetworkStage name="beyond" className="mb-10 aspect-[4/3] w-full md:aspect-[4/1]" />
+      <NetworkStage name="beyond" className="mb-10 aspect-[2/1] w-full md:aspect-[4/1]" />
       <h2 id="beyond-title" className="text-sm text-ink-muted en:font-mono en:text-xs en:tracking-wide en:uppercase">
         {dict.title}
       </h2>
