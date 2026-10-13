@@ -3,6 +3,7 @@ import { BrandLogo } from '@/components/layout/BrandLogo'
 import { SiteFooter } from '@/components/layout/SiteFooter'
 import { SiteHeader } from '@/components/layout/SiteHeader'
 import { ProductMark } from '@/components/network/ProductMark'
+import { EndyraScreen } from '@/components/product/EndyraScreen'
 import { ButtonLink } from '@/components/ui/ButtonLink'
 import { Section } from '@/components/ui/Section'
 import { StatusChip } from '@/components/ui/StatusChip'
@@ -133,6 +134,18 @@ export function ProductPage({ locale, product }: { locale: Locale; product: Prod
             <ProductMark product={product} className="mx-auto w-full max-w-72 sm:max-w-sm lg:col-span-5 lg:max-w-md" />
           </div>
         </Section>
+
+        {copy.screen && product === 'endyra' && (
+          <Section id="screen" labelledBy="screen-title">
+            <h2 id="screen-title" className={H2}>
+              {copy.screen.title}
+            </h2>
+            <figure className="mt-10">
+              <EndyraScreen label={copy.screen.label} className="w-full rounded-2xl ring-1 ring-ink/10" />
+              <figcaption className="mt-4 text-sm text-ink-muted">{copy.screen.caption}</figcaption>
+            </figure>
+          </Section>
+        )}
 
         {copy.blocks.map((block, i) => (
           <Block key={block.title} block={block} id={`block-${i + 1}`} />

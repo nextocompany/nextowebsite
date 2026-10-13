@@ -75,6 +75,12 @@ export const en: Dictionary = {
         'Endyra is an image capture and documentation system for endoscopy units. It captures still images on demand, records the colonoscopy withdrawal and keeps every case organized for review and reporting.',
       note: 'In use in Thailand.',
       cta: { label: 'Request a demo', subject: 'Request a demo: Endyra' },
+      screen: {
+        title: 'At the endoscopy room',
+        caption: 'The capture station beside the endoscopy tower. Illustration with sample data.',
+        label:
+          'Endyra capture screen: the live scope image, insertion and withdrawal timers, a capture button for the foot switch, and the captured images.',
+      },
       blocks: [
         {
           kind: 'cards',

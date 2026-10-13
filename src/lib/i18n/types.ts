@@ -27,6 +27,8 @@ export interface ProductPageCopy {
   /** Short line under the call to action, e.g. where it is in use. */
   note?: string
   cta: { label: string; subject: string }
+  /** A drawing of the product's own screen, from the real software; only where one exists. */
+  screen?: { title: string; caption: string; label: string }
   blocks: ReadonlyArray<ProductBlock>
   contactTitle: string
 }
