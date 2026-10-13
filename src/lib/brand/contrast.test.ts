@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs'
 import path from 'node:path'
 import { describe, expect, it } from 'vitest'
 import { contrastRatio } from './contrast'
-import { COLOR_TOKENS, SITE_THEME, TEXT_PAIRS, THEMES } from './tokens'
+import { COLOR_TOKENS, PRODUCT_PAIRS, SITE_THEME, TEXT_PAIRS, THEMES } from './tokens'
 
 describe('contrastRatio', () => {
   it('returns 21 for black on white', () => {
@@ -30,6 +30,14 @@ describe('brand text pairs', () => {
         expect(ratio).toBeGreaterThanOrEqual(4.5)
       })
     }
+  }
+})
+
+describe('product accents', () => {
+  for (const [fg, bg] of PRODUCT_PAIRS) {
+    it(`${fg} on ${bg} meets 4.5:1`, () => {
+      expect(contrastRatio(COLOR_TOKENS[fg][SITE_THEME], COLOR_TOKENS[bg][SITE_THEME])).toBeGreaterThanOrEqual(4.5)
+    })
   }
 })
 

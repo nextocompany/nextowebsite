@@ -1,11 +1,13 @@
 interface StatusChipProps {
-  tone: 'available' | 'development'
+  /** accent: a product page's own colour (--accent-text, set by data-product). */
+  tone: 'available' | 'development' | 'accent'
   children: React.ReactNode
 }
 
 const TONES = {
   available: 'text-teal-text ring-teal-text/40',
   development: 'text-ink-muted ring-ink-muted/40',
+  accent: 'text-[var(--accent-text)] ring-[color-mix(in_srgb,var(--accent-text)_40%,transparent)]',
 } as const
 
 export function StatusChip({ tone, children }: StatusChipProps) {

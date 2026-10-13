@@ -17,6 +17,10 @@
   --ink-muted: #b4b5b7;
   --teal-text: #5ed3d7;
   --coral-text: #f6958b;
+  /* Product accents, from each product's logo; a product page sets --accent to its own. */
+  --endyra: #c4f25e;
+  --anvira: #8f94f5;
+  --anvira-text: #a5a9f7;
 
   /* Page column: grows on very wide screens instead of floating in the middle. */
   --page-width: 72rem;
@@ -231,4 +235,15 @@
   [data-motion='on'] [data-hold-tail] {
     padding-bottom: 15svh;
   }
+}
+
+/* Each product page's own colour (ProductPage sets data-product). */
+/* --accent for buttons and marks, --accent-text for small text (keeps 4.5:1 on raised cards). */
+[data-product='endyra'] {
+  --accent: var(--endyra);
+  --accent-text: var(--endyra);
+}
+[data-product='anvira'] {
+  --accent: var(--anvira);
+  --accent-text: var(--anvira-text);
 }
