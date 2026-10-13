@@ -5,10 +5,6 @@ import '@/app/globals.css'
 
 const GA_ID = 'G-62ZB83X2YZ'
 
-// First thing in <body>, so it runs before content paints: when motion is allowed, hide the SVG stills so the
-// canvas intro doesn't flash a finished brain first. Constant string, no input.
-const MOTION_FLAG = `if(!matchMedia('(prefers-reduced-motion: reduce)').matches)document.documentElement.dataset.motion='on'`
-
 interface RootDocumentProps {
   locale: Locale
   children: React.ReactNode
@@ -19,7 +15,6 @@ export function RootDocument({ locale, children }: RootDocumentProps) {
   return (
     <html lang={locale} className={fontVariables} suppressHydrationWarning>
       <body>
-        <script dangerouslySetInnerHTML={{ __html: MOTION_FLAG }} />
         {children}
       </body>
       {/* Analytics waits for idle so it never competes with the first paint. */}

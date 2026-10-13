@@ -14,6 +14,13 @@ export const PUBLISHED_LOCALES: ReadonlyArray<Locale> = ['en', 'th']
 /** Base path of each locale. English is the default at the root. */
 export const LOCALE_PATH: Readonly<Record<Locale, string>> = { en: '/', th: '/th/' }
 
+/** Product pages, under each locale's base path (docs/adr/0001). */
+export const PRODUCTS = ['endyra', 'anvira'] as const
+export type Product = (typeof PRODUCTS)[number]
+
+/** Path of a page under a locale: '' is the home, 'endyra/' a product page. */
+export const localePath = (locale: Locale, page = '') => `${LOCALE_PATH[locale]}${page}`
+
 export function getDictionary(locale: Locale): Dictionary {
   return DICTIONARIES[locale]
 }
@@ -23,13 +30,14 @@ export function switchTarget(locale: Locale, published: ReadonlyArray<Locale> = 
   return published.find((other) => other !== locale) ?? null
 }
 
-/** hreflang alternates (first published locale is x-default); none for a single-language site. */
+/** hreflang alternates of a page (first published locale is x-default); none for a single-language site. */
 export function languageAlternates(
   published: ReadonlyArray<Locale> = PUBLISHED_LOCALES,
+  page = '',
 ): Record<string, string> | undefined {
   if (published.length < 2) return undefined
   return {
-    ...Object.fromEntries(published.map((locale) => [locale, LOCALE_PATH[locale]])),
-    'x-default': LOCALE_PATH[published[0]],
+    ...Object.fromEntries(published.map((locale) => [locale, localePath(locale, page)])),
+    'x-default': localePath(published[0], page),
   }
 }

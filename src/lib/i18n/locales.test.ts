@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { LOCALE_PATH, PUBLISHED_LOCALES, languageAlternates, switchTarget } from './index'
-import { buildHomeMetadata } from './metadata'
+import { buildHomeMetadata, buildProductMetadata } from './metadata'
 
 describe('published locales', () => {
   it('publishes English at the site root and Thai at /th/', () => {
@@ -31,5 +31,14 @@ describe('published locales', () => {
     const th = buildHomeMetadata('th')
     expect(th.alternates).toEqual({ canonical: '/th/', languages })
     expect(th.openGraph).toMatchObject({ url: '/th/', images: [expect.objectContaining({ url: '/og-th.png' })] })
+  })
+
+  it('gives a product page its own canonical and hreflang to the same product in each language', () => {
+    const metadata = buildProductMetadata('th', 'anvira')
+    expect(metadata.alternates).toEqual({
+      canonical: '/th/anvira/',
+      languages: { en: '/anvira/', th: '/th/anvira/', 'x-default': '/anvira/' },
+    })
+    expect(metadata.title).toMatch(/^Anvira \| /)
   })
 })

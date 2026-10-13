@@ -277,6 +277,20 @@ test.describe('phone 390×844', () => {
   })
 })
 
+test('a product card leads to its page, and the language switch keeps the page', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 })
+  await page.goto('/')
+  await settle(page)
+  await page.locator('#products a[href="/endyra/"]').evaluate((a: HTMLElement) => a.click())
+  await page.waitForURL(/\/endyra\/$/)
+  await expect(page.getByRole('heading', { level: 1 })).toBeVisible()
+  await page.locator('header a[hreflang="th"]').evaluate((a: HTMLElement) => a.click())
+  await page.waitForURL(/\/th\/endyra\/$/)
+  await expect(page.locator('html')).toHaveAttribute('lang', 'th')
+  // No canvas here: the footer's brain is the server-drawn still.
+  await expect(page.locator('footer [data-stage="closing"] svg:visible')).toHaveCount(1)
+})
+
 test('short laptop screens scroll freely (no pin)', async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 600 })
   await page.goto('/')

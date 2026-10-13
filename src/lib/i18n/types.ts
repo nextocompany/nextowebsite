@@ -11,6 +11,26 @@ export interface ProductCopy {
   description: string
 }
 
+/** One block of a product page, in reading order. */
+export type ProductBlock =
+  | { kind: 'cards'; title: string; items: ReadonlyArray<{ label?: string; title: string; body: string }> }
+  | { kind: 'steps'; title: string; items: ReadonlyArray<{ title: string; body: string }> }
+  | { kind: 'list'; title: string; items: ReadonlyArray<string> }
+  | { kind: 'callout'; title: string; body: string }
+
+/** A product's own page (/endyra/, /anvira/ and their Thai pages). Only claims the user has confirmed. */
+export interface ProductPageCopy {
+  meta: { title: string; description: string }
+  status: string
+  headline: string
+  intro: string
+  /** Short line under the call to action, e.g. where it is in use. */
+  note?: string
+  cta: { label: string; subject: string }
+  blocks: ReadonlyArray<ProductBlock>
+  contactTitle: string
+}
+
 export interface ContactTopic {
   label: string
   subject: string
@@ -51,8 +71,14 @@ export interface Dictionary {
   }
   products: {
     title: string
+    /** Link from a product card to its page. */
+    learnMore: string
     endyra: ProductCopy
     anvira: ProductCopy
+  }
+  productPages: {
+    endyra: ProductPageCopy
+    anvira: ProductPageCopy
   }
   beyond: {
     title: string

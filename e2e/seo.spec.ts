@@ -52,6 +52,22 @@ for (const { file, lang, path: url, ogLocale, og } of [
   })
 }
 
+for (const product of ['endyra', 'anvira']) {
+  for (const { lang, base, ogLocale } of [
+    { lang: 'en', base: '/', ogLocale: 'en_US' },
+    { lang: 'th', base: '/th/', ogLocale: 'th_TH' },
+  ]) {
+    test(`the ${lang} ${product} page has its own title, canonical and hreflang to both languages`, () => {
+      const html = read(`${base.slice(1)}${product}/index.html`)
+      const t = tags(html)
+      expect(t).toMatchObject({ lang, canonical: `${SITE}${base}${product}/`, ogLocale, robots: 'index, follow' })
+      expect(t.alternates.sort()).toEqual(['en', 'th', 'x-default'])
+      expect(html).toMatch(new RegExp(`<title>${product[0].toUpperCase()}${product.slice(1)} \\| `))
+      expect(html).toContain(`mailto:${product}@nexto.co.th`)
+    })
+  }
+}
+
 test('English is the root and Thai is at /th/; /en/ redirects to the root', () => {
   expect(existsSync(path.join(OUT, 'en'))).toBe(false)
   expect(existsSync(path.join(OUT, 'th/index.html'))).toBe(true)
@@ -64,9 +80,16 @@ test('privacy stays out of search results', () => {
   expect(t).toMatchObject({ lang: 'en', robots: 'noindex', canonical: `${SITE}/privacy/` })
 })
 
-test('sitemap lists both homes with their language alternates; robots points at it', () => {
+test('sitemap lists every page in both languages with their alternates; robots points at it', () => {
   const sitemap = read('sitemap.xml')
-  expect(Array.from(sitemap.matchAll(/<loc>([^<]+)<\/loc>/g), (m) => m[1])).toEqual([`${SITE}/`, `${SITE}/th/`])
+  expect(Array.from(sitemap.matchAll(/<loc>([^<]+)<\/loc>/g), (m) => m[1])).toEqual([
+    `${SITE}/`,
+    `${SITE}/th/`,
+    `${SITE}/endyra/`,
+    `${SITE}/th/endyra/`,
+    `${SITE}/anvira/`,
+    `${SITE}/th/anvira/`,
+  ])
   expect(sitemap).toContain('hreflang="th"')
   expect(read('robots.txt')).toContain(`Sitemap: ${SITE}/sitemap.xml`)
 })

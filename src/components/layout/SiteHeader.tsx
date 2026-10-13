@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { getDictionary, LOCALE_PATH, switchTarget, type Locale } from '@/lib/i18n'
+import { getDictionary, LOCALE_PATH, localePath, switchTarget, type Locale } from '@/lib/i18n'
 import { NAV_SECTIONS, SECTION_IDS } from '@/lib/site/sections'
 import { BrandLogo } from './BrandLogo'
 import { HeaderAutoHide } from './HeaderAutoHide'
@@ -7,12 +7,14 @@ import { LanguageSwitch } from './LanguageSwitch'
 
 interface SiteHeaderProps {
   locale: Locale
+  /** The page under the locale ('' for the home, 'endyra/' for a product), so the language switch keeps it. */
+  page?: string
 }
 
 // Links here jump within the page (or to /privacy/), so prefetching the route payload is wasted bytes.
 const NAV_LINK = 'rounded-full px-3 py-2 text-ink-muted transition-colors hover:text-ink'
 
-export function SiteHeader({ locale }: SiteHeaderProps) {
+export function SiteHeader({ locale, page = '' }: SiteHeaderProps) {
   const dict = getDictionary(locale)
   const target = switchTarget(locale)
   // Full path, so the anchors also work from /privacy/.
@@ -46,7 +48,7 @@ export function SiteHeader({ locale }: SiteHeaderProps) {
         <div className="flex items-center gap-2">
           {target && (
             <LanguageSwitch
-              href={LOCALE_PATH[target]}
+              href={localePath(target, page)}
               hrefLang={target}
               label={dict.nav.switchLanguage}
               ariaLabel={dict.nav.switchLanguageLabel}

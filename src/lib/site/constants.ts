@@ -4,6 +4,9 @@ export const LINE_ID = '@nextocompany'
 export const LINE_URL = 'https://line.me/R/ti/p/@nextocompany'
 export const SAANIQ_URL = 'https://saaniq.com'
 
+/** Each product page's own inbox (decided 2026-10-14; see docs/adr/0001). */
+export const PRODUCT_EMAIL = { endyra: 'endyra@nexto.co.th', anvira: 'anvira@nexto.co.th' } as const
+
 /** Nexto's own channels, shown as icons in the footer. */
 export const SOCIAL_LINKS = [
   { name: 'Facebook', icon: 'facebook', href: 'https://www.facebook.com/nextocompany' },

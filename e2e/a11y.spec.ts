@@ -4,7 +4,11 @@ import { LOCALES, expect, settle, test } from './fixtures'
 
 const WCAG_TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa']
 
-for (const locale of LOCALES) {
+const PAGES = LOCALES.flatMap((locale) =>
+  ['', 'endyra/', 'anvira/'].map((page) => ({ name: `${locale.name} /${page}`, path: `${locale.path}${page}` })),
+)
+
+for (const locale of PAGES) {
   test(`${locale.name}: no automated WCAG A/AA violations`, async ({ page }) => {
     // Reduced motion so axe never measures contrast on text caught mid-reveal.
     await page.emulateMedia({ reducedMotion: 'reduce' })
