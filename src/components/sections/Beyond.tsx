@@ -5,6 +5,7 @@ import { Section } from '@/components/ui/Section'
 import type { Dictionary } from '@/lib/i18n'
 import { ENGINEERING_PARTNERS, SAANIQ_URL } from '@/lib/site/constants'
 import { SECTION_IDS } from '@/lib/site/sections'
+import { keepTogether } from '@/lib/text/keepTogether'
 
 export function Beyond({ dict }: { dict: Dictionary['beyond'] }) {
   const { saaniq, engineering } = dict
@@ -20,7 +21,7 @@ export function Beyond({ dict }: { dict: Dictionary['beyond'] }) {
           <h3 id="saaniq-title">
             <BrandLogo basePath="/brand/saaniq-logo" alt={saaniq.name} width={172} height={40} className="h-10 w-auto" />
           </h3>
-          <p className="mt-3 max-w-md text-ink-muted">{saaniq.description}</p>
+          <p className="mt-3 max-w-md text-ink-muted">{keepTogether(saaniq.description)}</p>
           <a
             href={SAANIQ_URL}
             target="_blank"

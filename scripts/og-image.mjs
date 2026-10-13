@@ -10,8 +10,11 @@ import { chromium } from '@playwright/test'
 
 const PORT = 4174
 const ROOT = path.resolve(import.meta.dirname, '..')
-// Published locales only (Thai is hidden for now; add { name: 'th', path: '/th/' } when it returns).
-const LOCALES = [{ name: 'en', path: '/' }]
+// Published locales only.
+const LOCALES = [
+  { name: 'en', path: '/' },
+  { name: 'th', path: '/th/' },
+]
 const SIZE = { width: 1200, height: 630 }
 
 /** Replaces the page with the card, reusing the hero headline and the formed network still. */

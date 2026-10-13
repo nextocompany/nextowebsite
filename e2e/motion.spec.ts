@@ -140,10 +140,17 @@ test.describe('desktop 1440×900', () => {
     expectNear(await topOf(page, '#approach'), 80)
   })
 
-  test('there is no language switch while Thai is hidden', async ({ page }) => {
-    await page.goto('/')
+  test('the language switch goes to Thai and back, keeping the section in view', async ({ page }) => {
+    await page.goto('/#products')
     await settle(page)
-    await expect(page.locator('a[hreflang]')).toHaveCount(0)
+    // A real click without Playwright's scroll-into-view, which scrolls the page under the sticky header first.
+    await page.locator('header a[hreflang="th"]').evaluate((a: HTMLElement) => a.click())
+    await page.waitForURL(/\/th\/#products$/)
+    await expect(page.locator('html')).toHaveAttribute('lang', 'th')
+    await settle(page)
+    await page.locator('header a[hreflang="en"]').evaluate((a: HTMLElement) => a.click())
+    await page.waitForURL(/\/#products$/)
+    await expect(page.locator('html')).toHaveAttribute('lang', 'en')
   })
 
   test('the pin survives a resize below the breakpoint and back', async ({ page }) => {
@@ -257,7 +264,7 @@ test.describe('phone 390×844', () => {
     await expect(footer.getByRole('link', { name: /Nexto on/ }).first()).toBeVisible()
     await expect(footer.getByRole('navigation', { name: 'Menu' })).toBeHidden()
     await expect(footer.locator('dl')).toBeHidden()
-    await expect(footer.getByRole('link', { name: 'Become a partner', includeHidden: true })).toBeHidden()
+    await expect(footer.getByRole('link', { name: 'Request a demo', includeHidden: true })).toBeHidden()
   })
 
   test('the partner logos sit in a grid of four columns', async ({ page }) => {

@@ -21,25 +21,40 @@ function tags(html: string) {
   }
 }
 
-// URLs use the served form (trailingSlash: true), so none of them redirect.
-test('the English home is the site root, with no hreflang while it is the only language', () => {
-  const t = tags(read('index.html'))
-  expect(t).toMatchObject({
-    lang: 'en',
-    canonical: `${SITE}/`,
-    ogUrl: `${SITE}/`,
-    ogLocale: 'en_US',
-    robots: 'index, follow',
-    ogImage: `${SITE}/og-en.png`,
-    twitterImage: `${SITE}/og-en.png`,
-  })
-  expect(t.alternates).toEqual([])
-  expect(existsSync(path.join(OUT, 'og-en.png')), 'OG image file').toBe(true)
-})
+/** JSON-LD blocks in built HTML. */
+const jsonLd = (html: string) =>
+  Array.from(html.matchAll(/<script type="application\/ld\+json">([^<]+)<\/script>/g), (m) => JSON.parse(m[1]))
 
-test('no Thai pages are published, and /en/ redirects to the root', () => {
+// URLs use the served form (trailingSlash: true), so none of them redirect.
+for (const { file, lang, path: url, ogLocale, og } of [
+  { file: 'index.html', lang: 'en', path: '/', ogLocale: 'en_US', og: 'og-en.png' },
+  { file: 'th/index.html', lang: 'th', path: '/th/', ogLocale: 'th_TH', og: 'og-th.png' },
+]) {
+  test(`the ${lang} home has its own canonical, hreflang to both languages and its own OG image`, () => {
+    const t = tags(read(file))
+    expect(t).toMatchObject({
+      lang,
+      canonical: `${SITE}${url}`,
+      ogUrl: `${SITE}${url}`,
+      ogLocale,
+      robots: 'index, follow',
+      ogImage: `${SITE}/${og}`,
+      twitterImage: `${SITE}/${og}`,
+    })
+    expect(t.alternates.sort()).toEqual(['en', 'th', 'x-default'])
+    expect(existsSync(path.join(OUT, og)), 'OG image file').toBe(true)
+  })
+
+  test(`the ${lang} home describes Nexto as an organisation`, () => {
+    const [org] = jsonLd(read(file))
+    expect(org).toMatchObject({ '@type': 'Organization', name: 'Nexto', url: `${SITE}${url}` })
+    expect(existsSync(path.join(OUT, new URL(org.logo).pathname)), 'logo file').toBe(true)
+  })
+}
+
+test('English is the root and Thai is at /th/; /en/ redirects to the root', () => {
   expect(existsSync(path.join(OUT, 'en'))).toBe(false)
-  expect(existsSync(path.join(OUT, 'th'))).toBe(false)
+  expect(existsSync(path.join(OUT, 'th/index.html'))).toBe(true)
   expect(read('_redirects')).toMatch(/^\/en\/ \/ 301$/m)
   expect(read('_redirects')).toMatch(/^\/en \/ 301$/m)
 })
@@ -49,14 +64,13 @@ test('privacy stays out of search results', () => {
   expect(t).toMatchObject({ lang: 'en', robots: 'noindex', canonical: `${SITE}/privacy/` })
 })
 
-test('sitemap lists only the root; robots points at it', () => {
+test('sitemap lists both homes with their language alternates; robots points at it', () => {
   const sitemap = read('sitemap.xml')
-  expect(Array.from(sitemap.matchAll(/<loc>([^<]+)<\/loc>/g), (m) => m[1])).toEqual([`${SITE}/`])
-  expect(sitemap).not.toContain('hreflang')
+  expect(Array.from(sitemap.matchAll(/<loc>([^<]+)<\/loc>/g), (m) => m[1])).toEqual([`${SITE}/`, `${SITE}/th/`])
+  expect(sitemap).toContain('hreflang="th"')
   expect(read('robots.txt')).toContain(`Sitemap: ${SITE}/sitemap.xml`)
 })
 
-test('no placeholder or Thai OG image ships', () => {
+test('no placeholder OG image ships', () => {
   expect(existsSync(path.join(OUT, 'og-placeholder.png'))).toBe(false)
-  expect(existsSync(path.join(OUT, 'og-th.png'))).toBe(false)
 })

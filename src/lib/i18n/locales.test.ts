@@ -3,12 +3,13 @@ import { LOCALE_PATH, PUBLISHED_LOCALES, languageAlternates, switchTarget } from
 import { buildHomeMetadata } from './metadata'
 
 describe('published locales', () => {
-  it('publishes English only for now, at the site root', () => {
-    expect(PUBLISHED_LOCALES).toEqual(['en'])
+  it('publishes English at the site root and Thai at /th/', () => {
+    expect(PUBLISHED_LOCALES).toEqual(['en', 'th'])
     expect(LOCALE_PATH.en).toBe('/')
+    expect(LOCALE_PATH.th).toBe('/th/')
   })
 
-  it('offers no language switch while the other locale is hidden', () => {
+  it('switches to the other published locale, and to none on a single-language site', () => {
     expect(switchTarget('en', ['en'])).toBeNull()
     expect(switchTarget('en', ['th', 'en'])).toBe('th')
   })
@@ -22,9 +23,13 @@ describe('published locales', () => {
     })
   })
 
-  it('gives the English home a root canonical and no alternates', () => {
-    const metadata = buildHomeMetadata('en')
-    expect(metadata.alternates).toEqual({ canonical: '/' })
-    expect(metadata.openGraph).toMatchObject({ url: '/', images: [expect.objectContaining({ url: '/og-en.png' })] })
+  it('gives each home its own canonical, hreflang to both, and English as x-default', () => {
+    const languages = { en: '/', th: '/th/', 'x-default': '/' }
+    const en = buildHomeMetadata('en')
+    expect(en.alternates).toEqual({ canonical: '/', languages })
+    expect(en.openGraph).toMatchObject({ url: '/', images: [expect.objectContaining({ url: '/og-en.png' })] })
+    const th = buildHomeMetadata('th')
+    expect(th.alternates).toEqual({ canonical: '/th/', languages })
+    expect(th.openGraph).toMatchObject({ url: '/th/', images: [expect.objectContaining({ url: '/og-th.png' })] })
   })
 })

@@ -3,7 +3,7 @@ import { LOCALE_PATH, PUBLISHED_LOCALES, SITE_URL, languageAlternates } from '@/
 
 export const dynamic = 'force-static'
 
-const LAST_MODIFIED = '2026-10-10'
+const LAST_MODIFIED = '2026-10-14'
 
 const absolute = (path: string) => `${SITE_URL}${path}`
 

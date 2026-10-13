@@ -4,8 +4,11 @@ import { test as base, expect, type Page } from '@playwright/test'
 
 export { expect }
 
-/** Published locales (Thai is hidden for now; add { name: 'th', path: '/th/' } when it returns). */
-export const LOCALES = [{ name: 'en', path: '/' }] as const
+/** Published locales. */
+export const LOCALES = [
+  { name: 'en', path: '/' },
+  { name: 'th', path: '/th/' },
+] as const
 
 /** The production CSP from public/_headers, so a policy break shows up locally too. */
 const CSP = readFileSync(path.join(__dirname, '../public/_headers'), 'utf8')

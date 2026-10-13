@@ -8,11 +8,8 @@ export const SITE_URL = 'https://nexto.co.th'
 
 const DICTIONARIES: Readonly<Record<Locale, Dictionary>> = { th, en }
 
-/**
- * Locales the site serves. Thai is hidden for now (decided 2026-10-10): its copy stays
- * here, ready to return at /th/ with its own route group and a language switch.
- */
-export const PUBLISHED_LOCALES: ReadonlyArray<Locale> = ['en']
+/** Locales the site serves, default first. Thai returned at /th/ on 2026-10-14 once its copy was reviewed. */
+export const PUBLISHED_LOCALES: ReadonlyArray<Locale> = ['en', 'th']
 
 /** Base path of each locale. English is the default at the root. */
 export const LOCALE_PATH: Readonly<Record<Locale, string>> = { en: '/', th: '/th/' }

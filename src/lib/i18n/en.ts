@@ -21,7 +21,7 @@ export const en: Dictionary = {
     title: 'Scattered data, brought together.',
     subtitle:
       'We develop software that connects data across systems and medical devices, so clinical teams work more efficiently.',
-    primaryCta: 'Become a partner',
+    primaryCta: 'Request a demo',
     secondaryCta: 'Explore our products',
   },
   partners: {
@@ -77,7 +77,7 @@ export const en: Dictionary = {
     title: 'Contact us',
     intro: 'Select a topic to contact our team by email.',
     topics: [
-      { label: 'Medical device partnership', subject: 'Medical device partnership' },
+      { label: 'Request a demo', subject: 'Request a demo' },
       { label: 'Product inquiries', subject: 'Nexto product inquiry' },
       { label: 'Engineering services', subject: 'Engineering services' },
     ],

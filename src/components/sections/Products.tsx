@@ -4,6 +4,7 @@ import { Section } from '@/components/ui/Section'
 import { StatusChip } from '@/components/ui/StatusChip'
 import type { Dictionary } from '@/lib/i18n'
 import { SECTION_IDS } from '@/lib/site/sections'
+import { keepTogether } from '@/lib/text/keepTogether'
 
 const CARD = 'flex flex-col justify-between gap-6 rounded-3xl bg-ground-raised p-6 sm:min-h-56 sm:gap-10 sm:p-10'
 
@@ -28,7 +29,7 @@ export function Products({ dict }: { dict: Dictionary['products'] }) {
             </h3>
             <StatusChip tone="available">{endyra.status}</StatusChip>
           </div>
-          <p className="max-w-sm text-lg text-ink-muted">{endyra.description}</p>
+          <p className="max-w-sm text-lg text-ink-muted">{keepTogether(endyra.description)}</p>
         </li>
         <li data-fade className={CARD}>
           <div className="flex flex-wrap items-start justify-between gap-4">
@@ -37,7 +38,7 @@ export function Products({ dict }: { dict: Dictionary['products'] }) {
             </h3>
             <StatusChip tone="development">{anvira.status}</StatusChip>
           </div>
-          <p className="max-w-sm text-lg text-ink-muted">{anvira.description}</p>
+          <p className="max-w-sm text-lg text-ink-muted">{keepTogether(anvira.description)}</p>
         </li>
       </ul>
     </Section>
