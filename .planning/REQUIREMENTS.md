@@ -6,18 +6,18 @@
 
 ### Foundation
 
-- [ ] **FND-01**: Colour tokens in `globals.css` come from the Nexto brand book `tokens.json` (teal #00B0B6, coral #F15A4B, charcoal #414142, mist #E7E8E9, teal-text #007A7E / #5ED3D7, coral-text #C24433 / #F6958B, ground, ground-raised, ink, ink-muted). Old #2EC4B6 / #E85D4A removed.
-- [ ] **FND-02**: Light and dark themes follow `prefers-color-scheme`; every text/ground pair meets 4.5:1 in both. A CTA filled with coral uses `coral-text`; teal fills carry ink-coloured text (white on #F15A4B is only 3.33:1).
-- [ ] **FND-03**: Montserrat (Latin) and Anuphan (Thai) self-hosted via `next/font`, `display: swap`.
-- [ ] **FND-04**: Old assets removed: Manverra and Careyra logos, `endyra-logo.svg` (off-system), unused Next.js scaffold SVGs.
+- [x] **FND-01**: Colour tokens in `globals.css` come from the Nexto brand book `tokens.json` (teal #00B0B6, coral #F15A4B, charcoal #414142, mist #E7E8E9, teal-text #007A7E / #5ED3D7, coral-text #C24433 / #F6958B, ground, ground-raised, ink, ink-muted). Old #2EC4B6 / #E85D4A removed.
+- [x] **FND-02**: Light and dark themes follow `prefers-color-scheme`; every text/ground pair meets 4.5:1 in both. A CTA filled with coral uses `coral-text`; teal fills carry ink-coloured text (white on #F15A4B is only 3.33:1). *Superseded 2026-10-10: dark only (redesign); the contrast test checks the dark pairs and the product accents.*
+- [x] **FND-03**: Montserrat (Latin) and Anuphan (Thai) self-hosted via `next/font`, `display: swap`. IBM Plex Mono added for English labels.
+- [x] **FND-04**: Old assets removed: Manverra and Careyra logos, `endyra-logo.svg` (off-system), unused Next.js scaffold SVGs.
 
 ### Internationalisation
 
-- [ ] **I18N-01**: Thai at `/`, English at `/en`, each with its own root layout so `<html lang>` is `th` or `en`.
-- [ ] **I18N-02**: Language switch in the header keeps the visitor on the same section.
-- [ ] **I18N-03**: All copy lives in one dictionary per language; a test fails if the TH and EN key sets differ.
-- [ ] **I18N-04**: `hreflang` alternates and per-locale canonical URLs; sitemap lists both.
-- [ ] **I18N-05**: `/privacy` and the 404 page still build and render after the route split; `/en` resolves on Cloudflare after static export.
+- [x] **I18N-01**: Thai at `/`, English at `/en`, each with its own root layout so `<html lang>` is `th` or `en`. *Superseded: English at `/`, Thai at `/th/` (Release A, 2026-10-14; docs/adr/0001).*
+- [x] **I18N-02**: Language switch in the header keeps the visitor on the same section. Also keeps the product page.
+- [x] **I18N-03**: All copy lives in one dictionary per language; a test fails if the TH and EN key sets differ.
+- [x] **I18N-04**: `hreflang` alternates and per-locale canonical URLs; sitemap lists both. Done in Release A: hreflang with x-default English; the sitemap lists all six pages.
+- [x] **I18N-05**: `/privacy` and the 404 page still build and render after the route split; `/en` resolves on Cloudflare after static export. `/en/` 301 → `/` via `public/_redirects`.
 
 ### Sections and copy (approved 2026-10-10)
 
@@ -33,9 +33,9 @@
 
 ### Visual design
 
-- [ ] **VIS-01**: Reference language from cipherdigital.com (decided 2026-10-10, redesign): dark only (brand book dark theme), a hairline page grid with dots where lines cross, short headlines in a lighter weight, square-ish buttons, one accent (teal). IBM Plex Mono for English labels and numbers only.
+- [x] **VIS-01**: Reference language from cipherdigital.com (decided 2026-10-10, redesign): dark only (brand book dark theme), a hairline page grid with dots where lines cross, short headlines in a lighter weight, square-ish buttons, one accent (teal). IBM Plex Mono for English labels and numbers only.
 - [x] **VIS-02**: Header: Nexto logo (brand book file), anchor nav, language switch, primary CTA; collapses on mobile.
-- [ ] **VIS-03**: Layout works at 320, 375, 768, 1024, 1440, 1920 with no horizontal scroll.
+- [x] **VIS-03**: Layout works at 320, 375, 768, 1024, 1440, 1920 with no horizontal scroll. Checked by Playwright at 320–1920.
 
 ### Network motion (signature)
 
@@ -59,6 +59,7 @@
 - [x] **QA-01**: Vitest: network layout/interpolation, TH/EN key parity, mailto builder (Thai subjects encoded).
 - [x] **QA-02**: Playwright suite (`npm run test:e2e`, against `out/`): screenshots at 320, 768, 1024, 1440 for `/` and `/en/` (dark only since the redesign), overflow and clipped-content checks at 320–1920, motion/pin/anchor/language-switch flows, reduced-motion and no-JS runs, production CSP applied with zero violations or console errors.
 - [ ] **QA-03**: Lighthouse mobile 90+, LCP < 2.5s, CLS < 0.1. JS budget waived by the user on 2026-10-10 for Lenis + GSAP: landing JS measured 193 kB gz (Playwright, all loaded .js), motion chunks load after hydration. Measured 2026-10-10 (local, gzip server, Lighthouse 13.5 mobile, 3 runs): performance 93–97, CLS 0, TBT ≤ 70 ms, FCP 1.2 s, accessibility/best practices/SEO 100; LCP 2.5–3.1 s (simulated). With all JS blocked LCP is still 2.3 s, so the remaining gap is the Next/React runtime. Re-measure on the preview.
+  **Production, 2026-10-14** (Lighthouse 13.0 mobile, 3 runs per page): performance home 70/90/94 (the 70 was a cold first run, LCP 6.6 s), `/th/` 85–94, `/endyra/` 84–95, `/anvira/` 87–95; LCP 2.7–3.8 s; CLS 0; TBT ≤ 93 ms (one 236 ms run on `/th/`); accessibility 100, SEO 100, best practices 92. LCP element is the hero `h1`; the real trace shows TTFB 69 ms and render delay 99 ms, so the gap is the simulated slow-4G throttling of the JS runtime, as measured locally. Best practices loses 8 because Cloudflare injects its Web Analytics beacon (`static.cloudflareinsights.com`), which the CSP blocks. **Still open: LCP < 2.5 s.**
 - [x] **QA-04**: Keyboard reaches every link and button with a visible focus ring; automated a11y check passes.
 - [x] **QA-05**: OG image per locale (`public/og-th.png`, `public/og-en.png`, rendered from the built site by `npm run og`); titles and descriptions per locale.
 
@@ -73,7 +74,6 @@
 
 | Feature | Reason |
 |---------|--------|
-| Product detail pages (`/endyra`, `/anvira`) | Next milestone; Endyra may be renamed pending trademark result |
 | Contact form | Email + LINE per topic; static site has no backend |
 | Team / founder section | User decision |
 | Three.js / WebGL | Canvas 2D keeps the JS budget |
@@ -84,4 +84,4 @@
 LAYOUT-01..05, HERO-01..03, CONT-01..05, CTCT-01..03, DSGN-01..04, TECH-01..05, SEO-01..06, PRIV-01. Superseded by v2 except SEO-05 (robots/sitemap), SEO-06 (favicon), PRIV-01 (privacy page) and GA, which carry over.
 
 ---
-*v1 defined 2026-02-17 · v2 defined 2026-10-10*
+*v1 defined 2026-02-17 · v2 defined 2026-10-10 · v2 live 2026-10-14 (product pages `/endyra/`, `/anvira/` shipped in Release B)*
