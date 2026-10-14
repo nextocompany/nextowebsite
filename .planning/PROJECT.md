@@ -30,7 +30,7 @@ See `.planning/REQUIREMENTS.md` (v2 section). v1 requirements are archived there
 ## Constraints
 
 - **Stack:** Next.js 16 App Router, static export (`output: "export"`), Tailwind CSS v4, TypeScript.
-- **Hosting:** Cloudflare Worker `nextowebsite` (custom domain nexto.co.th), from `wrangler.jsonc` serving `./out`; not the `nexto-website` Pages project. Every deploy needs a fresh `npm run build`; the local `out/` is stale. Cloudflare Web Analytics injects a beacon the CSP blocks (see QA-03).
+- **Hosting:** Cloudflare Worker `nextowebsite` (custom domain nexto.co.th), from `wrangler.jsonc` serving `./out`; not the `nexto-website` Pages project. Every deploy needs a fresh `npm run build`; the local `out/` is stale. Cloudflare Web Analytics JS snippet is off (2026-10-14): its injected beacon broke the CSP, and GA covers analytics. If it is turned back on, the CSP needs `static.cloudflareinsights.com`.
 - **CSP (`public/_headers`):** `font-src 'self'` means fonts self-host via `next/font`; no Google Fonts `<link>`. GSAP and Lenis come from npm. Static export cannot use nonces, so the existing `'unsafe-inline'` script policy stays.
 - **Performance:** Lighthouse mobile 90+, LCP < 2.5s, CLS < 0.1, landing JS < 150 kB gzipped. GSAP and Lenis load by dynamic import after first paint.
 - **Honesty:** no hospital-deployment claims, no invented numbers, no stock imagery implying hospital use.

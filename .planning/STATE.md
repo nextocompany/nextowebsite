@@ -31,10 +31,10 @@ Old Endyra site: Worker endyrawebsite (custom domain endyra.nexto.co.th) deleted
 Product identity (2026-10-14, user: the pages had no feel of their own products): each product page sets data-product, so --accent / --accent-text give it the colour from its logo (Endyra #c4f25e; Anvira #8f94f5, text #a5a9f7 for 4.5:1 on raised cards; tokens.ts PRODUCT_PAIRS). The call to action, status chip, labels, step numbers and callout rule use it. The top visual is the product's own shape from the network story (ProductMark: Endyra's lens, Anvira's monitor trace with the logo's coral dot on the spike). Endyra copy corrected against nextocompany/endyra main: Full HD stills (capture card takes up to 4K60), withdrawal recording and timing (video is 720p30, colonoscopy withdrawal only), PDF reports; no 4K recording, no clip export. Next: product UI drawings from real screenshots (run nextocompany/endyra locally; needs Go, pnpm, ffmpeg).
 Endyra screen (2026-10-14): ran nextocompany/endyra locally (demo seed, mock capture, no webcam; portal on :3100, kiosk renderer via Vite API on :5199) and drew its kiosk capture screen in the new identity (components/product/EndyraScreen.tsx): insertion and withdrawal timers, foot switch capture, Record video, captured images, sample data only, captioned as an illustration. The lime "⊃ Endyra" logo and CI is a rebrand the Endyra software itself has not adopted yet (it still shows the blue ENDYRA mark); updating it is work for nextocompany/endyra. Anvira: nextocompany/anesync is Phase 0 with no UI, so its page keeps only the monitor trace until real screens exist.
 Production (2026-10-14, user approved): deployed nextowebsite version 944b1f0f (rollback target 4ce3829b, the Feb site). nexto.co.th is served by the Worker nextowebsite (custom domain), not the nexto-website Pages project. GATE-04 done.
-Production Lighthouse (2026-10-14): performance 84–95 warm, LCP 2.7–3.8 s (hero h1), CLS 0, a11y/SEO 100, best practices 92 (Cloudflare Web Analytics beacon blocked by CSP). Details in QA-03.
+Production Lighthouse (2026-10-14): performance 84–95 warm, LCP 2.7–3.8 s (hero h1), CLS 0, a11y/SEO 100, best practices 100 after the user turned off the Cloudflare Web Analytics snippet. LCP accepted by the user. Details in QA-03.
 Last activity: 2026-10-14 — v2 merged and live; production measured; planning docs brought up to date
 
-Progress v2: [██████████] 100% (QA-03 LCP still open)
+Progress v2: [██████████] 100%
 
 > Everything below "What Actually Shipped" describes v1. v2 decisions live in PROJECT.md Key Decisions.
 
@@ -118,11 +118,9 @@ Recent decisions affecting current work:
 
 ### Pending Todos
 
-- QA-03: LCP 2.7–3.8 s on production (target 2.5 s).
-- CSP vs Cloudflare Web Analytics: allow `static.cloudflareinsights.com` (script) and `cloudflareinsights.com` (connect), or turn the beacon off (GA already runs).
 - Endyra software rebrand to the lime logo: user, in nextocompany/endyra.
 - Anvira screens: user, in the Anvira repo; the product page keeps the monitor trace until then.
-- Done 2026-10-14: endyra@ and anvira@nexto.co.th mailboxes exist (user).
+- Done 2026-10-14: endyra@ and anvira@nexto.co.th mailboxes exist (user); Cloudflare Web Analytics snippet off; LCP 2.7–3.8 s accepted (QA-03).
 
 ### Blockers/Concerns
 
