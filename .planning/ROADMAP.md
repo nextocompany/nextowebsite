@@ -76,7 +76,7 @@ Plans:
 
 Rebuild the single page around the new positioning, in Thai and English, light and dark, with the neural-network scroll story as the signature. Phases 4–7. Production deploy happens only after the user approves a preview.
 
-**Shipped 2026-10-14** (PR #1, merged to main; Worker `nextowebsite` version 944b1f0f on nexto.co.th). After Phase 7 two releases went out with it: Release A (Thai back at `/th/`, Request a demo CTA, Organization JSON-LD) and Release B (product pages `/endyra/`, `/anvira/` in both languages). Open: QA-03 LCP on production (2.7–3.8 s simulated).
+**Shipped 2026-10-14** (PR #1, merged to main; Worker `nextowebsite` version 944b1f0f on nexto.co.th). After Phase 7 two releases went out with it: Release A (Thai back at `/th/`, Request a demo CTA, Organization JSON-LD) and Release B (product pages `/endyra/`, `/anvira/` in both languages). LCP on production (2.7–3.8 s simulated) accepted by the user (QA-03).
 
 - [x] **Phase 4: Foundation v2** - brand tokens, fonts, themes, TH/EN route split, old assets removed
 - [x] **Phase 5: Sections + copy** - all 8 sections in both languages, static (no motion), reference visual language
@@ -140,7 +140,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7
 | 4. Foundation v2 | 1/1 | Complete | 2026-10-10 |
 | 5. Sections + copy | 1/1 | Complete | 2026-10-10 |
 | 6. Network + motion | 1/1 | Complete (redesigned) | 2026-10-10 |
-| 7. Quality + preview | 1/1 | Complete (LCP still over 2.5 s, QA-03) | 2026-10-14 |
+| 7. Quality + preview | 1/1 | Complete (LCP over 2.5 s accepted, QA-03) | 2026-10-14 |
 
 ---
 *Roadmap created: 2026-02-17*
