@@ -14,7 +14,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Foundation** - Next.js project scaffold, Tailwind config, typography, global styles, design tokens (completed 2026-02-17)
 - [x] **Phase 2: Page** - 6 sections assembled with final copy, anchor nav, responsive layout (completed 2026-02-22)
-- [ ] **Phase 3: Quality + Ship** - SEO metadata, accessibility fixes, GA integration, privacy page, Cloudflare Pages deploy
+- [x] **Phase 3: Quality + Ship** - SEO metadata, accessibility fixes, GA integration, privacy page, Cloudflare Pages deploy
 
 ## Phase Details
 
@@ -66,9 +66,9 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 03-01-PLAN.md — SEO metadata, OG tags, GA integration, sitemap/robots, accessibility contrast fixes, focus ring
-- [ ] 03-02-PLAN.md — Privacy policy page at /privacy
-- [ ] 03-03-PLAN.md — Build verification, GitHub repo creation, Cloudflare Pages deploy
+- [x] 03-01-PLAN.md — SEO metadata, OG tags, GA integration, sitemap/robots, accessibility contrast fixes, focus ring
+- [x] 03-02-PLAN.md — Privacy policy page at /privacy
+- [x] 03-03-PLAN.md — Build verification, GitHub repo creation, Cloudflare Pages deploy
 
 ---
 
@@ -76,10 +76,12 @@ Plans:
 
 Rebuild the single page around the new positioning, in Thai and English, light and dark, with the neural-network scroll story as the signature. Phases 4–7. Production deploy happens only after the user approves a preview.
 
+**Shipped 2026-10-14** (PR #1, merged to main; Worker `nextowebsite` version 944b1f0f on nexto.co.th). After Phase 7 two releases went out with it: Release A (Thai back at `/th/`, Request a demo CTA, Organization JSON-LD) and Release B (product pages `/endyra/`, `/anvira/` in both languages). Open: QA-03 LCP on production (2.7–3.8 s simulated).
+
 - [x] **Phase 4: Foundation v2** - brand tokens, fonts, themes, TH/EN route split, old assets removed
-- [ ] **Phase 5: Sections + copy** - all 8 sections in both languages, static (no motion), reference visual language
-- [ ] **Phase 6: Network + motion** - canvas network with 4 beats, GSAP text reveals, Lenis, reduced motion
-- [ ] **Phase 7: Quality + preview** - tests, Lighthouse/a11y/bundle budget, SEO per locale, OG image, preview deploy, launch gates
+- [x] **Phase 5: Sections + copy** - all 8 sections in both languages, static (no motion), reference visual language
+- [x] **Phase 6: Network + motion** - canvas network with 4 beats, GSAP text reveals, Lenis, reduced motion
+- [x] **Phase 7: Quality + preview** - tests, Lighthouse/a11y/bundle budget, SEO per locale, OG image, preview deploy, launch gates
 
 ### Phase 4: Foundation v2
 **Goal**: The app builds with the brand book tokens, both themes, both locales and the right fonts, before any section work
@@ -138,8 +140,8 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7
 | 4. Foundation v2 | 1/1 | Complete | 2026-10-10 |
 | 5. Sections + copy | 1/1 | Complete | 2026-10-10 |
 | 6. Network + motion | 1/1 | Complete (redesigned) | 2026-10-10 |
-| 7. Quality + preview | 0/1 | In progress (QA done; preview deploy pending) | - |
+| 7. Quality + preview | 1/1 | Complete (LCP still over 2.5 s, QA-03) | 2026-10-14 |
 
 ---
 *Roadmap created: 2026-02-17*
-*Last updated: 2026-02-22 — Phase 3 planned (3 plans, 2 waves)*
+*Last updated: 2026-10-14 — v2 live*
