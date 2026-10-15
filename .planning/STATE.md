@@ -33,7 +33,8 @@ Endyra screen (2026-10-14): ran nextocompany/endyra locally (demo seed, mock cap
 Production (2026-10-14, user approved): deployed nextowebsite version 944b1f0f (rollback target 4ce3829b, the Feb site). nexto.co.th is served by the Worker nextowebsite (custom domain), not the nexto-website Pages project. GATE-04 done.
 Production Lighthouse (2026-10-14): performance 84–95 warm, LCP 2.7–3.8 s (hero h1), CLS 0, a11y/SEO 100, best practices 100 after the user turned off the Cloudflare Web Analytics snippet. LCP accepted by the user. Details in QA-03.
 SEO (2026-10-15): Google answered "Nexto" with NEXTTO (nexttosystem.com, an accounting product) that reads like the Thai registered name บริษัท เน็กซ์ทู จำกัด. Titles now say Healthcare software / ซอฟต์แวร์ทางการแพทย์ and the TH title and description carry เน็กซ์ทู; Organization alternateName lists the Thai name; WebSite JSON-LD on both homes; product pages have SoftwareApplication + BreadcrumbList from their approved copy (no ratings or offers). Deployed version a7ae28f3 (rollback target 80cb81ec). AI crawlers (GPTBot, ClaudeBot, PerplexityBot) get 200. Vitest 185, Playwright 60.
-Last activity: 2026-10-15 — brand-name SEO and product structured data live
+Entity (2026-10-15): Organization has foundingDate 2015-08-05 and sameAs the Wikidata item Q141742250 (created by the user). www.nexto.co.th and http:// both 301 to https://nexto.co.th (user, Cloudflare). Deployed version c20805ad (rollback target a7ae28f3).
+Last activity: 2026-10-15 — founding date and Wikidata live; www and https redirects in place
 
 Progress v2: [██████████] 100%
 
@@ -119,7 +120,7 @@ Recent decisions affecting current work:
 
 ### Pending Todos
 
-- SEO off the site (user): Search Console resubmit sitemap and request indexing for / and /th/; Bing Webmaster Tools (import from GSC) and Cloudflare Crawler Hints; Google Business Profile; Wikidata item; same name and description on LinkedIn, Facebook, LINE, DBD; links from partners.
+- SEO off the site (user): Search Console resubmit sitemap and request indexing for / and /th/; Wikidata official website should read https://nexto.co.th/ (it has www); same name and description on LinkedIn, Facebook, LINE, DBD; links from partners.
 - SEO on the site, waiting for facts from the user: a factual "who is Nexto" paragraph (founding year etc.), a short FAQ with true answers.
 - Endyra software rebrand to the lime logo: user, in nextocompany/endyra.
 - Anvira screens: user, in the Anvira repo; the product page keeps the monitor trace until then.
