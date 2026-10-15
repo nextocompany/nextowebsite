@@ -3,9 +3,9 @@ import type { Dictionary } from './types'
 export const en: Dictionary = {
   meta: {
     lang: 'en',
-    title: 'Nexto | Scattered data, brought together',
+    title: 'Nexto | Healthcare software | Scattered data, brought together',
     description:
-      'Nexto develops software that integrates data from multiple systems and medical devices, enabling clinical teams and healthcare organizations to work more efficiently.',
+      'Nexto Co., Ltd. develops healthcare software that integrates data from multiple systems and medical devices, enabling clinical teams and healthcare organizations to work more efficiently.',
     ogLocale: 'en_US',
   },
   nav: {
