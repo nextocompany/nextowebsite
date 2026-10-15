@@ -11,10 +11,11 @@ describe('organizationJsonLd', () => {
     expect(th.url).toBe('https://nexto.co.th/th/')
   })
 
-  it('points at a raster logo and every social channel', () => {
+  it('points at a raster logo, the Wikidata item and every social channel', () => {
     const org = organizationJsonLd('en')
     expect(org.logo).toMatch(/\.png$/)
     expect(org.sameAs).toContain('https://www.linkedin.com/company/nextocompany')
+    expect(org.sameAs).toContain('https://www.wikidata.org/wiki/Q141742250')
   })
 
   it('serialises to JSON that cannot close its script tag', () => {
