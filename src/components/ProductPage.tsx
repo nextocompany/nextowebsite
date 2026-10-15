@@ -11,6 +11,7 @@ import { getDictionary, LOCALE_PATH, type Locale, type Product } from '@/lib/i18
 import type { ProductBlock } from '@/lib/i18n/types'
 import { buildMailto } from '@/lib/site/contact'
 import { LINE_ID, LINE_URL, PRODUCT_EMAIL } from '@/lib/site/constants'
+import { productJsonLd } from '@/lib/site/product'
 import { SECTION_IDS } from '@/lib/site/sections'
 import { keepTogether } from '@/lib/text/keepTogether'
 
@@ -99,6 +100,8 @@ export function ProductPage({ locale, product }: { locale: Locale; product: Prod
 
   return (
     <>
+      {/* Data, not script: CSP does not apply, and the content is our own copy. */}
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd(locale, product)) }} />
       <SiteHeader locale={locale} page={`${product}/`} />
       {/* data-product sets --accent: the product's own colour for its marks, chip and buttons. */}
       <main data-product={product}>

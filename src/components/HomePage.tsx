@@ -10,7 +10,7 @@ import { HowWeWork } from '@/components/sections/HowWeWork'
 import { Intro } from '@/components/sections/Intro'
 import { Products } from '@/components/sections/Products'
 import { getDictionary, type Locale } from '@/lib/i18n'
-import { organizationJsonLd } from '@/lib/site/organization'
+import { organizationJsonLd, websiteJsonLd } from '@/lib/site/organization'
 
 // First thing in <body>, so it runs before content paints: when motion is allowed, hide the SVG stills so the
 // canvas intro doesn't flash a finished brain first. Only the home has the canvas; other pages keep their stills.
@@ -29,6 +29,7 @@ export function HomePage({ locale }: HomePageProps) {
       <script dangerouslySetInnerHTML={{ __html: MOTION_FLAG }} />
       {/* Data, not script: CSP does not apply, and the content is our own constants. */}
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd(locale)) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd(locale)) }} />
       <SiteHeader locale={locale} />
       <main>
         <Hero dict={dict.hero} partners={dict.partners} />
