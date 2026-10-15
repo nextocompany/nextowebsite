@@ -21,6 +21,7 @@ export function organizationJsonLd(locale: Locale) {
     name: 'Nexto',
     legalName: 'Nexto Co., Ltd.',
     alternateName: [...ALTERNATE_NAMES],
+    foundingDate: '2015-08-05',
     url: `${SITE_URL}${LOCALE_PATH[locale]}`,
     logo: `${SITE_URL}/brand/nexto-mark-512.png`,
     description: dict.meta.description,

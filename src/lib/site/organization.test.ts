@@ -23,6 +23,7 @@ describe('organizationJsonLd', () => {
 
   it('carries the Thai registered name, so searches for it reach this site', () => {
     expect(organizationJsonLd('th').alternateName).toContain('บริษัท เน็กซ์ทู จำกัด')
+    expect(organizationJsonLd('en').foundingDate).toBe('2015-08-05')
   })
 })
 
